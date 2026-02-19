@@ -44,7 +44,7 @@ imitation_player.html
 `fetch('data.json')` を使用しているため `file://` では動作しない。ローカルサーバーを起動すること：
 
 ```bash
-python3 -m http.server 8080
+uv run python -m http.server 8080
 ```
 
 http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
@@ -53,7 +53,7 @@ http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
 
 1. 元音声ファイルを `audio/` に配置
 2. `transcribe.py` の `FILES` リストにエントリ追加（`(ファイル名, key, label)`）
-3. `OPENAI_API_KEY=sk-... python3 transcribe.py` を実行
+3. `OPENAI_API_KEY=sk-... uv run python transcribe.py` を実行
 4. 生成された `transcripts.json` の内容を `data.json` に追記（`segments` 配列に変換）
 5. `audio/segments/{key}/` にMP3を配置（`transcribe.py` を改修して書き出すか手動で変換）
 6. `git add` してコミット

@@ -1,0 +1,9 @@
+[project]
+name = "imitation-player"
+version = "0.1.0"
+description = "英語イミテーション練習プレイヤー"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=2.21.0",
+    "pydub>=0.25.1",
+]
