@@ -1,0 +1,19 @@
+{
+  "name": "Imitation Player",
+  "short_name": "ImPlayer",
+  "description": "英語イミテーション練習プレイヤー",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#060612",
+  "theme_color": "#060612",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
