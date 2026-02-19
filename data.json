@@ -1,0 +1,467 @@
+[
+  {
+    "label": "ビジネス 形容詞",
+    "key": "adj",
+    "segments": [
+      {
+        "transcript": "I'm doing well."
+      },
+      {
+        "transcript": "I'm available tomorrow."
+      },
+      {
+        "transcript": "I have some availability today."
+      },
+      {
+        "transcript": "I'm a bit confused."
+      },
+      {
+        "transcript": "I'm quite hungry."
+      },
+      {
+        "transcript": "I'm married."
+      },
+      {
+        "transcript": "I'm interested in K-pop."
+      },
+      {
+        "transcript": "I'm good at singing."
+      },
+      {
+        "transcript": "I'm sorry to hear that."
+      },
+      {
+        "transcript": "That's very kind of you."
+      },
+      {
+        "transcript": "That's very insightful."
+      },
+      {
+        "transcript": "He is very well known."
+      },
+      {
+        "transcript": "He's quite tall."
+      },
+      {
+        "transcript": "My younger brother is overweight."
+      },
+      {
+        "transcript": "She is well-known."
+      },
+      {
+        "transcript": "She's very attractive."
+      },
+      {
+        "transcript": "My older sister has a great sense of humor."
+      },
+      {
+        "transcript": "Sorry for being late."
+      },
+      {
+        "transcript": "I'm afraid I'll be late."
+      },
+      {
+        "transcript": "Are you all right?"
+      },
+      {
+        "transcript": "Yes, I'm fine."
+      },
+      {
+        "transcript": "No, I'm not feeling well."
+      },
+      {
+        "transcript": "That's good to hear."
+      },
+      {
+        "transcript": "That's nice to hear."
+      },
+      {
+        "transcript": "That's unpleasant."
+      },
+      {
+        "transcript": "That's impressive!"
+      },
+      {
+        "transcript": "That's correct."
+      },
+      {
+        "transcript": "That's very interesting."
+      },
+      {
+        "transcript": "That's quite funny."
+      },
+      {
+        "transcript": "That's unfortunate."
+      },
+      {
+        "transcript": "That was embarrassing."
+      },
+      {
+        "transcript": "That was unexpected."
+      },
+      {
+        "transcript": "This is excellent."
+      },
+      {
+        "transcript": "This is quite sour."
+      },
+      {
+        "transcript": "This is reasonably priced."
+      },
+      {
+        "transcript": "It's very challenging."
+      },
+      {
+        "transcript": "It's quite simple."
+      },
+      {
+        "transcript": "It's a bit warm today."
+      },
+      {
+        "transcript": "It's quite expensive."
+      },
+      {
+        "transcript": "It's very cloudy today."
+      },
+      {
+        "transcript": "It's very crowded."
+      },
+      {
+        "transcript": "It was excellent."
+      },
+      {
+        "transcript": "It was enjoyable."
+      },
+      {
+        "transcript": "It was very windy yesterday."
+      },
+      {
+        "transcript": "It was quite challenging."
+      },
+      {
+        "transcript": "The area is usually busy."
+      },
+      {
+        "transcript": "The overall impression was quite positive."
+      },
+      {
+        "transcript": "This might be a bit larger than we need."
+      },
+      {
+        "transcript": "These might be slightly smaller than expected."
+      },
+      {
+        "transcript": "The overall impression."
+      }
+    ]
+  },
+  {
+    "label": "未来 ビジネスシーン",
+    "key": "future",
+    "segments": [
+      {
+        "transcript": "I'll meet with a client tomorrow."
+      },
+      {
+        "transcript": "I'm going to visit the site this weekend."
+      },
+      {
+        "transcript": "I will be in Shibuya later today for meetings."
+      },
+      {
+        "transcript": "I'm scheduled to visit our new office later this week."
+      },
+      {
+        "transcript": "I will come into the office on Sunday if needed."
+      },
+      {
+        "transcript": "I'll talk a bit about my background later."
+      },
+      {
+        "transcript": "I'm going to share my experience from my earlier career."
+      },
+      {
+        "transcript": "I will touch on my previous working situation if it's relevant."
+      },
+      {
+        "transcript": "I'll work on this later tonight."
+      },
+      {
+        "transcript": "I'm going to spend some time reviewing the materials."
+      },
+      {
+        "transcript": "I will finish this task by tomorrow."
+      },
+      {
+        "transcript": "I've already made a reservation so we are all set."
+      },
+      {
+        "transcript": "I'm going out for dinner with the team tonight."
+      },
+      {
+        "transcript": "I'll have dinner with some colleagues later."
+      },
+      {
+        "transcript": "I am playing golf with a few business contacts this weekend."
+      },
+      {
+        "transcript": "I'm planning to do a yoga session this weekend."
+      },
+      {
+        "transcript": "I'll work out for about an hour after work today."
+      },
+      {
+        "transcript": "I'm going to focus more on my health this year."
+      },
+      {
+        "transcript": "I'm planning to watch a movie over the weekend."
+      },
+      {
+        "transcript": "I will do some reading tonight."
+      },
+      {
+        "transcript": "I'm going to catch up on some industry articles later."
+      },
+      {
+        "transcript": "Are we traveling to California next month?"
+      },
+      {
+        "transcript": "I'm going to visit my hometown in January."
+      },
+      {
+        "transcript": "I'm scheduled for a business trip next quarter."
+      },
+      {
+        "transcript": "I'm planning to buy some clothes this weekend."
+      },
+      {
+        "transcript": "I'll catch up with some friends over the weekend."
+      },
+      {
+        "transcript": "I can talk about how I met my wife if there's time."
+      },
+      {
+        "transcript": "I'll get up early tomorrow morning."
+      },
+      {
+        "transcript": "I'm probably going to stay up late tonight."
+      },
+      {
+        "transcript": "I'll stay home tomorrow and get some rest."
+      },
+      {
+        "transcript": "He'll get home early today."
+      },
+      {
+        "transcript": "I'll report back once I confirm it."
+      },
+      {
+        "transcript": "I'll do my best."
+      },
+      {
+        "transcript": "I'll keep you posted."
+      },
+      {
+        "transcript": "I think it will be manageable."
+      },
+      {
+        "transcript": "I'll be careful not to make the same mistake again."
+      },
+      {
+        "transcript": "I'm going to start exercising at home next month."
+      },
+      {
+        "transcript": "I will give it a try."
+      },
+      {
+        "transcript": "I'm willing to give this approach a shot."
+      },
+      {
+        "transcript": "I'll apply what I learned at my previous company."
+      },
+      {
+        "transcript": "I will leverage my experience working at a bravest company."
+      },
+      {
+        "transcript": "I will use the discipline I built through martial arts."
+      },
+      {
+        "transcript": "I will make use of my teaching experience where possible."
+      },
+      {
+        "transcript": "I won't have much time this weekend."
+      },
+      {
+        "transcript": "I won't be able to join the meeting tomorrow morning."
+      },
+      {
+        "transcript": "I'm not planning to make any major changes for now."
+      },
+      {
+        "transcript": "A client will be stopping by later today."
+      },
+      {
+        "transcript": "Someone from the team is expected to arrive shortly."
+      },
+      {
+        "transcript": "She might arrive a bit late due to traffic."
+      },
+      {
+        "transcript": "He won't be able to join us today."
+      }
+    ]
+  },
+  {
+    "label": "過去 ビジネス",
+    "key": "past",
+    "segments": [
+      {
+        "transcript": "I met with a client yesterday."
+      },
+      {
+        "transcript": "I went for a site visit last weekend."
+      },
+      {
+        "transcript": "I was in Shibuya the other day for meetings."
+      },
+      {
+        "transcript": "I visited our Roppongi office earlier this week."
+      },
+      {
+        "transcript": "I came into the office on Sunday."
+      },
+      {
+        "transcript": "I was actively involved in dance when I was younger."
+      },
+      {
+        "transcript": "I used to be really into video games as a kid."
+      },
+      {
+        "transcript": "I lived in a dormitory during my university years."
+      },
+      {
+        "transcript": "I lived with my family while I was in college."
+      },
+      {
+        "transcript": "I worked late last night."
+      },
+      {
+        "transcript": "I spent some time studying English last night."
+      },
+      {
+        "transcript": "I cooked dinner at home last night."
+      },
+      {
+        "transcript": "I've already made the reservation."
+      },
+      {
+        "transcript": "I had a steak for dinner last night."
+      },
+      {
+        "transcript": "I went out for dinner with my colleagues last night."
+      },
+      {
+        "transcript": "I played golf with some contacts last weekend."
+      },
+      {
+        "transcript": "I did a yoga session last Saturday."
+      },
+      {
+        "transcript": "I worked out for about two hours yesterday."
+      },
+      {
+        "transcript": "I watched a movie over the weekend."
+      },
+      {
+        "transcript": "I did some reading last night."
+      },
+      {
+        "transcript": "I traveled to California last year."
+      },
+      {
+        "transcript": "I went back to my hometown this January."
+      },
+      {
+        "transcript": "I bought some clothes last Sunday."
+      },
+      {
+        "transcript": "I caught up with some friends last weekend."
+      },
+      {
+        "transcript": "I met my wife through work."
+      },
+      {
+        "transcript": "I woke up early this morning."
+      },
+      {
+        "transcript": "I stayed up late last night."
+      },
+      {
+        "transcript": "I stayed home yesterday."
+      },
+      {
+        "transcript": "He got home early yesterday."
+      },
+      {
+        "transcript": "I saw him on the street the other day."
+      },
+      {
+        "transcript": "I did my best."
+      },
+      {
+        "transcript": "I heard you got married."
+      },
+      {
+        "transcript": "I thought it would be easy."
+      },
+      {
+        "transcript": "I made a mistake."
+      },
+      {
+        "transcript": "I started exercising at home last month."
+      },
+      {
+        "transcript": "I give it a try."
+      },
+      {
+        "transcript": "I used to work at another company."
+      },
+      {
+        "transcript": "Are you still living in Yokohama as a child?"
+      },
+      {
+        "transcript": "I used to practice karate when I was a student."
+      },
+      {
+        "transcript": "I used to teach Spanish."
+      },
+      {
+        "transcript": "I didn't do much last weekend."
+      },
+      {
+        "transcript": "I didn't have breakfast this morning."
+      },
+      {
+        "transcript": "I wasn't into studying when I was younger."
+      },
+      {
+        "transcript": "A friend of mine came over last night."
+      },
+      {
+        "transcript": "A friend stopped by the other day."
+      },
+      {
+        "transcript": "My sister wasn't into sports when she was little."
+      },
+      {
+        "transcript": "She arrived late to the party."
+      },
+      {
+        "transcript": "My brother didn't like vegetables as a child."
+      },
+      {
+        "transcript": "He had a cat when he was young."
+      }
+    ]
+  }
+]
