@@ -310,7 +310,7 @@ body::before {
 /* ── MOBILE ── */
 @media (max-width: 640px) {
   .player-bar {
-    height: auto; flex-direction: column; padding: 16px 20px; gap: 12px;
+    height: auto; flex-direction: column; padding: 22px 20px; gap: 16px;
   }
   .player-left { display: none; }
   .player-center { width: 100%; }
