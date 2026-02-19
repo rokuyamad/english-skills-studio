@@ -13,7 +13,10 @@ from openai import OpenAI
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 FILES = [
-    ("イミテーション(ビジネス)[形容詞].mp3",  "adj",    "ビジネス 形容詞"),
+    ("business-adjectives.mp3", "adj",    "ビジネス 形容詞"),
+    ("business-future.m4a",     "future", "未来 ビジネスシーン"),
+    ("business-past.m4a",       "past",   "過去 ビジネス"),
+].mp3",  "adj",    "ビジネス 形容詞"),
     ("イミテーション(未来、ビジネスシーン).m4a", "future", "未来 ビジネスシーン"),
     ("イミテーション（過去_ビジネス).m4a",      "past",   "過去 ビジネス"),
 ]
