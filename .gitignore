@@ -8,7 +8,7 @@ __pycache__/
 .env
 venv/
 .venv/
-.python-version
+transcripts.json
 
 # Claude Code
 .claude/
