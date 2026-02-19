@@ -39,6 +39,16 @@ imitation_player.html
 - 音声は `new Audio('audio/segments/' + key + '/' + String(idx).padStart(2,'0') + '.mp3')` で再生
 - モバイル対応: JS で DOM 要素を移動する `applyMobileLayout()` によるレイアウト切り替え
 
+## ローカルでの動作確認
+
+`fetch('data.json')` を使用しているため `file://` では動作しない。ローカルサーバーを起動すること：
+
+```bash
+python3 -m http.server 8080
+```
+
+http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
+
 ## 新しいトラックを追加する手順
 
 1. 元音声ファイルを `audio/` に配置
