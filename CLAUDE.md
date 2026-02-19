@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | ファイル | 役割 |
 |---|---|
-| `imitation_player.html` | UIと再生ロジックをすべて含む単一ページアプリ |
+| `index.html` | UIと再生ロジックをすべて含む単一ページアプリ |
 | `data.json` | 各セグメントのトランスクリプトとトラック情報 |
 | `audio/segments/{key}/{nn}.mp3` | セグメント単位の音声ファイル（`adj`/`future`/`past`） |
 | `audio/*.mp3,*.m4a` | 元の録音ファイル（文字起こし用） |
@@ -31,7 +31,7 @@ data.json + audio/segments/{key}/{nn}.mp3
 imitation_player.html
 ```
 
-### imitation_player.html の構造
+### index.html の構造
 
 - `<style>` にCSS全量（CSS変数でテーマ管理）
 - `<script>` 内でページ読み込み時に `fetch('data.json')` を実行し、`DATA` 変数にセット
@@ -52,6 +52,6 @@ imitation_player.html
 
 ## GitHub Pages
 
-リポジトリのルートから配信。`imitation_player.html` がエントリポイントとなるため、GitHub Pages の設定でルートを公開すること（または `index.html` にリネームが必要な場合あり）。
+リポジトリのルートから配信。`index.html` がエントリポイント。
 
 Git LFS は使用していない（GitHub PagesがLFSファイルを配信できないため）。音声ファイルは通常のgitオブジェクトとして管理。
