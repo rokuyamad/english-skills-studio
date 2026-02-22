@@ -1,0 +1,16 @@
+name: Check AGENTS Link
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-agents-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify AGENTS.md symlink
+        run: ./scripts/check-agents-link.sh
