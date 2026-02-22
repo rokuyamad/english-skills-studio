@@ -27,7 +27,7 @@ export function buildSentenceList() {
     const textEl = document.createElement('span');
     textEl.className = 'sent-text' + (revealed ? '' : ' hidden');
     textEl.id = 'text-' + i;
-    textEl.textContent = revealed ? seg.transcript : '•  •  •  •  •  •  •  •';
+    textEl.textContent = revealed ? seg.transcript : '*  *  *  *  *  *  *  *';
 
     const eyeBtn = document.createElement('button');
     eyeBtn.className = 'eye-btn' + (revealed ? ' on' : '');
@@ -47,7 +47,7 @@ export function toggleReveal(i) {
   const seg = state.DATA[state.trackIdx].segments[i];
   const textEl = document.getElementById('text-' + i);
   textEl.className = 'sent-text' + (revealed ? '' : ' hidden');
-  textEl.textContent = revealed ? seg.transcript : '•  •  •  •  •  •  •  •';
+  textEl.textContent = revealed ? seg.transcript : '*  *  *  *  *  *  *  *';
   textEl.nextElementSibling.classList.toggle('on', revealed);
 }
 
