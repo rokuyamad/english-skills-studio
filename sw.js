@@ -1,14 +1,20 @@
-const CACHE = 'imitation-player-v1';
+const CACHE = 'imitation-player-v2';
 
 const SHELL = [
   './',
   './index.html',
+  './slash.html',
   './css/style.css',
+  './css/slash.css',
   './js/app.js',
   './js/player.js',
   './js/state.js',
   './js/ui.js',
+  './js/slash-app.js',
+  './js/slash-state.js',
+  './js/slash-ui.js',
   './data.json',
+  './slash-data.json',
   './manifest.json',
   './icons/icon.svg',
 ];
@@ -58,6 +64,13 @@ self.addEventListener('fetch', e => {
         }
         return res;
       })
-      .catch(() => caches.match(e.request))
+      .catch(async () => {
+        const cached = await caches.match(e.request);
+        if (cached) return cached;
+        if (e.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+        return Response.error();
+      })
   );
 });

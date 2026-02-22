@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060612">
+<meta name="description" content="英語スラッシュリーディング練習">
+<title>Slash Reading</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/slash.css">
+</head>
+<body>
+<div class="device">
+  <header class="topbar">
+    <div class="topbar-title">Slash Reading</div>
+    <a class="mode-link" href="index.html">English Skills Studioへ</a>
+  </header>
+
+  <main class="main layout">
+    <aside class="set-panel">
+      <div class="set-panel-title">セット一覧</div>
+      <div class="set-list" id="setList"></div>
+    </aside>
+
+    <section class="content-panel">
+      <div class="content-header">
+        <div class="track-name" id="setName">英文リスト</div>
+        <div class="meta-count" id="metaCount">—</div>
+      </div>
+      <div class="sentence-list" id="readingList"></div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="js/slash-app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

@@ -56,31 +56,75 @@ body::before {
   overflow: hidden;
 }
 
-/* ── Track tabs ── */
-.tracklist {
-  display: flex; padding: 0 44px;
+/* ── Topbar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 44px;
   background: rgba(6,6,18,0.55);
   border-bottom: 1px solid var(--border);
-  flex-shrink: 0; overflow-x: auto;
+  flex-shrink: 0;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+.topbar-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 0.06em;
+}
+
+/* ── Track sidebar ── */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.track-panel {
+  border-right: 1px solid var(--border);
+  background: rgba(6, 6, 18, 0.38);
+  padding: 16px 12px;
+  overflow-y: auto;
+}
+
+.track-panel-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  margin: 4px 8px 10px;
+}
+
+.tracklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .tracklist::-webkit-scrollbar { display: none; }
 
 .track-tab {
-  padding: 18px 24px;
-  font-size: 12px; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--dim); cursor: pointer;
-  border-bottom: 2px solid transparent;
-  border-left: none; border-right: none; border-top: none;
-  background: none; transition: all 0.25s; white-space: nowrap;
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--dim);
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  transition: all 0.25s;
+  white-space: normal;
 }
 .track-tab:hover { color: var(--muted); }
 .track-tab.active {
   color: var(--accent);
-  border-bottom-color: var(--accent);
-  text-shadow: 0 0 14px rgba(167,139,250,0.6);
+  border-color: rgba(167,139,250,0.55);
+  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(96,165,250,0.1));
+  box-shadow: 0 0 18px rgba(139,92,246,0.2);
+  text-shadow: 0 0 8px rgba(167,139,250,0.5);
 }
 
 /* ── Main layout ── */
@@ -95,19 +139,34 @@ body::before {
 }
 
 .content-header {
-  padding: 22px 44px 20px;
+  padding: 18px 44px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
   background: rgba(255,255,255,0.02);
 }
 .track-name { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
 .meta-count { font-size: 13px; color: var(--dim); letter-spacing: 0.06em; }
+.header-actions { display: flex; align-items: center; gap: 14px; }
+.mode-link {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--accent3);
+  border: 1px solid rgba(96,165,250,0.35);
+  background: rgba(96,165,250,0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  transition: all 0.2s;
+}
+.mode-link:hover {
+  color: var(--text);
+  border-color: rgba(167,139,250,0.55);
+  background: rgba(167,139,250,0.14);
+}
 
 .jacket-bg {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  opacity: 0.12; pointer-events: none; z-index: 0;
-  transition: background-image 0.4s;
+  display: none;
 }
 
 .sentence-list { flex: 1; overflow-y: auto; padding: 8px 0; position: relative; z-index: 1; }
@@ -169,7 +228,7 @@ body::before {
 
 /* Vinyl */
 .vinyl {
-  width: 88px; height: 88px; border-radius: 50%;
+  width: 72px; height: 72px; border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, rgba(167,139,250,0.18) 0%, rgba(6,6,18,0.92) 60%);
   box-shadow:
     0 0 0 1px rgba(167,139,250,0.18),
@@ -188,10 +247,10 @@ body::before {
 }
 .vinyl-inner {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 34px; height: 34px; border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, rgba(167,139,250,0.45), rgba(6,6,18,0.95));
   border: 1px solid rgba(167,139,250,0.22);
-  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
 }
 .vinyl-dot {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
@@ -250,10 +309,10 @@ body::before {
 }
 
 .play-btn {
-  width: 88px; height: 88px; border-radius: 50%;
+  width: 72px; height: 72px; border-radius: 50%;
   background: linear-gradient(135deg, rgba(139,92,246,0.28), rgba(52,211,153,0.16));
   border: 1px solid rgba(167,139,250,0.45);
-  color: var(--accent); font-size: 24px; cursor: pointer;
+  color: var(--accent); font-size: 20px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.22s;
   box-shadow: 0 0 24px rgba(139,92,246,0.22), inset 0 0 12px rgba(139,92,246,0.06);
@@ -309,6 +368,27 @@ body::before {
 
 /* ── MOBILE ── */
 @media (max-width: 640px) {
+  .topbar { padding: 14px 20px; }
+  .topbar-title { font-size: 13px; }
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .track-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .tracklist {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .track-tab {
+    min-width: 180px;
+    white-space: nowrap;
+  }
   .player-bar {
     height: auto; flex-direction: column; padding: 22px 20px; gap: 16px;
   }
@@ -316,11 +396,11 @@ body::before {
   .player-center { width: 100%; }
   .player-right { width: 100%; justify-content: center; }
 
-  .tracklist { padding: 0 20px; }
-  .track-tab { padding: 14px 18px; }
   .content-header { padding: 14px 20px; }
   .track-name { font-size: 15px; }
   .meta-count { font-size: 12px; }
+  .header-actions { gap: 8px; }
+  .mode-link { padding: 5px 8px; font-size: 11px; }
   .sentence-item { padding: 14px 20px 14px 22px; gap: 14px; }
   .sent-text { font-size: 14px; }
   .eye-btn { opacity: 1; font-size: 14px; }

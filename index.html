@@ -5,20 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#060612">
 <meta name="description" content="英語イミテーション練習プレイヤー">
-<title>Imitation Player</title>
+<title>English Skills Studio</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon.svg">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="device">
-  <div class="tracklist" id="trackTabs"></div>
+  <header class="topbar">
+    <div class="topbar-title">English Skills Studio</div>
+    <a class="mode-link" href="slash.html">Slash Readingへ</a>
+  </header>
 
-  <div class="main">
+  <div class="main layout">
+    <aside class="track-panel">
+      <div class="track-panel-title">セット一覧</div>
+      <div class="tracklist" id="trackTabs"></div>
+    </aside>
+
     <div class="content-panel">
       <div class="content-header">
         <div class="track-name" id="trackName">—</div>
-        <div class="meta-count" id="metaCount">—</div>
+        <div class="header-actions">
+          <div class="meta-count" id="metaCount">—</div>
+        </div>
       </div>
       <div class="jacket-bg" id="jacketBg"></div>
       <div class="sentence-list" id="sentenceList"></div>
