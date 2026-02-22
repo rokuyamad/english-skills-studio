@@ -40,7 +40,7 @@ document.addEventListener('keydown', e => {
 });
 
 // データ読み込み
-fetch('data.json')
+fetch('data/data.json')
   .then(r => r.json())
   .then(d => {
     state.DATA = d;

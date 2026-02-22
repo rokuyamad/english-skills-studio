@@ -98,7 +98,7 @@ wheels = [
 ]
 
 [[package]]
-name = "imitation-player"
+name = "english-skills-studio"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

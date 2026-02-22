@@ -26,8 +26,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `js/slash-state.js` | slash-reading の状態オブジェクト |
 | `js/slash-ui.js` | slash-reading の描画・トグル・セット切替 |
 | `js/slash-app.js` | slash-reading の初期化・データ整形 |
-| `data.json` | 各セグメントのトランスクリプトとトラック情報 |
-| `slash-data.json` | slash-reading のセット・英文・スラッシュ・和訳データ |
+| `data/data.json` | 各セグメントのトランスクリプトとトラック情報 |
+| `data/slash-data.json` | slash-reading のセット・英文・スラッシュ・和訳データ |
 | `audio/segments/{key}/{nn}.mp3` | セグメント単位の音声ファイル（`adj`/`future`/`past`） |
 | `audio/*.mp3,*.m4a` | 元の録音ファイル（文字起こし用） |
 | `scripts/transcribe.py` | 元音声 → セグメント分割 + Whisper API 文字起こし + MP3 書き出し |
@@ -39,11 +39,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 audio/*.mp3,*.m4a
     ↓ scripts/transcribe.py (OpenAI Whisper API)
-data.json + audio/segments/{key}/{nn}.mp3
+data/data.json + audio/segments/{key}/{nn}.mp3
     ↓ fetch() on page load
 index.html → js/app.js → js/player.js / js/ui.js
 
-slash-data.json
+data/slash-data.json
     ↓ fetch() on page load
 slash.html → js/slash-app.js → js/slash-ui.js / js/slash-state.js
 ```
@@ -78,10 +78,10 @@ ui.init({ loadAndPlay: player.loadAndPlay });
 
 ## ローカルでの動作確認
 
-`fetch('data.json')` を使用しているため `file://` では動作しない。ローカルサーバーを起動すること：
+`fetch('data/data.json')` を使用しているため `file://` では動作しない。ローカルサーバーを起動すること：
 
 ```bash
-uv run python -m http.server 8080
+uv run python3 -m http.server 8080
 ```
 
 http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
@@ -92,7 +92,7 @@ http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
 
 ## data.json の役割とベストプラクティス
 
-`data.json` はアプリ起動時に `fetch('data.json')` で取得する **コンテンツ定義ファイル**。
+`data/data.json` はアプリ起動時に `fetch('data/data.json')` で取得する **コンテンツ定義ファイル**。
 スキーマ: `[{ label, key, segments: [{ transcript }] }]`
 
 **fetch vs HTML 埋め込みのベストプラクティス**:
@@ -103,7 +103,7 @@ http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
 
 ## slash-data.json の役割とスキーマ
 
-`slash-data.json` は slash-reading 専用のコンテンツ定義。
+`data/slash-data.json` は slash-reading 専用のコンテンツ定義。
 
 現在の推奨スキーマ:
 
@@ -136,15 +136,15 @@ http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
 
 1. 元音声ファイルを `audio/` に配置
 2. `scripts/transcribe.py` の `FILES` リストにエントリ追加（`("audio/ファイル名", key, label)`）
-3. `OPENAI_API_KEY=sk-... uv run python scripts/transcribe.py` を実行
+3. `OPENAI_API_KEY=sk-... uv run python3 scripts/transcribe.py` を実行
    - `audio/segments/{key}/` にセグメントMP3 が自動生成される
-   - `data.json` が自動的に upsert される（key が一致するトラックは上書き、新規は末尾追加）
+   - `data/data.json` が自動的に upsert される（key が一致するトラックは上書き、新規は末尾追加）
    - `transcripts.json` にバックアップが保存される（`.gitignore` 対象）
 4. `git add` してコミット
 
 ## 新しい slash-reading セットを追加する手順
 
-1. `slash-data.json` の `sets` に新しいセットを追加
+1. `data/slash-data.json` の `sets` に新しいセットを追加
    - 必須: `id`, `label`, `entries`
 2. 各 `entries[]` に `id`, `title`, `en`, `slash`, `ja` を記載
 3. `http://localhost:8080/slash.html` でセット切替とチャンク表示を確認
@@ -157,7 +157,7 @@ http://localhost:8080 をブラウザで開く。終了は `Ctrl+C`。
 PWAの要点:
 - `manifest.json` の `start_url` は `./index.html`
 - `shortcuts` に English Skills Studio / Slash Reading の2導線を定義
-- `sw.js` で両ページ・両CSS/JS・`data.json`・`slash-data.json` をキャッシュ
+- `sw.js` で両ページ・両CSS/JS・`data/data.json`・`data/slash-data.json` をキャッシュ
 - 音声（`/audio/`）は Cache First でオフライン再生を補助
 
 Git LFS は使用していない（GitHub PagesがLFSファイルを配信できないため）。音声ファイルは通常のgitオブジェクトとして管理。

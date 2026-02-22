@@ -1,4 +1,4 @@
-const CACHE = 'imitation-player-v2';
+const CACHE = 'english-skills-studio-v3';
 
 const SHELL = [
   './',
@@ -13,8 +13,8 @@ const SHELL = [
   './js/slash-app.js',
   './js/slash-state.js',
   './js/slash-ui.js',
-  './data.json',
-  './slash-data.json',
+  './data/data.json',
+  './data/slash-data.json',
   './manifest.json',
   './icons/icon.svg',
 ];

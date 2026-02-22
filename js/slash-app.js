@@ -117,7 +117,7 @@ function normalizeSets(raw) {
   return [];
 }
 
-fetch('slash-data.json')
+fetch('data/slash-data.json')
   .then((r) => r.json())
   .then((d) => {
     state.DATA = d;

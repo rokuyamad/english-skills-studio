@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 音声ファイルをWhisper APIで文字起こしし、セグメントMP3を書き出すスクリプト
-使い方: OPENAI_API_KEY="sk-..." uv run python scripts/transcribe.py
+使い方: OPENAI_API_KEY="sk-..." uv run python3 scripts/transcribe.py
 ※ プロジェクトルートから実行すること
 """
 
@@ -68,8 +68,8 @@ with open("transcripts.json", "w", encoding="utf-8") as f:
 print("\n✅ transcripts.json に保存しました（バックアップ用）。")
 print("✅ audio/segments/{key}/ にセグメントMP3を書き出しました。")
 
-# data.json を key でupsert
-data_path = Path("data.json")
+# data/data.json を key でupsert
+data_path = Path("data/data.json")
 data = json.loads(data_path.read_text(encoding="utf-8")) if data_path.exists() else []
 
 data_by_key = {entry["key"]: entry for entry in data}
@@ -88,4 +88,4 @@ data_path.write_text(
     json.dumps([data_by_key[k] for k in all_keys], ensure_ascii=False, indent=2),
     encoding="utf-8"
 )
-print(f"✅ data.json を更新しました（{len(all_keys)} トラック）。")
+print(f"✅ data/data.json を更新しました（{len(all_keys)} トラック）。")
