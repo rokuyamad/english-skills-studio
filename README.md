@@ -18,6 +18,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 - トランスクリプト表示と UI 連動
 - slash-reading のセット切替とチャンク表示（2-3 文）
 - チャンク単位の `Slash` / `JP` トグル
+- Supabase Auth（Magic Link）によるログイン導線（`auth.html`）
 - PWA 対応（`manifest.json` + `sw.js`）
 - オフライン時のキャッシュ再生補助（`/audio/` は Cache First）
 
@@ -27,10 +28,16 @@ GitHub Pages ではリポジトリルートから配信されます。
 |---|---|
 | `index.html` | English Skills Studio エントリ |
 | `slash.html` | slash-reading エントリ |
+| `auth.html` | Supabase Magic Link ログインページ |
 | `css/style.css` | English Skills Studio 用スタイル |
 | `css/slash.css` | slash-reading 用スタイル |
+| `css/auth.css` | 認証ページ用スタイル |
 | `js/app.js` | English Skills Studio 初期化・イベント配線 |
+| `js/auth.js` | Supabase クライアント初期化と認証API |
+| `js/auth-page.js` | auth.html のイベント処理 |
+| `js/auth-ui.js` | topbar のログイン状態表示 |
 | `js/player.js` | 音声再生ロジック |
+| `js/supabase-config.js` | Supabase URL / anon key 設定 |
 | `js/ui.js` | DOM 操作・表示更新 |
 | `js/state.js` | 共有状態 |
 | `js/slash-app.js` | slash-reading 初期化・データ整形 |
@@ -42,6 +49,24 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `scripts/transcribe.py` | 音声分割 + Whisper API 文字起こし + JSON 更新 |
 | `manifest.json` | PWA マニフェスト |
 | `sw.js` | Service Worker |
+
+## Supabase Auth Setup (Magic Link)
+
+1. Supabase プロジェクトを作成
+2. Authentication > Providers > Email を有効化（Magic Link）
+3. Authentication > URL Configuration で以下を設定
+- Site URL: 例 `https://<your-site-domain>/`
+- Redirect URLs: 例 `https://<your-site-domain>/auth.html`
+4. 自分専用運用にする場合は、Authentication > Users に自分のメールユーザーを作成
+5. 本実装では `shouldCreateUser: false` を使っているため、未登録メールはログイン不可
+6. `js/supabase-config.js` を編集
+
+```js
+export const SUPABASE_URL = 'https://xxxx.supabase.co';
+export const SUPABASE_ANON_KEY = 'eyJ...';
+```
+
+7. `auth.html` を開いて Magic Link 送信を確認
 
 ## Local Development
 
@@ -119,4 +144,3 @@ OPENAI_API_KEY=sk-... uv run python3 scripts/transcribe.py
 
 - GitHub Pages の都合上、Git LFS は使っていません
 - 音声ファイルは通常の Git オブジェクトとして管理しています
-

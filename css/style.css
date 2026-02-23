@@ -76,6 +76,46 @@ body::before {
   letter-spacing: 0.06em;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-user {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-link,
+.auth-btn {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent2);
+  border: 1px solid rgba(52,211,153,0.35);
+  background: rgba(52,211,153,0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  transition: all 0.2s;
+}
+
+.auth-btn {
+  cursor: pointer;
+}
+
+.auth-link:hover,
+.auth-btn:hover {
+  color: var(--text);
+  border-color: rgba(52,211,153,0.55);
+  background: rgba(52,211,153,0.18);
+}
+
 /* ── Track sidebar ── */
 .layout {
   display: grid;
@@ -164,6 +204,8 @@ body::before {
   border-color: rgba(167,139,250,0.55);
   background: rgba(167,139,250,0.14);
 }
+
+.hidden { display: none !important; }
 
 .jacket-bg {
   display: none;
@@ -378,6 +420,9 @@ body::before {
 @media (max-width: 640px) {
   .topbar { padding: 14px 20px; }
   .topbar-title { font-size: 13px; }
+  .topbar-actions { gap: 6px; }
+  .auth-user { display: none; }
+  .auth-link, .auth-btn { padding: 5px 8px; font-size: 11px; }
   .layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;

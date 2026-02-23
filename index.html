@@ -14,7 +14,12 @@
 <div class="device">
   <header class="topbar">
     <div class="topbar-title">Imitation Player</div>
-    <a class="mode-link" href="slash.html">Slash Readingへ</a>
+    <div class="topbar-actions">
+      <a class="mode-link" href="slash.html">Slash Readingへ</a>
+      <span class="auth-user" id="authUser">認証状態を確認中...</span>
+      <a class="auth-link" id="authLink" href="auth.html">ログイン</a>
+      <button class="auth-btn hidden" id="logoutBtn" type="button">ログアウト</button>
+    </div>
   </header>
 
   <div class="main layout">

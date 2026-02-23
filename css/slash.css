@@ -60,6 +60,12 @@ body::before {
   letter-spacing: 0.06em;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .mode-link {
   text-decoration: none;
   font-size: 12px;
@@ -77,6 +83,40 @@ body::before {
   color: var(--text);
   border-color: rgba(167,139,250,0.55);
   background: rgba(167,139,250,0.14);
+}
+
+.auth-user {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-link,
+.auth-btn {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent2);
+  border: 1px solid rgba(52,211,153,0.35);
+  background: rgba(52,211,153,0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  transition: all 0.2s;
+}
+
+.auth-btn {
+  cursor: pointer;
+}
+
+.auth-link:hover,
+.auth-btn:hover {
+  color: var(--text);
+  border-color: rgba(52,211,153,0.55);
+  background: rgba(52,211,153,0.18);
 }
 
 .main { flex: 1; overflow: hidden; }
@@ -309,6 +349,9 @@ body::before {
   }
   .topbar { padding: 14px 20px; }
   .topbar-title { font-size: 13px; }
+  .topbar-actions { gap: 6px; }
+  .auth-user { display: none; }
+  .auth-link, .auth-btn { font-size: 11px; padding: 5px 8px; }
   .mode-link { font-size: 11px; padding: 5px 8px; }
   .content-header { padding: 14px 20px; }
   .track-name { font-size: 15px; }

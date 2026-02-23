@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060612">
+<meta name="description" content="Magic Link ログイン">
+<title>Auth | English Skills Studio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<div class="device">
+  <header class="topbar">
+    <div class="topbar-title">Account</div>
+    <div class="topbar-actions">
+      <a class="mode-link" href="index.html">Studioへ</a>
+      <a class="mode-link" href="slash.html">Slashへ</a>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <section class="auth-card">
+      <h1 class="auth-title">Supabase Magic Link</h1>
+      <p class="auth-description">
+        メールアドレスを入力し、受信したリンクからログインしてください。
+      </p>
+
+      <p id="statusText" class="status-text">認証状態を確認中...</p>
+
+      <div id="signedOutBlock">
+        <form id="magicLinkForm" class="auth-form">
+          <label class="field-label" for="emailInput">Email</label>
+          <input class="email-input" id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <button class="send-btn" type="submit">Magic Linkを送信</button>
+        </form>
+      </div>
+
+      <div id="signedInBlock" class="hidden">
+        <p class="signed-in-text">ログイン中: <span id="currentUser">-</span></p>
+        <div class="signed-in-actions">
+          <a class="mode-link" href="index.html">English Skills Studioへ</a>
+          <a class="mode-link" href="slash.html">Slash Readingへ</a>
+          <button class="logout-btn" id="logoutBtn" type="button">ログアウト</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="js/auth-page.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

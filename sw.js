@@ -1,13 +1,19 @@
-const CACHE = 'english-skills-studio-v3';
+const CACHE = 'english-skills-studio-v4';
 
 const SHELL = [
   './',
   './index.html',
   './slash.html',
+  './auth.html',
   './css/style.css',
   './css/slash.css',
+  './css/auth.css',
   './js/app.js',
+  './js/auth.js',
+  './js/auth-page.js',
+  './js/auth-ui.js',
   './js/player.js',
+  './js/supabase-config.js',
   './js/state.js',
   './js/ui.js',
   './js/slash-app.js',

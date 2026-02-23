@@ -1,5 +1,6 @@
 import { state } from './slash-state.js';
 import { selectSet } from './slash-ui.js';
+import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 
 function splitEnglishSentences(text = '') {
   const normalized = text.replace(/\s+/g, ' ').trim();
@@ -117,19 +118,27 @@ function normalizeSets(raw) {
   return [];
 }
 
-fetch('data/slash-data.json')
-  .then((r) => r.json())
-  .then((d) => {
-    state.DATA = d;
-    const sets = normalizeSets(d);
-    state.sets = sets.map((set) => ({
-      ...set,
-      entries: set.entries.map((item) => ({
-        ...item,
-        chunks: buildEntryChunks(item)
-      }))
-    }));
+async function bootstrap() {
+  const isAuthenticated = await requireAuthOrRedirect();
+  if (!isAuthenticated) return;
+  setupTopbarAuth();
 
-    if (!state.sets.length) return;
-    selectSet(0);
-  });
+  fetch('data/slash-data.json')
+    .then((r) => r.json())
+    .then((d) => {
+      state.DATA = d;
+      const sets = normalizeSets(d);
+      state.sets = sets.map((set) => ({
+        ...set,
+        entries: set.entries.map((item) => ({
+          ...item,
+          chunks: buildEntryChunks(item)
+        }))
+      }));
+
+      if (!state.sets.length) return;
+      selectSet(0);
+    });
+}
+
+bootstrap();
