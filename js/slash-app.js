@@ -1,6 +1,7 @@
 import { state } from './slash-state.js';
 import { selectSet } from './slash-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
+import { initMobileTopbar } from './mobile-topbar.js';
 
 function splitEnglishSentences(text = '') {
   const normalized = text.replace(/\s+/g, ' ').trim();
@@ -121,6 +122,7 @@ function normalizeSets(raw) {
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
   if (!isAuthenticated) return;
+  initMobileTopbar();
   setupTopbarAuth();
 
   fetch('data/slash-data.json')

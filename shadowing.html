@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#060612">
-<meta name="description" content="英語スラッシュリーディング練習">
-<title>Slash Reading</title>
+<meta name="description" content="英語シャドーイング練習動画セット">
+<title>Shadowing</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon.svg">
-<link rel="stylesheet" href="css/slash.css">
+<link rel="stylesheet" href="css/shadowing.css">
 </head>
 <body>
 <div class="device">
@@ -16,8 +16,8 @@
     <div class="topbar-title">English Skills Hub</div>
     <nav class="topbar-nav" aria-label="Primary">
       <a class="nav-link" href="index.html">Imitation Player</a>
-      <a class="nav-link active" href="slash.html">Slash Reading</a>
-      <a class="nav-link" href="shadowing.html">Shadowing</a>
+      <a class="nav-link" href="slash.html">Slash Reading</a>
+      <a class="nav-link active" href="shadowing.html">Shadowing</a>
     </nav>
     <div class="topbar-actions">
       <span class="auth-user" id="authUser">認証状態を確認中...</span>
@@ -37,8 +37,8 @@
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
       <a class="mobile-nav-link" href="index.html">Imitation Player</a>
-      <a class="mobile-nav-link active" href="slash.html">Slash Reading</a>
-      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
+      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
+      <a class="mobile-nav-link active" href="shadowing.html">Shadowing</a>
     </nav>
     <div class="mobile-auth-area">
       <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
@@ -55,15 +55,15 @@
 
     <section class="content-panel">
       <div class="content-header">
-        <div class="track-name" id="setName">英文リスト</div>
+        <div class="track-name" id="setName">Shadowing</div>
         <div class="meta-count" id="metaCount">—</div>
       </div>
-      <div class="sentence-list" id="readingList"></div>
+      <div class="shadowing-list" id="shadowingList"></div>
     </section>
   </main>
 </div>
 
-<script type="module" src="js/slash-app.js"></script>
+<script type="module" src="js/shadowing-app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');

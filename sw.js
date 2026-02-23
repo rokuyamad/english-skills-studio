@@ -1,17 +1,20 @@
-const CACHE = 'english-skills-studio-v4';
+const CACHE = 'english-skills-studio-v5';
 
 const SHELL = [
   './',
   './index.html',
   './slash.html',
+  './shadowing.html',
   './auth.html',
   './css/style.css',
   './css/slash.css',
+  './css/shadowing.css',
   './css/auth.css',
   './js/app.js',
   './js/auth.js',
   './js/auth-page.js',
   './js/auth-ui.js',
+  './js/mobile-topbar.js',
   './js/player.js',
   './js/supabase-config.js',
   './js/state.js',
@@ -19,8 +22,12 @@ const SHELL = [
   './js/slash-app.js',
   './js/slash-state.js',
   './js/slash-ui.js',
+  './js/shadowing-app.js',
+  './js/shadowing-state.js',
+  './js/shadowing-ui.js',
   './data/data.json',
   './data/slash-data.json',
+  './data/shadowing-data.json',
   './manifest.json',
   './icons/icon.svg',
 ];

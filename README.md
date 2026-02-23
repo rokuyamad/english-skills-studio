@@ -1,9 +1,10 @@
 # English Skills Studio
 
-英語学習用の 2 ページ構成 Web アプリです。GitHub Pages 配信を前提にしています。
+英語学習用の 3 ページ構成 Web アプリです。GitHub Pages 配信を前提にしています。
 
 - `index.html`: 音声ベースの **English Skills Studio**
 - `slash.html`: テキストベースの **slash-reading**
+- `shadowing.html`: 動画ベースの **Shadowing**
 
 ## Demo / Pages
 
@@ -11,6 +12,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 
 - `index.html`（または `/`）: English Skills Studio
 - `slash.html`: slash-reading
+- `shadowing.html`: Shadowing
 
 ## Features
 
@@ -18,6 +20,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 - トランスクリプト表示と UI 連動
 - slash-reading のセット切替とチャンク表示（2-3 文）
 - チャンク単位の `Slash` / `JP` トグル
+- Shadowing のセット切替と YouTube 練習動画一覧
 - Supabase Auth（Email OTP）によるログイン導線（`auth.html`）
 - PWA 対応（`manifest.json` + `sw.js`）
 - オフライン時のキャッシュ再生補助（`/audio/` は Cache First）
@@ -28,14 +31,17 @@ GitHub Pages ではリポジトリルートから配信されます。
 |---|---|
 | `index.html` | English Skills Studio エントリ |
 | `slash.html` | slash-reading エントリ |
+| `shadowing.html` | Shadowing エントリ |
 | `auth.html` | Supabase Email OTP ログインページ |
 | `css/style.css` | English Skills Studio 用スタイル |
 | `css/slash.css` | slash-reading 用スタイル |
+| `css/shadowing.css` | Shadowing 用スタイル |
 | `css/auth.css` | 認証ページ用スタイル |
 | `js/app.js` | English Skills Studio 初期化・イベント配線 |
 | `js/auth.js` | Supabase クライアント初期化と認証API |
 | `js/auth-page.js` | auth.html のイベント処理 |
 | `js/auth-ui.js` | topbar のログイン状態表示 |
+| `js/mobile-topbar.js` | モバイル用ハンバーガー/ドロワー制御 |
 | `js/player.js` | 音声再生ロジック |
 | `js/supabase-config.js` | Supabase URL / anon key 設定 |
 | `js/ui.js` | DOM 操作・表示更新 |
@@ -43,8 +49,12 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `js/slash-app.js` | slash-reading 初期化・データ整形 |
 | `js/slash-ui.js` | slash-reading 描画・トグル |
 | `js/slash-state.js` | slash-reading 状態 |
+| `js/shadowing-app.js` | Shadowing 初期化・データ読み込み |
+| `js/shadowing-ui.js` | Shadowing 描画・埋め込みトグル |
+| `js/shadowing-state.js` | Shadowing 状態 |
 | `data/data.json` | トラック/セグメント定義（音声ページ用） |
 | `data/slash-data.json` | セット/英文/スラッシュ/和訳（slash 用） |
+| `data/shadowing-data.json` | セット/練習動画URL（Shadowing 用） |
 | `audio/segments/{key}/{nn}.mp3` | セグメント音声 |
 | `scripts/transcribe.py` | 音声分割 + Whisper API 文字起こし + JSON 更新 |
 | `manifest.json` | PWA マニフェスト |
@@ -80,6 +90,7 @@ uv run python3 -m http.server 8080
 
 - `http://localhost:8080/index.html`
 - `http://localhost:8080/slash.html`
+- `http://localhost:8080/shadowing.html`
 
 ## Data Schema
 
@@ -112,6 +123,27 @@ uv run python3 -m http.server 8080
           "en": "English script...",
           "slash": "English script / with slashes...",
           "ja": "日本語訳..."
+        }
+      ]
+    }
+  ]
+}
+```
+
+### `data/shadowing-data.json`（Shadowing）
+
+```json
+{
+  "sets": [
+    {
+      "id": "shadowing-beginner-2",
+      "label": "シャドーイング（初級2）",
+      "entries": [
+        {
+          "id": "sh-001",
+          "title": "ニューヨーク旅行",
+          "wpm": 177,
+          "youtubeUrl": "https://youtu.be/9RVnNzYhnl4"
         }
       ]
     }

@@ -2,6 +2,7 @@ import { state } from './state.js';
 import * as player from './player.js';
 import * as ui from './ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
+import { initMobileTopbar } from './mobile-topbar.js';
 
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
@@ -25,6 +26,7 @@ async function bootstrap() {
   // モバイルレイアウト
   ui.applyMobileLayout();
   window.addEventListener('resize', ui.applyMobileLayout);
+  initMobileTopbar();
   setupTopbarAuth();
 
   // コントロールボタン

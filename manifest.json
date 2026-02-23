@@ -1,7 +1,7 @@
 {
   "name": "English Skills Studio",
   "short_name": "ESS",
-  "description": "英語イミテーション練習とスラッシュリーディング",
+  "description": "英語イミテーション練習・スラッシュリーディング・シャドーイング",
   "start_url": "./index.html",
   "scope": ".",
   "display": "standalone",
@@ -33,6 +33,18 @@
       "name": "Slash Reading",
       "short_name": "Slash",
       "url": "./slash.html",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Shadowing",
+      "short_name": "Shadow",
+      "url": "./shadowing.html",
       "icons": [
         {
           "src": "icons/icon.svg",

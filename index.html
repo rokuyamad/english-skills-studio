@@ -17,13 +17,35 @@
     <nav class="topbar-nav" aria-label="Primary">
       <a class="nav-link active" href="index.html">Imitation Player</a>
       <a class="nav-link" href="slash.html">Slash Reading</a>
+      <a class="nav-link" href="shadowing.html">Shadowing</a>
     </nav>
     <div class="topbar-actions">
       <span class="auth-user" id="authUser">認証状態を確認中...</span>
       <a class="auth-link" id="authLink" href="auth.html">ログイン</a>
       <button class="auth-btn hidden" id="logoutBtn" type="button">ログアウト</button>
     </div>
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="メニューを開く"
+      aria-controls="mobileDrawer"
+      aria-expanded="false"
+    >☰</button>
   </header>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
+    <nav class="mobile-nav" aria-label="Mobile Primary">
+      <a class="mobile-nav-link active" href="index.html">Imitation Player</a>
+      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
+      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
+    </nav>
+    <div class="mobile-auth-area">
+      <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
+      <a class="mobile-auth-link" id="mobileAuthLink" href="auth.html">ログイン</a>
+      <button class="mobile-auth-btn hidden" id="mobileLogoutBtn" type="button">ログアウト</button>
+    </div>
+  </aside>
 
   <div class="main layout">
     <aside class="track-panel">

@@ -1,0 +1,49 @@
+import { state } from './shadowing-state.js';
+import { selectSet } from './shadowing-ui.js';
+import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
+import { initMobileTopbar } from './mobile-topbar.js';
+
+function normalizeSets(raw) {
+  if (Array.isArray(raw)) {
+    return [
+      {
+        id: 'shadowing-set-1',
+        label: 'Shadowing',
+        entries: raw
+      }
+    ];
+  }
+
+  if (raw && Array.isArray(raw.sets)) {
+    return raw.sets.map((set, idx) => ({
+      id: set.id || `shadowing-set-${idx + 1}`,
+      label: set.label || `Set ${idx + 1}`,
+      entries: Array.isArray(set.entries) ? set.entries : []
+    }));
+  }
+
+  return [];
+}
+
+async function bootstrap() {
+  const isAuthenticated = await requireAuthOrRedirect();
+  if (!isAuthenticated) return;
+  initMobileTopbar();
+  setupTopbarAuth();
+
+  fetch('data/shadowing-data.json')
+    .then((r) => r.json())
+    .then((d) => {
+      state.DATA = d;
+      state.sets = normalizeSets(d);
+      if (!state.sets.length) return;
+      selectSet(0);
+    })
+    .catch((e) => {
+      console.error(e);
+      const el = document.getElementById('metaCount');
+      if (el) el.textContent = 'data load error';
+    });
+}
+
+bootstrap();
