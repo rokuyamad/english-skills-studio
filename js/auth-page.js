@@ -3,17 +3,23 @@ import {
   getSessionUser,
   isSupabaseConfigured,
   readAuthUrlError,
-  signInWithMagicLink,
+  sendEmailOtp,
+  verifyEmailOtp,
   signOut
 } from './auth.js';
 
-const form = document.getElementById('magicLinkForm');
+const requestForm = document.getElementById('requestOtpForm');
+const verifyForm = document.getElementById('verifyOtpForm');
 const emailInput = document.getElementById('emailInput');
+const otpInput = document.getElementById('otpInput');
 const statusEl = document.getElementById('statusText');
 const signedInEl = document.getElementById('signedInBlock');
 const signedOutEl = document.getElementById('signedOutBlock');
+const otpBlock = document.getElementById('otpBlock');
 const currentUserEl = document.getElementById('currentUser');
 const logoutBtn = document.getElementById('logoutBtn');
+
+let pendingEmail = '';
 
 function setStatus(msg, isError = false) {
   statusEl.textContent = msg;
@@ -29,6 +35,9 @@ function renderSignedIn(email) {
 function renderSignedOut() {
   signedInEl.classList.add('hidden');
   signedOutEl.classList.remove('hidden');
+  otpBlock.classList.add('hidden');
+  otpInput.value = '';
+  pendingEmail = '';
 }
 
 function tryRedirectToReturnTo() {
@@ -58,7 +67,7 @@ async function initialize() {
       tryRedirectToReturnTo();
     } else {
       renderSignedOut();
-      setStatus('メールアドレスを入力して Magic Link を送信してください。');
+      setStatus('メールアドレスに6桁コードを送信してログインしてください。');
     }
   } catch (e) {
     console.error(e);
@@ -67,7 +76,7 @@ async function initialize() {
   }
 }
 
-form.addEventListener('submit', async (e) => {
+requestForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!isSupabaseConfigured()) return;
   const email = emailInput.value.trim();
@@ -76,13 +85,42 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  setStatus('Magic Link を送信中...');
+  setStatus('認証コードを送信中...');
   try {
-    await signInWithMagicLink(email);
-    setStatus('送信しました。メールのリンクを開いてログインしてください。');
+    await sendEmailOtp(email);
+    pendingEmail = email;
+    otpBlock.classList.remove('hidden');
+    setStatus('送信しました。メールの6桁コードを入力してください。');
   } catch (err) {
     console.error(err);
     setStatus(`送信失敗: ${err.message}`, true);
+  }
+});
+
+verifyForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!isSupabaseConfigured()) return;
+  const token = otpInput.value.trim();
+  const email = pendingEmail || emailInput.value.trim();
+  if (!email) {
+    setStatus('先にメールアドレスを入力してください。', true);
+    return;
+  }
+  if (!/^\d{6}$/.test(token)) {
+    setStatus('6桁の数字コードを入力してください。', true);
+    return;
+  }
+
+  setStatus('コードを検証中...');
+  try {
+    await verifyEmailOtp(email, token);
+    const user = await getSessionUser();
+    renderSignedIn(user?.email || email);
+    setStatus('ログインしました。');
+    tryRedirectToReturnTo();
+  } catch (err) {
+    console.error(err);
+    setStatus(`認証失敗: ${err.message}`, true);
   }
 });
 

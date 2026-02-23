@@ -41,18 +41,31 @@ export async function getSessionUser() {
   return data.session?.user ?? null;
 }
 
-export async function signInWithMagicLink(email) {
+export async function sendEmailOtp(email) {
   const supabase = await getSupabaseClient();
   if (!supabase) throw new Error('Supabase configuration is missing.');
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
+      // OTP入力方式ではリダイレクト不要だが、フォールバックで保持
       emailRedirectTo: getAuthRedirectUrl(),
       // 登録済みユーザーのみログインを許可（新規自動作成を禁止）
       shouldCreateUser: false
     }
   });
   if (error) throw error;
+}
+
+export async function verifyEmailOtp(email, token) {
+  const supabase = await getSupabaseClient();
+  if (!supabase) throw new Error('Supabase configuration is missing.');
+  const { data, error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'email'
+  });
+  if (error) throw error;
+  return data;
 }
 
 export async function signOut() {

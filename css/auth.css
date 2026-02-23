@@ -158,6 +158,15 @@ body::before {
   background: rgba(52,211,153,0.22);
 }
 
+.otp-block {
+  margin-top: 14px;
+}
+
+.otp-input {
+  letter-spacing: 0.3em;
+  font-family: 'Orbitron', monospace;
+}
+
 .signed-in-text {
   color: var(--text);
 }

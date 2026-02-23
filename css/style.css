@@ -76,6 +76,37 @@ body::before {
   letter-spacing: 0.06em;
 }
 
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--accent3);
+  border: 1px solid rgba(96,165,250,0.35);
+  background: rgba(96,165,250,0.08);
+  border-radius: 8px;
+  padding: 6px 10px;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  border-color: rgba(167,139,250,0.55);
+  background: rgba(167,139,250,0.14);
+}
+
+.nav-link.active {
+  color: var(--text);
+  border-color: rgba(167,139,250,0.55);
+  background: linear-gradient(135deg, rgba(139,92,246,0.24), rgba(96,165,250,0.16));
+}
+
 .topbar-actions {
   display: flex;
   align-items: center;
@@ -237,16 +268,29 @@ body::before {
 
 .sent-text { flex: 1; font-size: 16px; line-height: 1.55; color: var(--muted); transition: color 0.18s; }
 .sentence-item.active .sent-text { color: var(--text); font-weight: 500; }
-.sent-text.hidden { color: var(--dim); letter-spacing: 0.25em; font-size: 14px; }
+.sent-text.masked { color: var(--muted); letter-spacing: 0.08em; font-size: 15px; }
 
-.eye-btn {
-  background: none; border: none; cursor: pointer; font-size: 16px;
-  padding: 4px 8px; border-radius: 4px; transition: all 0.18s;
-  flex-shrink: 0; opacity: 0; color: var(--dim);
+.script-btn {
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.2s;
 }
-.sentence-item:hover .eye-btn, .sentence-item.active .eye-btn { opacity: 1; }
-.eye-btn:hover { color: var(--accent); }
-.eye-btn.on { color: var(--accent); opacity: 1; }
+.script-btn:hover {
+  color: var(--text);
+  border-color: rgba(167,139,250,0.45);
+}
+.script-btn.on {
+  color: var(--accent2);
+  border-color: rgba(52,211,153,0.5);
+  background: rgba(52,211,153,0.12);
+}
 
 /* ── Player bar (bottom fixed) ── */
 .player-bar {
@@ -420,6 +464,8 @@ body::before {
 @media (max-width: 640px) {
   .topbar { padding: 14px 20px; }
   .topbar-title { font-size: 13px; }
+  .topbar-nav { gap: 6px; flex-wrap: wrap; }
+  .nav-link { padding: 5px 8px; font-size: 11px; }
   .topbar-actions { gap: 6px; }
   .auth-user { display: none; }
   .auth-link, .auth-btn { padding: 5px 8px; font-size: 11px; }
@@ -459,8 +505,7 @@ body::before {
   .track-name { font-size: 15px; }
   .meta-count { font-size: 12px; }
   .header-actions { gap: 8px; }
-  .mode-link { padding: 5px 8px; font-size: 11px; }
   .sentence-item { padding: 14px 20px 14px 22px; gap: 14px; }
   .sent-text { font-size: 14px; }
-  .eye-btn { opacity: 1; font-size: 14px; }
+  .script-btn { font-size: 11px; padding: 4px 8px; }
 }

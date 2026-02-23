@@ -1,6 +1,7 @@
 import { state } from './state.js';
 
 let _loadAndPlay;
+const MASK_TEXT = '*****';
 
 export function init({ loadAndPlay }) {
   _loadAndPlay = loadAndPlay;
@@ -18,25 +19,25 @@ export function buildSentenceList() {
     const div = document.createElement('div');
     div.className = 'sentence-item' + (i === state.current ? ' active' : '');
     div.id = 'sent-' + i;
-    div.onclick = (e) => { if(!e.target.closest('.eye-btn')) _loadAndPlay(i); };
+    div.onclick = (e) => { if(!e.target.closest('.script-btn')) _loadAndPlay(i); };
 
     const numEl = document.createElement('span');
     numEl.className = 'sent-num';
     numEl.textContent = String(i+1).padStart(2,'0');
 
     const textEl = document.createElement('span');
-    textEl.className = 'sent-text' + (revealed ? '' : ' hidden');
+    textEl.className = 'sent-text' + (revealed ? '' : ' masked');
     textEl.id = 'text-' + i;
-    textEl.textContent = revealed ? seg.transcript : '*  *  *  *  *  *  *  *';
+    textEl.textContent = revealed ? seg.transcript : MASK_TEXT;
 
-    const eyeBtn = document.createElement('button');
-    eyeBtn.className = 'eye-btn' + (revealed ? ' on' : '');
-    eyeBtn.textContent = '👁';
-    eyeBtn.onclick = (e) => { e.stopPropagation(); toggleReveal(i); };
+    const scriptBtn = document.createElement('button');
+    scriptBtn.className = 'script-btn' + (revealed ? ' on' : '');
+    scriptBtn.textContent = 'Script';
+    scriptBtn.onclick = (e) => { e.stopPropagation(); toggleReveal(i); };
 
     div.appendChild(numEl);
     div.appendChild(textEl);
-    div.appendChild(eyeBtn);
+    div.appendChild(scriptBtn);
     list.appendChild(div);
   });
 }
@@ -46,8 +47,8 @@ export function toggleReveal(i) {
   const revealed = state.revealedState[state.trackIdx][i];
   const seg = state.DATA[state.trackIdx].segments[i];
   const textEl = document.getElementById('text-' + i);
-  textEl.className = 'sent-text' + (revealed ? '' : ' hidden');
-  textEl.textContent = revealed ? seg.transcript : '*  *  *  *  *  *  *  *';
+  textEl.className = 'sent-text' + (revealed ? '' : ' masked');
+  textEl.textContent = revealed ? seg.transcript : MASK_TEXT;
   textEl.nextElementSibling.classList.toggle('on', revealed);
 }
 

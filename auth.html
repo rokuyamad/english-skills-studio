@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#060612">
-<meta name="description" content="Magic Link ログイン">
+<meta name="description" content="メールOTPログイン">
 <title>Auth | English Skills Studio</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon.svg">
@@ -22,19 +22,26 @@
 
   <main class="auth-main">
     <section class="auth-card">
-      <h1 class="auth-title">Supabase Magic Link</h1>
+      <h1 class="auth-title">Supabase Email OTP</h1>
       <p class="auth-description">
-        メールアドレスを入力し、受信したリンクからログインしてください。
+        メールアドレスへ6桁コードを送信し、PWA内で入力してログインします。
       </p>
 
       <p id="statusText" class="status-text">認証状態を確認中...</p>
 
       <div id="signedOutBlock">
-        <form id="magicLinkForm" class="auth-form">
+        <form id="requestOtpForm" class="auth-form">
           <label class="field-label" for="emailInput">Email</label>
           <input class="email-input" id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required>
-          <button class="send-btn" type="submit">Magic Linkを送信</button>
+          <button class="send-btn" type="submit">認証コードを送信</button>
         </form>
+        <div id="otpBlock" class="hidden">
+          <form id="verifyOtpForm" class="auth-form otp-block">
+            <label class="field-label" for="otpInput">6桁コード</label>
+            <input class="email-input otp-input" id="otpInput" inputmode="numeric" pattern="\\d{6}" maxlength="6" placeholder="123456" required>
+            <button class="send-btn" type="submit">コードを検証してログイン</button>
+          </form>
+        </div>
       </div>
 
       <div id="signedInBlock" class="hidden">

@@ -18,7 +18,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 - トランスクリプト表示と UI 連動
 - slash-reading のセット切替とチャンク表示（2-3 文）
 - チャンク単位の `Slash` / `JP` トグル
-- Supabase Auth（Magic Link）によるログイン導線（`auth.html`）
+- Supabase Auth（Email OTP）によるログイン導線（`auth.html`）
 - PWA 対応（`manifest.json` + `sw.js`）
 - オフライン時のキャッシュ再生補助（`/audio/` は Cache First）
 
@@ -28,7 +28,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 |---|---|
 | `index.html` | English Skills Studio エントリ |
 | `slash.html` | slash-reading エントリ |
-| `auth.html` | Supabase Magic Link ログインページ |
+| `auth.html` | Supabase Email OTP ログインページ |
 | `css/style.css` | English Skills Studio 用スタイル |
 | `css/slash.css` | slash-reading 用スタイル |
 | `css/auth.css` | 認証ページ用スタイル |
@@ -50,10 +50,10 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `manifest.json` | PWA マニフェスト |
 | `sw.js` | Service Worker |
 
-## Supabase Auth Setup (Magic Link)
+## Supabase Auth Setup (Email OTP)
 
 1. Supabase プロジェクトを作成
-2. Authentication > Providers > Email を有効化（Magic Link）
+2. Authentication > Providers > Email を有効化（Email OTP）
 3. Authentication > URL Configuration で以下を設定
 - Site URL: 例 `https://<your-site-domain>/`
 - Redirect URLs: 例 `https://<your-site-domain>/auth.html`
@@ -66,7 +66,7 @@ export const SUPABASE_URL = 'https://xxxx.supabase.co';
 export const SUPABASE_ANON_KEY = 'eyJ...';
 ```
 
-7. `auth.html` を開いて Magic Link 送信を確認
+7. `auth.html` を開いて認証コード送信とログインを確認
 
 ## Local Development
 
