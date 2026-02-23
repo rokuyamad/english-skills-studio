@@ -83,6 +83,84 @@ body::before {
   background: rgba(167,139,250,0.14);
 }
 
+.menu-toggle,
+.mobile-overlay,
+.mobile-drawer {
+  display: none;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+.menu-toggle {
+  border: 1px solid rgba(96,165,250,0.35);
+  background: rgba(96,165,250,0.08);
+  color: var(--text);
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 90;
+}
+
+.mobile-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(78vw, 320px);
+  background: rgba(10, 10, 24, 0.95);
+  border-left: 1px solid var(--border);
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+  z-index: 100;
+  padding: 18px 14px;
+}
+
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-nav-link {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.mobile-nav-link:hover {
+  color: var(--text);
+  border-color: rgba(167,139,250,0.55);
+  background: rgba(167,139,250,0.14);
+}
+
 .auth-main {
   flex: 1;
   display: grid;
@@ -181,6 +259,28 @@ body::before {
 .hidden { display: none; }
 
 @media (max-width: 640px) {
-  .topbar { padding: 14px 20px; }
-  .topbar-title { font-size: 13px; }
+  .topbar {
+    padding: 10px 12px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  .topbar-title {
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    flex: 1;
+    min-width: 0;
+  }
+  .topbar-actions {
+    display: none;
+  }
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mobile-overlay,
+  .mobile-drawer {
+    display: block;
+  }
 }

@@ -1,5 +1,13 @@
 # アプリ化設計メモ（PWA + Supabase + FSRS）
 
+> この文書は **将来拡張（FSRSカード機能）向けの設計メモ** です。  
+> 現行サービスの実装仕様（`index` / `slash` / `shadowing` / `auth`）とは一致しない項目を含みます。
+
+## 現在の実装との差分
+- ここで記載している `cards.html` / `js/fsrs.js` / `js/sync.js` は **未実装**
+- 現行は「3学習ページ + 認証ページ」の静的PWA構成
+- 認証は Supabase Email OTP を利用し、`shouldCreateUser: false` で登録済みユーザーのみ許可
+
 ## 1. 目的
 既存の英語学習PWA（`index.html` / `slash.html`）に、FSRSベースのカード復習機能を追加し、**自分専用**かつ**無料枠運用**で端末間同期を実現する。
 

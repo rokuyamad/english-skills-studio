@@ -7,6 +7,7 @@ import {
   verifyEmailOtp,
   signOut
 } from './auth.js';
+import { initMobileTopbar } from './mobile-topbar.js';
 
 const requestForm = document.getElementById('requestOtpForm');
 const verifyForm = document.getElementById('verifyOtpForm');
@@ -38,6 +39,12 @@ function renderSignedOut() {
   otpBlock.classList.add('hidden');
   otpInput.value = '';
   pendingEmail = '';
+}
+
+function ensureCustomValidationFlow() {
+  // ブラウザ既定メッセージではなく、画面内ステータスに統一する
+  requestForm.setAttribute('novalidate', 'novalidate');
+  verifyForm.setAttribute('novalidate', 'novalidate');
 }
 
 function tryRedirectToReturnTo() {
@@ -84,6 +91,10 @@ requestForm.addEventListener('submit', async (e) => {
     setStatus('メールアドレスを入力してください。', true);
     return;
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setStatus('メールアドレスの形式が正しくありません。', true);
+    return;
+  }
 
   setStatus('認証コードを送信中...');
   try {
@@ -124,6 +135,13 @@ verifyForm.addEventListener('submit', async (e) => {
   }
 });
 
+otpInput.addEventListener('input', () => {
+  if (otpInput.value.length > 6) otpInput.value = otpInput.value.slice(0, 6);
+  if (otpInput.value && !/^\d+$/.test(otpInput.value)) {
+    setStatus('認証コードは数字のみ入力できます。', true);
+  }
+});
+
 logoutBtn.addEventListener('click', async () => {
   try {
     await signOut();
@@ -136,3 +154,5 @@ logoutBtn.addEventListener('click', async () => {
 });
 
 initialize();
+ensureCustomValidationFlow();
+initMobileTopbar();
