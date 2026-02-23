@@ -378,13 +378,39 @@ body::before {
     white-space: nowrap;
     min-width: 180px;
   }
-  .topbar { padding: 14px 20px; }
-  .topbar-title { font-size: 13px; }
-  .topbar-nav { gap: 6px; flex-wrap: wrap; }
-  .nav-link { font-size: 11px; padding: 5px 8px; }
-  .topbar-actions { gap: 6px; }
+  .topbar {
+    padding: 10px 12px;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .topbar-title {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+  .topbar-nav {
+    gap: 4px;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  .nav-link {
+    font-size: 10px;
+    padding: 3px 6px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .topbar-actions {
+    gap: 4px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
   .auth-user { display: none; }
-  .auth-link, .auth-btn { font-size: 11px; padding: 5px 8px; }
+  .auth-link, .auth-btn {
+    font-size: 10px;
+    padding: 3px 6px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
   .content-header { padding: 14px 20px; }
   .track-name { font-size: 15px; }
   .sentence-list { padding: 10px 20px 16px; }

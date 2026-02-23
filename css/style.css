@@ -462,13 +462,39 @@ body::before {
 
 /* ── MOBILE ── */
 @media (max-width: 640px) {
-  .topbar { padding: 14px 20px; }
-  .topbar-title { font-size: 13px; }
-  .topbar-nav { gap: 6px; flex-wrap: wrap; }
-  .nav-link { padding: 5px 8px; font-size: 11px; }
-  .topbar-actions { gap: 6px; }
+  .topbar {
+    padding: 10px 12px;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .topbar-title {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+  .topbar-nav {
+    gap: 4px;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  .nav-link {
+    padding: 3px 6px;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .topbar-actions {
+    gap: 4px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
   .auth-user { display: none; }
-  .auth-link, .auth-btn { padding: 5px 8px; font-size: 11px; }
+  .auth-link, .auth-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
   .layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
