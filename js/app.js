@@ -3,6 +3,75 @@ import * as player from './player.js';
 import * as ui from './ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
+import { enableSidebarDnD } from './sidebar-sortable.js';
+import { getOrder, initProgressDb, saveOrder } from './progress-db.js';
+
+let detachTrackDnD = null;
+
+function applyTrackOrder(data, revealedState, orderedIds) {
+  if (!Array.isArray(orderedIds) || !orderedIds.length) {
+    return { data, revealedState };
+  }
+
+  const map = new Map();
+  data.forEach((track, idx) => {
+    map.set(track.key, { track, revealed: revealedState[idx] || [] });
+  });
+
+  const nextData = [];
+  const nextRevealed = [];
+
+  orderedIds.forEach((id) => {
+    const item = map.get(id);
+    if (!item) return;
+    nextData.push(item.track);
+    nextRevealed.push(item.revealed);
+    map.delete(id);
+  });
+
+  map.forEach((item) => {
+    nextData.push(item.track);
+    nextRevealed.push(item.revealed);
+  });
+
+  return { data: nextData, revealedState: nextRevealed };
+}
+
+function renderTrackTabs() {
+  const tabsEl = document.getElementById('trackTabs');
+  tabsEl.innerHTML = '';
+
+  state.DATA.forEach((track, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'track-tab sortable-item' + (i === state.trackIdx ? ' active' : '');
+    btn.type = 'button';
+    btn.textContent = track.label;
+    btn.dataset.setId = track.key;
+    btn.addEventListener('click', () => ui.selectTrack(i));
+    tabsEl.appendChild(btn);
+  });
+
+  if (detachTrackDnD) detachTrackDnD();
+  detachTrackDnD = enableSidebarDnD({
+    container: tabsEl,
+    itemSelector: '.track-tab',
+    getId: (el) => el.dataset.setId || '',
+    onReorder: async (orderedIds) => {
+      const currentKey = state.DATA[state.trackIdx]?.key;
+      const ordered = applyTrackOrder(state.DATA, state.revealedState, orderedIds);
+      state.DATA = ordered.data;
+      state.revealedState = ordered.revealedState;
+      state.trackIdx = Math.max(
+        0,
+        state.DATA.findIndex((track) => track.key === currentKey)
+      );
+
+      await saveOrder('imitation', orderedIds);
+      renderTrackTabs();
+      ui.updateUI();
+    }
+  });
+}
 
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
@@ -47,22 +116,22 @@ async function bootstrap() {
     if (e.code === 'ArrowLeft') player.prev();
   });
 
+  await initProgressDb();
+
   // データ読み込み
-  fetch('data/data.json')
-    .then(r => r.json())
-    .then(d => {
-      state.DATA = d;
-      const tabsEl = document.getElementById('trackTabs');
-      state.DATA.forEach((t, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'track-tab' + (i === 0 ? ' active' : '');
-        btn.textContent = t.label;
-        btn.addEventListener('click', () => ui.selectTrack(i));
-        tabsEl.appendChild(btn);
-        state.revealedState[i] = new Array(t.segments.length).fill(false);
-      });
-      ui.selectTrack(0);
-    });
+  const response = await fetch('data/data.json');
+  const rawData = await response.json();
+  const tracks = Array.isArray(rawData) ? rawData : [];
+
+  const revealed = tracks.map((track) => new Array(track.segments.length).fill(false));
+  const savedOrder = await getOrder('imitation');
+  const ordered = applyTrackOrder(tracks, revealed, savedOrder);
+  state.DATA = ordered.data;
+  state.revealedState = ordered.revealedState;
+  state.trackIdx = 0;
+
+  renderTrackTabs();
+  ui.selectTrack(0);
 }
 
 bootstrap();

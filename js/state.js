@@ -6,5 +6,6 @@ export const state = {
   repeat: false,
   speed: 1.0,
   playing: false,
-  revealedState: {}
+  revealedState: {},
+  countMap: {}
 };

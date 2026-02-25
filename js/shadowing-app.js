@@ -2,6 +2,7 @@ import { state } from './shadowing-state.js';
 import { selectSet } from './shadowing-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
+import { getOrder, initProgressDb } from './progress-db.js';
 
 function normalizeSets(raw) {
   if (Array.isArray(raw)) {
@@ -25,25 +26,44 @@ function normalizeSets(raw) {
   return [];
 }
 
+function applySetOrder(sets, orderedIds) {
+  if (!Array.isArray(orderedIds) || !orderedIds.length) return sets;
+
+  const map = new Map(sets.map((set) => [set.id, set]));
+  const next = [];
+
+  orderedIds.forEach((id) => {
+    const set = map.get(id);
+    if (!set) return;
+    next.push(set);
+    map.delete(id);
+  });
+
+  map.forEach((set) => next.push(set));
+  return next;
+}
+
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
   if (!isAuthenticated) return;
   initMobileTopbar();
   setupTopbarAuth();
+  await initProgressDb();
 
-  fetch('data/shadowing-data.json')
-    .then((r) => r.json())
-    .then((d) => {
-      state.DATA = d;
-      state.sets = normalizeSets(d);
-      if (!state.sets.length) return;
-      selectSet(0);
-    })
-    .catch((e) => {
-      console.error(e);
-      const el = document.getElementById('metaCount');
-      if (el) el.textContent = 'data load error';
-    });
+  try {
+    const response = await fetch('data/shadowing-data.json');
+    const data = await response.json();
+    state.DATA = data;
+    const sets = normalizeSets(data);
+    const orderedIds = await getOrder('shadowing');
+    state.sets = applySetOrder(sets, orderedIds);
+    if (!state.sets.length) return;
+    selectSet(0);
+  } catch (e) {
+    console.error(e);
+    const el = document.getElementById('metaCount');
+    if (el) el.textContent = 'data load error';
+  }
 }
 
 bootstrap();

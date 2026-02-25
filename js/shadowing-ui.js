@@ -1,9 +1,12 @@
 import { state } from './shadowing-state.js';
+import { enableSidebarDnD } from './sidebar-sortable.js';
+import { getCount, incrementCount, saveOrder } from './progress-db.js';
 
 const setListEl = document.getElementById('setList');
 const setNameEl = document.getElementById('setName');
 const metaCountEl = document.getElementById('metaCount');
 const shadowingListEl = document.getElementById('shadowingList');
+let detachSetDnD = null;
 
 function toEmbedUrl(url = '') {
   try {
@@ -28,17 +31,68 @@ function renderSetList() {
 
   state.sets.forEach((set, idx) => {
     const btn = document.createElement('button');
-    btn.className = `set-btn${idx === state.currentSetIdx ? ' active' : ''}`;
+    btn.className = `set-btn sortable-item${idx === state.currentSetIdx ? ' active' : ''}`;
     btn.type = 'button';
+    btn.dataset.setId = set.id;
     btn.textContent = set.label;
     btn.addEventListener('click', () => selectSet(idx));
     setListEl.appendChild(btn);
   });
+
+  if (detachSetDnD) detachSetDnD();
+  detachSetDnD = enableSidebarDnD({
+    container: setListEl,
+    itemSelector: '.set-btn',
+    getId: (el) => el.dataset.setId || '',
+    onReorder: async (orderedIds) => {
+      const currentId = state.sets[state.currentSetIdx]?.id;
+      const map = new Map(state.sets.map((set) => [set.id, set]));
+      const next = [];
+
+      orderedIds.forEach((id) => {
+        const set = map.get(id);
+        if (!set) return;
+        next.push(set);
+        map.delete(id);
+      });
+      map.forEach((set) => next.push(set));
+
+      state.sets = next;
+      state.currentSetIdx = Math.max(
+        0,
+        state.sets.findIndex((set) => set.id === currentId)
+      );
+      const currentSet = state.sets[state.currentSetIdx];
+      if (currentSet) {
+        state.entries = currentSet.entries || [];
+        if (setNameEl) setNameEl.textContent = currentSet.label || 'Shadowing';
+        if (metaCountEl) metaCountEl.textContent = `${state.entries.length} videos`;
+      }
+      await saveOrder('shadowing', orderedIds);
+      renderSetList();
+    }
+  });
+}
+
+function buildEntryCounterKey(setId, entryId, entryIdx) {
+  const safeEntryId = entryId || `entry-${entryIdx}`;
+  return `shadowing:${setId}:${safeEntryId}`;
+}
+
+async function hydrateEntryCount(counterKey, countEl) {
+  if (Object.prototype.hasOwnProperty.call(state.countMap, counterKey)) {
+    countEl.textContent = `${state.countMap[counterKey]}回`;
+    return;
+  }
+  const count = await getCount(counterKey);
+  state.countMap[counterKey] = count;
+  countEl.textContent = `${count}回`;
 }
 
 function renderEntries() {
   if (!shadowingListEl) return;
   shadowingListEl.innerHTML = '';
+  const currentSet = state.sets[state.currentSetIdx];
 
   state.entries.forEach((entry, idx) => {
     const card = document.createElement('article');
@@ -61,6 +115,26 @@ function renderEntries() {
     openInYoutube.target = '_blank';
     openInYoutube.rel = 'noopener noreferrer';
     openInYoutube.textContent = 'YouTubeで開く';
+
+    const countWrap = document.createElement('div');
+    countWrap.className = 'count-wrap';
+
+    const countChip = document.createElement('span');
+    countChip.className = 'count-chip';
+    countChip.textContent = '0回';
+
+    const countBtn = document.createElement('button');
+    countBtn.className = 'count-btn';
+    countBtn.type = 'button';
+    countBtn.textContent = '+1';
+    countBtn.addEventListener('click', async () => {
+      const key = buildEntryCounterKey(currentSet.id, entry.id, idx);
+      const next = await incrementCount(key);
+      state.countMap[key] = next;
+      countChip.textContent = `${next}回`;
+    });
+
+    countWrap.append(countChip, countBtn);
 
     const toggle = document.createElement('button');
     const isOpen = Boolean(state.openMap[entry.id]);
@@ -89,9 +163,12 @@ function renderEntries() {
       renderEntries();
     });
 
-    actions.append(openInYoutube, toggle);
+    actions.append(openInYoutube, countWrap, toggle);
     card.append(title, meta, actions, body);
     shadowingListEl.appendChild(card);
+
+    const counterKey = buildEntryCounterKey(currentSet.id, entry.id, idx);
+    hydrateEntryCount(counterKey, countChip);
   });
 }
 

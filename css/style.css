@@ -310,6 +310,12 @@ body.menu-open {
   box-shadow: 0 0 18px rgba(139,92,246,0.2);
   text-shadow: 0 0 8px rgba(167,139,250,0.5);
 }
+.sortable-item { user-select: none; }
+.sortable-item.dragging {
+  opacity: 0.55;
+  border-color: rgba(96,165,250,0.65);
+  box-shadow: 0 0 16px rgba(96,165,250,0.24);
+}
 
 /* ── Main layout ── */
 .main { flex: 1; overflow: hidden; }
@@ -403,6 +409,44 @@ body.menu-open {
   color: var(--accent2);
   border-color: rgba(52,211,153,0.5);
   background: rgba(52,211,153,0.12);
+}
+
+.count-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.count-chip {
+  min-width: 42px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 7px;
+  color: var(--accent3);
+  background: rgba(96,165,250,0.12);
+  border: 1px solid rgba(96,165,250,0.32);
+  border-radius: 999px;
+}
+
+.count-btn {
+  border: 1px solid rgba(52,211,153,0.35);
+  background: rgba(52,211,153,0.1);
+  color: var(--accent2);
+  padding: 5px 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.count-btn:hover {
+  color: var(--text);
+  border-color: rgba(52,211,153,0.6);
+  background: rgba(52,211,153,0.2);
 }
 
 /* ── Player bar (bottom fixed) ── */
@@ -639,4 +683,6 @@ body.menu-open {
   .sentence-item { padding: 14px 20px 14px 22px; gap: 14px; }
   .sent-text { font-size: 14px; }
   .script-btn { font-size: 11px; padding: 4px 8px; }
+  .count-chip { font-size: 10px; min-width: 38px; padding: 4px 6px; }
+  .count-btn { font-size: 10px; padding: 4px 7px; }
 }

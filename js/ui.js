@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { getCount, incrementCount } from './progress-db.js';
 
 let _loadAndPlay;
 const MASK_TEXT = '*****';
@@ -14,12 +15,15 @@ export function applyMobileLayout() {
 export function buildSentenceList() {
   const list = document.getElementById('sentenceList');
   list.innerHTML = '';
-  state.DATA[state.trackIdx].segments.forEach((seg, i) => {
+  const track = state.DATA[state.trackIdx];
+  track.segments.forEach((seg, i) => {
     const revealed = state.revealedState[state.trackIdx][i];
     const div = document.createElement('div');
     div.className = 'sentence-item' + (i === state.current ? ' active' : '');
     div.id = 'sent-' + i;
-    div.onclick = (e) => { if(!e.target.closest('.script-btn')) _loadAndPlay(i); };
+    div.onclick = (e) => {
+      if (!e.target.closest('.script-btn') && !e.target.closest('.count-btn')) _loadAndPlay(i);
+    };
 
     const numEl = document.createElement('span');
     numEl.className = 'sent-num';
@@ -35,11 +39,51 @@ export function buildSentenceList() {
     scriptBtn.textContent = 'Script';
     scriptBtn.onclick = (e) => { e.stopPropagation(); toggleReveal(i); };
 
+    const countWrap = document.createElement('div');
+    countWrap.className = 'count-wrap';
+
+    const countEl = document.createElement('span');
+    countEl.className = 'count-chip';
+    countEl.textContent = '0回';
+
+    const countBtn = document.createElement('button');
+    countBtn.className = 'count-btn';
+    countBtn.type = 'button';
+    countBtn.textContent = '+1';
+    countBtn.onclick = async (e) => {
+      e.stopPropagation();
+      const key = getSentenceCounterKey(track.key, i);
+      const next = await incrementCount(key);
+      state.countMap[key] = next;
+      countEl.textContent = `${next}回`;
+    };
+
+    countWrap.appendChild(countEl);
+    countWrap.appendChild(countBtn);
+
     div.appendChild(numEl);
     div.appendChild(textEl);
     div.appendChild(scriptBtn);
+    div.appendChild(countWrap);
     list.appendChild(div);
+
+    hydrateSentenceCount(track.key, i, countEl);
   });
+}
+
+function getSentenceCounterKey(trackKey, sentenceIdx) {
+  return `imitation:${trackKey}:${sentenceIdx}`;
+}
+
+async function hydrateSentenceCount(trackKey, sentenceIdx, countEl) {
+  const key = getSentenceCounterKey(trackKey, sentenceIdx);
+  if (Object.prototype.hasOwnProperty.call(state.countMap, key)) {
+    countEl.textContent = `${state.countMap[key]}回`;
+    return;
+  }
+  const count = await getCount(key);
+  state.countMap[key] = count;
+  countEl.textContent = `${count}回`;
 }
 
 export function toggleReveal(i) {

@@ -2,6 +2,7 @@ import { state } from './slash-state.js';
 import { selectSet } from './slash-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
+import { getOrder, initProgressDb } from './progress-db.js';
 
 function splitEnglishSentences(text = '') {
   const normalized = text.replace(/\s+/g, ' ').trim();
@@ -119,28 +120,47 @@ function normalizeSets(raw) {
   return [];
 }
 
+function applySetOrder(sets, orderedIds) {
+  if (!Array.isArray(orderedIds) || !orderedIds.length) return sets;
+
+  const map = new Map(sets.map((set) => [set.id, set]));
+  const next = [];
+
+  orderedIds.forEach((id) => {
+    const set = map.get(id);
+    if (!set) return;
+    next.push(set);
+    map.delete(id);
+  });
+
+  map.forEach((set) => next.push(set));
+  return next;
+}
+
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
   if (!isAuthenticated) return;
   initMobileTopbar();
   setupTopbarAuth();
+  await initProgressDb();
 
-  fetch('data/slash-data.json')
-    .then((r) => r.json())
-    .then((d) => {
-      state.DATA = d;
-      const sets = normalizeSets(d);
-      state.sets = sets.map((set) => ({
-        ...set,
-        entries: set.entries.map((item) => ({
-          ...item,
-          chunks: buildEntryChunks(item)
-        }))
-      }));
+  const response = await fetch('data/slash-data.json');
+  const data = await response.json();
+  state.DATA = data;
 
-      if (!state.sets.length) return;
-      selectSet(0);
-    });
+  const sets = normalizeSets(data).map((set) => ({
+    ...set,
+    entries: set.entries.map((item) => ({
+      ...item,
+      chunks: buildEntryChunks(item)
+    }))
+  }));
+
+  const orderedIds = await getOrder('slash');
+  state.sets = applySetOrder(sets, orderedIds);
+
+  if (!state.sets.length) return;
+  selectSet(0);
 }
 
 bootstrap();

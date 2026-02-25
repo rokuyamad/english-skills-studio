@@ -3,5 +3,6 @@ export const state = {
   sets: [],
   currentSetIdx: 0,
   entries: [],
-  openMap: {}
+  openMap: {},
+  countMap: {}
 };

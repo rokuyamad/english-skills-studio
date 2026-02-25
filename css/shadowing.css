@@ -303,6 +303,13 @@ body.menu-open {
   box-shadow: 0 0 18px rgba(139,92,246,0.2);
 }
 
+.sortable-item { user-select: none; }
+.sortable-item.dragging {
+  opacity: 0.55;
+  border-color: rgba(96,165,250,0.65);
+  box-shadow: 0 0 16px rgba(96,165,250,0.24);
+}
+
 .content-panel {
   height: 100%;
   display: flex;
@@ -368,6 +375,42 @@ body.menu-open {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.count-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.count-chip {
+  min-width: 42px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 7px;
+  color: var(--accent3);
+  background: rgba(96,165,250,0.12);
+  border: 1px solid rgba(96,165,250,0.32);
+  border-radius: 999px;
+}
+
+.count-btn {
+  border: 1px solid rgba(52,211,153,0.35);
+  background: rgba(52,211,153,0.1);
+  color: var(--accent2);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.count-btn:hover {
+  color: var(--text);
+  border-color: rgba(52,211,153,0.6);
+  background: rgba(52,211,153,0.2);
 }
 
 .yt-link,
@@ -455,4 +498,6 @@ body.menu-open {
   .content-header { padding: 14px 20px; }
   .track-name { font-size: 15px; }
   .shadowing-list { padding: 10px 20px 16px; }
+  .count-chip { font-size: 10px; min-width: 38px; padding: 4px 6px; }
+  .count-btn { font-size: 10px; padding: 4px 7px; }
 }

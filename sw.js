@@ -1,4 +1,4 @@
-const CACHE = 'english-skills-studio-v5';
+const CACHE = 'english-skills-studio-v6';
 
 const SHELL = [
   './',
@@ -16,6 +16,8 @@ const SHELL = [
   './js/auth-ui.js',
   './js/mobile-topbar.js',
   './js/player.js',
+  './js/progress-db.js',
+  './js/sidebar-sortable.js',
   './js/supabase-config.js',
   './js/state.js',
   './js/ui.js',

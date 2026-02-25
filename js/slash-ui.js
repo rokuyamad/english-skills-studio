@@ -1,4 +1,8 @@
 import { state } from './slash-state.js';
+import { getCount, incrementCount, saveOrder } from './progress-db.js';
+import { enableSidebarDnD } from './sidebar-sortable.js';
+
+let detachSetDnD = null;
 
 function initializeEntryState(entries) {
   state.entryOpen = entries.map((_, i) => i === 0);
@@ -20,10 +24,45 @@ export function renderSetList() {
 
   state.sets.forEach((set, i) => {
     const btn = document.createElement('button');
-    btn.className = `set-btn${i === state.currentSetIdx ? ' active' : ''}`;
+    btn.className = `set-btn sortable-item${i === state.currentSetIdx ? ' active' : ''}`;
+    btn.type = 'button';
+    btn.dataset.setId = set.id;
     btn.textContent = set.label;
     btn.addEventListener('click', () => selectSet(i));
     list.appendChild(btn);
+  });
+
+  if (detachSetDnD) detachSetDnD();
+  detachSetDnD = enableSidebarDnD({
+    container: list,
+    itemSelector: '.set-btn',
+    getId: (el) => el.dataset.setId || '',
+    onReorder: async (orderedIds) => {
+      const currentId = state.sets[state.currentSetIdx]?.id;
+      const map = new Map(state.sets.map((set) => [set.id, set]));
+      const next = [];
+
+      orderedIds.forEach((id) => {
+        const set = map.get(id);
+        if (!set) return;
+        next.push(set);
+        map.delete(id);
+      });
+      map.forEach((set) => next.push(set));
+
+      state.sets = next;
+      state.currentSetIdx = Math.max(
+        0,
+        state.sets.findIndex((set) => set.id === currentId)
+      );
+      state.entries = state.sets[state.currentSetIdx]?.entries || [];
+      if (state.entryOpen.length !== state.entries.length) {
+        initializeEntryState(state.entries);
+      }
+      await saveOrder('slash', orderedIds);
+      renderSetList();
+      renderList();
+    }
   });
 }
 
@@ -105,10 +144,26 @@ function buildChunk(entryIdx, chunkIdx, chunk) {
   return block;
 }
 
+function buildEntryCounterKey(setId, entryId, entryIdx) {
+  const safeEntryId = entryId || `entry-${entryIdx}`;
+  return `slash:${setId}:${safeEntryId}`;
+}
+
+async function hydrateEntryCount(counterKey, countEl) {
+  if (Object.prototype.hasOwnProperty.call(state.countMap, counterKey)) {
+    countEl.textContent = `${state.countMap[counterKey]}回`;
+    return;
+  }
+  const count = await getCount(counterKey);
+  state.countMap[counterKey] = count;
+  countEl.textContent = `${count}回`;
+}
+
 export function renderList() {
   const list = document.getElementById('readingList');
   list.innerHTML = '';
-  document.getElementById('setName').textContent = state.sets[state.currentSetIdx].label;
+  const currentSet = state.sets[state.currentSetIdx];
+  document.getElementById('setName').textContent = currentSet.label;
 
   state.entries.forEach((entry, entryIdx) => {
     const card = document.createElement('article');
@@ -128,6 +183,26 @@ export function renderList() {
     chunkCount.className = 'chunk-count';
     chunkCount.textContent = `${entry.chunks.length} chunks`;
 
+    const countWrap = document.createElement('div');
+    countWrap.className = 'count-wrap';
+
+    const countChip = document.createElement('span');
+    countChip.className = 'count-chip';
+    countChip.textContent = '0回';
+
+    const countBtn = document.createElement('button');
+    countBtn.className = 'count-btn';
+    countBtn.type = 'button';
+    countBtn.textContent = '+1';
+    countBtn.addEventListener('click', async () => {
+      const key = buildEntryCounterKey(currentSet.id, entry.id, entryIdx);
+      const next = await incrementCount(key);
+      state.countMap[key] = next;
+      countChip.textContent = `${next}回`;
+    });
+
+    countWrap.append(countChip, countBtn);
+
     const entryBtn = document.createElement('button');
     entryBtn.id = `entry-toggle-${entryIdx}`;
     entryBtn.className = 'entry-toggle-btn';
@@ -135,6 +210,7 @@ export function renderList() {
     entryBtn.addEventListener('click', () => toggleEntry(entryIdx));
 
     meta.appendChild(chunkCount);
+    meta.appendChild(countWrap);
     meta.appendChild(entryBtn);
 
     head.appendChild(title);
@@ -151,6 +227,9 @@ export function renderList() {
     card.appendChild(head);
     card.appendChild(body);
     list.appendChild(card);
+
+    const counterKey = buildEntryCounterKey(currentSet.id, entry.id, entryIdx);
+    hydrateEntryCount(counterKey, countChip);
   });
 
   const totalChunks = state.entries.reduce((sum, entry) => sum + entry.chunks.length, 0);

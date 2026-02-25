@@ -5,5 +5,6 @@ export const state = {
   entries: [],
   entryOpen: [],
   slashVisible: [],
-  jaVisible: []
+  jaVisible: [],
+  countMap: {}
 };
