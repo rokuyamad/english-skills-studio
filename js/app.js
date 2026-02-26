@@ -98,6 +98,21 @@ async function bootstrap() {
   initMobileTopbar();
   setupTopbarAuth();
 
+  // サイドバー折りたたみトグル
+  const sidebarToggleBtn = document.getElementById('sidebarToggle');
+  const layoutEl = document.querySelector('.layout');
+  if (sidebarToggleBtn && layoutEl) {
+    if (localStorage.getItem('sidebarCollapsed') === '1') {
+      layoutEl.classList.add('sidebar-collapsed');
+      sidebarToggleBtn.textContent = '›';
+    }
+    sidebarToggleBtn.addEventListener('click', () => {
+      const isCollapsed = layoutEl.classList.toggle('sidebar-collapsed');
+      sidebarToggleBtn.textContent = isCollapsed ? '›' : '‹';
+      localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
+    });
+  }
+
   // コントロールボタン
   document.getElementById('playBtn').addEventListener('click', player.togglePlay);
   document.getElementById('prevBtn').addEventListener('click', player.prev);

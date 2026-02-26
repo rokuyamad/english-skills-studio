@@ -137,11 +137,30 @@ function applySetOrder(sets, orderedIds) {
   return next;
 }
 
+function initSidebarToggle() {
+  const toggleBtn = document.getElementById('sidebarToggle');
+  const layout = document.querySelector('.layout');
+  if (!toggleBtn || !layout) return;
+
+  const collapsed = localStorage.getItem('sidebarCollapsed') === '1';
+  if (collapsed) {
+    layout.classList.add('sidebar-collapsed');
+    toggleBtn.textContent = '›';
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    const isCollapsed = layout.classList.toggle('sidebar-collapsed');
+    toggleBtn.textContent = isCollapsed ? '›' : '‹';
+    localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
+  });
+}
+
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
   if (!isAuthenticated) return;
   initMobileTopbar();
   setupTopbarAuth();
+  initSidebarToggle();
   await initProgressDb();
 
   const response = await fetch('data/slash-data.json');

@@ -27,7 +27,22 @@ export function renderSetList() {
     btn.className = `set-btn sortable-item${i === state.currentSetIdx ? ' active' : ''}`;
     btn.type = 'button';
     btn.dataset.setId = set.id;
-    btn.textContent = set.label;
+
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = set.label;
+    btn.appendChild(labelSpan);
+
+    const practiced = set.entries.filter((entry, entryIdx) => {
+      const key = `slash:${set.id}:${entry.id || `entry-${entryIdx}`}`;
+      return (state.countMap[key] || 0) > 0;
+    }).length;
+    const badge = document.createElement('span');
+    badge.className = 'set-progress-badge';
+    badge.id = `set-badge-${set.id}`;
+    badge.textContent = `${practiced}/${set.entries.length}`;
+    badge.style.display = practiced > 0 ? '' : 'none';
+    btn.appendChild(badge);
+
     btn.addEventListener('click', () => selectSet(i));
     list.appendChild(btn);
   });
@@ -149,6 +164,19 @@ function buildEntryCounterKey(setId, entryId, entryIdx) {
   return `slash:${setId}:${safeEntryId}`;
 }
 
+function refreshCurrentSetBadge() {
+  const set = state.sets[state.currentSetIdx];
+  if (!set) return;
+  const badgeEl = document.getElementById(`set-badge-${set.id}`);
+  if (!badgeEl) return;
+  const practiced = set.entries.filter((entry, entryIdx) => {
+    const key = `slash:${set.id}:${entry.id || `entry-${entryIdx}`}`;
+    return (state.countMap[key] || 0) > 0;
+  }).length;
+  badgeEl.textContent = `${practiced}/${set.entries.length}`;
+  badgeEl.style.display = practiced > 0 ? '' : 'none';
+}
+
 async function hydrateEntryCount(counterKey, countEl) {
   if (Object.prototype.hasOwnProperty.call(state.countMap, counterKey)) {
     countEl.textContent = `${state.countMap[counterKey]}回`;
@@ -157,6 +185,7 @@ async function hydrateEntryCount(counterKey, countEl) {
   const count = await getCount(counterKey);
   state.countMap[counterKey] = count;
   countEl.textContent = `${count}回`;
+  refreshCurrentSetBadge();
 }
 
 export function renderList() {
