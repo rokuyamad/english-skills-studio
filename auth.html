@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#060612">
+<meta name="theme-color" content="#0f1324">
 <meta name="description" content="メールOTPログイン">
 <title>Auth | English Skills Studio</title>
 <link rel="manifest" href="manifest.json">
@@ -28,6 +28,7 @@
       aria-expanded="false"
     >☰</button>
   </header>
+
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
@@ -38,35 +39,49 @@
   </aside>
 
   <main class="auth-main">
-    <section class="auth-card">
-      <h1 class="auth-title">Supabase Email OTP</h1>
-      <p class="auth-description">
-        メールアドレスへ6桁コードを送信し、PWA内で入力してログインします。
-      </p>
+    <section class="auth-hero" aria-hidden="true">
+      <p class="hero-kicker">Cinematic Concierge</p>
+      <h1 class="hero-title">Sign In to Your Practice Space</h1>
+      <p class="hero-copy">メール認証だけで、進捗と学習環境を安全に同期します。</p>
+      <div class="hero-points">
+        <span>1. メール入力</span>
+        <span>2. 6桁コード確認</span>
+        <span>3. 即時ログイン</span>
+      </div>
+    </section>
+
+    <section class="auth-card" aria-live="polite">
+      <div class="card-head">
+        <p class="card-kicker">Email OTP Login</p>
+        <h2 class="auth-title">本人確認</h2>
+        <p class="auth-description">登録済みメールアドレス宛に6桁コードを送信します。</p>
+      </div>
 
       <p id="statusText" class="status-text">認証状態を確認中...</p>
 
-      <div id="signedOutBlock">
+      <div id="signedOutBlock" class="auth-state">
         <form id="requestOtpForm" class="auth-form">
           <label class="field-label" for="emailInput">Email</label>
           <input class="email-input" id="emailInput" type="email" autocomplete="email" placeholder="you@example.com" required>
           <button class="send-btn" type="submit">認証コードを送信</button>
         </form>
+
         <div id="otpBlock" class="hidden">
           <form id="verifyOtpForm" class="auth-form otp-block">
             <label class="field-label" for="otpInput">6桁コード</label>
             <input class="email-input otp-input" id="otpInput" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required>
-            <button class="send-btn" type="submit">コードを検証してログイン</button>
+            <button class="send-btn verify-btn" type="submit">コードを検証してログイン</button>
           </form>
         </div>
       </div>
 
-      <div id="signedInBlock" class="hidden">
+      <div id="signedInBlock" class="auth-state hidden">
         <p class="signed-in-text">ログイン中: <span id="currentUser">-</span></p>
+        <p class="redirect-note">認証済みのため、学習ページへ移動します。</p>
         <div class="signed-in-actions">
-          <a class="mode-link" href="index.html">English Skills Studioへ</a>
-          <a class="mode-link" href="slash.html">Slash Readingへ</a>
-          <a class="mode-link" href="shadowing.html">Shadowingへ</a>
+          <a class="mode-link primary-link" href="index.html">今すぐ開始</a>
+          <a class="mode-link" href="slash.html">Slash Reading</a>
+          <a class="mode-link" href="shadowing.html">Shadowing</a>
           <button class="logout-btn" id="logoutBtn" type="button">ログアウト</button>
         </div>
       </div>

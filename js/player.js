@@ -59,9 +59,20 @@ export function next() {
 
 export function toggleRepeat() {
   state.repeat = !state.repeat;
+  syncRepeatButtonLabel();
+}
+
+function isPlayerCompact() {
+  const playerBar = document.querySelector('.player-bar');
+  return Boolean(playerBar && playerBar.classList.contains('compact'));
+}
+
+export function syncRepeatButtonLabel() {
   const btn = document.getElementById('repeatBtn');
-  btn.textContent = state.repeat ? '↺ ON' : '↺ OFF';
+  if (!btn) return;
+  btn.textContent = isPlayerCompact() ? '↺' : (state.repeat ? '↺ ON' : '↺ OFF');
   btn.classList.toggle('on', state.repeat);
+  btn.setAttribute('aria-pressed', state.repeat ? 'true' : 'false');
 }
 
 export function setSpeed(s, el) {

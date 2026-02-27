@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#060612">
+<meta name="theme-color" content="#101323">
 <meta name="description" content="英語シャドーイング練習動画セット">
 <title>Shadowing</title>
 <link rel="manifest" href="manifest.json">
@@ -33,6 +33,7 @@
       aria-expanded="false"
     >☰</button>
   </header>
+
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
@@ -49,15 +50,20 @@
 
   <main class="main layout">
     <aside class="set-panel">
-      <div class="set-panel-title">セット一覧</div>
+      <div class="set-panel-title">SHADOWING SETS</div>
       <div class="set-list" id="setList"></div>
     </aside>
 
     <section class="content-panel">
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="サイドバーを開閉">‹</button>
       <div class="content-header">
-        <div class="track-name" id="setName">Shadowing</div>
-        <div class="meta-count" id="metaCount">—</div>
+        <p class="session-eyebrow">VOICE SYNC</p>
+        <h1 class="track-name" id="setName">Shadowing</h1>
+        <p class="session-copy">速度ではなく同調を狙い、耳と口のラグを減らす。</p>
+        <div class="meta-row">
+          <span class="meta-count" id="metaCount">—</span>
+          <span class="meta-note">Video Practice</span>
+        </div>
       </div>
       <div class="shadowing-list" id="shadowingList"></div>
     </section>

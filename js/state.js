@@ -3,7 +3,7 @@ export const state = {
   current: 0,
   audio: null,
   trackIdx: 0,
-  repeat: false,
+  repeat: true,
   speed: 1.0,
   playing: false,
   revealedState: {},

@@ -22,9 +22,12 @@ const logoutBtn = document.getElementById('logoutBtn');
 
 let pendingEmail = '';
 
-function setStatus(msg, isError = false) {
+function setStatus(msg, type = 'default') {
   statusEl.textContent = msg;
-  statusEl.classList.toggle('error', isError);
+  statusEl.classList.remove('error', 'success', 'loading');
+  if (type === 'error') statusEl.classList.add('error');
+  if (type === 'success') statusEl.classList.add('success');
+  if (type === 'loading') statusEl.classList.add('loading');
 }
 
 function renderSignedIn(email) {
@@ -47,38 +50,41 @@ function ensureCustomValidationFlow() {
   verifyForm.setAttribute('novalidate', 'novalidate');
 }
 
-function tryRedirectToReturnTo() {
+function resolveRedirectTarget() {
   const returnTo = getReturnToParam();
-  if (!returnTo) return false;
-  // 外部URLへのオープンリダイレクトを避ける
-  if (!returnTo.startsWith('/')) return false;
-  window.location.href = returnTo;
+  if (returnTo && returnTo.startsWith('/')) return returnTo;
+  return 'index.html';
+}
+
+function redirectToLearningHome() {
+  const target = resolveRedirectTarget();
+  window.location.href = target;
   return true;
 }
 
 async function initialize() {
   if (!isSupabaseConfigured()) {
-    setStatus('Supabase未設定です。js/supabase-config.js を編集してください。', true);
+    setStatus('Supabase未設定です。js/supabase-config.js を編集してください。', 'error');
     renderSignedOut();
     return;
   }
 
   const authUrlError = readAuthUrlError();
-  if (authUrlError) setStatus(`認証エラー: ${authUrlError}`, true);
+  if (authUrlError) setStatus(`認証エラー: ${authUrlError}`, 'error');
 
   try {
     const user = await getSessionUser();
     if (user) {
       renderSignedIn(user.email);
-      setStatus('ログイン済みです。');
-      tryRedirectToReturnTo();
+      setStatus('認証済みです。学習ページへ移動します。', 'success');
+      redirectToLearningHome();
     } else {
       renderSignedOut();
       setStatus('メールアドレスに6桁コードを送信してログインしてください。');
     }
   } catch (e) {
     console.error(e);
-    setStatus(`認証状態の取得に失敗しました: ${e.message}`, true);
+    setStatus(`認証状態の取得に失敗しました: ${e.message}`, 'error');
     renderSignedOut();
   }
 }
@@ -88,23 +94,23 @@ requestForm.addEventListener('submit', async (e) => {
   if (!isSupabaseConfigured()) return;
   const email = emailInput.value.trim();
   if (!email) {
-    setStatus('メールアドレスを入力してください。', true);
+    setStatus('メールアドレスを入力してください。', 'error');
     return;
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    setStatus('メールアドレスの形式が正しくありません。', true);
+    setStatus('メールアドレスの形式が正しくありません。', 'error');
     return;
   }
 
-  setStatus('認証コードを送信中...');
+  setStatus('認証コードを送信中...', 'loading');
   try {
     await sendEmailOtp(email);
     pendingEmail = email;
     otpBlock.classList.remove('hidden');
-    setStatus('送信しました。メールの6桁コードを入力してください。');
+    setStatus('送信しました。メールの6桁コードを入力してください。', 'success');
   } catch (err) {
     console.error(err);
-    setStatus(`送信失敗: ${err.message}`, true);
+    setStatus(`送信失敗: ${err.message}`, 'error');
   }
 });
 
@@ -114,31 +120,31 @@ verifyForm.addEventListener('submit', async (e) => {
   const token = otpInput.value.trim();
   const email = pendingEmail || emailInput.value.trim();
   if (!email) {
-    setStatus('先にメールアドレスを入力してください。', true);
+    setStatus('先にメールアドレスを入力してください。', 'error');
     return;
   }
   if (!/^\d{6}$/.test(token)) {
-    setStatus('6桁の数字コードを入力してください。', true);
+    setStatus('6桁の数字コードを入力してください。', 'error');
     return;
   }
 
-  setStatus('コードを検証中...');
+  setStatus('コードを検証中...', 'loading');
   try {
     await verifyEmailOtp(email, token);
     const user = await getSessionUser();
     renderSignedIn(user?.email || email);
-    setStatus('ログインしました。');
-    tryRedirectToReturnTo();
+    setStatus('ログインしました。学習ページへ移動します。', 'success');
+    redirectToLearningHome();
   } catch (err) {
     console.error(err);
-    setStatus(`認証失敗: ${err.message}`, true);
+    setStatus(`認証失敗: ${err.message}`, 'error');
   }
 });
 
 otpInput.addEventListener('input', () => {
   if (otpInput.value.length > 6) otpInput.value = otpInput.value.slice(0, 6);
   if (otpInput.value && !/^\d+$/.test(otpInput.value)) {
-    setStatus('認証コードは数字のみ入力できます。', true);
+    setStatus('認証コードは数字のみ入力できます。', 'error');
   }
 });
 
@@ -149,7 +155,7 @@ logoutBtn.addEventListener('click', async () => {
     setStatus('ログアウトしました。');
   } catch (e) {
     console.error(e);
-    setStatus(`ログアウト失敗: ${e.message}`, true);
+    setStatus(`ログアウト失敗: ${e.message}`, 'error');
   }
 });
 

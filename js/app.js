@@ -8,6 +8,41 @@ import { getOrder, initProgressDb, saveOrder } from './progress-db.js';
 
 let detachTrackDnD = null;
 
+function initPlayerCompactToggle() {
+  const playerBar = document.querySelector('.player-bar');
+  const toggleBtn = document.getElementById('playerCompactToggle');
+  if (!playerBar || !toggleBtn) return;
+
+  const mediaQuery = window.matchMedia('(max-width: 640px)');
+  const storageKey = 'playerCompact';
+  let preferredCompact = localStorage.getItem(storageKey) === '1';
+
+  const applyCompactState = () => {
+    const isCompact = mediaQuery.matches && preferredCompact;
+    playerBar.classList.toggle('compact', isCompact);
+    document.body.classList.toggle('player-compact', isCompact);
+    toggleBtn.setAttribute('aria-expanded', String(!isCompact));
+    toggleBtn.setAttribute('aria-label', isCompact ? 'プレイヤーを展開' : 'プレイヤーをコンパクト表示');
+    toggleBtn.textContent = isCompact ? '⌃' : '⌄';
+    player.syncRepeatButtonLabel();
+  };
+
+  toggleBtn.addEventListener('click', () => {
+    preferredCompact = !preferredCompact;
+    localStorage.setItem(storageKey, preferredCompact ? '1' : '0');
+    applyCompactState();
+  });
+
+  const onMediaChange = () => applyCompactState();
+  if (typeof mediaQuery.addEventListener === 'function') {
+    mediaQuery.addEventListener('change', onMediaChange);
+  } else if (typeof mediaQuery.addListener === 'function') {
+    mediaQuery.addListener(onMediaChange);
+  }
+
+  applyCompactState();
+}
+
 function applyTrackOrder(data, revealedState, orderedIds) {
   if (!Array.isArray(orderedIds) || !orderedIds.length) {
     return { data, revealedState };
@@ -96,6 +131,7 @@ async function bootstrap() {
   ui.applyMobileLayout();
   window.addEventListener('resize', ui.applyMobileLayout);
   initMobileTopbar();
+  initPlayerCompactToggle();
   setupTopbarAuth();
 
   // サイドバー折りたたみトグル
@@ -118,6 +154,7 @@ async function bootstrap() {
   document.getElementById('prevBtn').addEventListener('click', player.prev);
   document.getElementById('nextBtn').addEventListener('click', player.next);
   document.getElementById('repeatBtn').addEventListener('click', player.toggleRepeat);
+  player.syncRepeatButtonLabel();
 
   // 速度ボタン
   document.querySelectorAll('.spd-btn').forEach(btn => {
