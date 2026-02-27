@@ -905,13 +905,6 @@ body.menu-open {
 @media (max-width: 640px) {
   .topbar {
     padding: 12px;
-    gap: 10px;
-  }
-
-  .topbar-title {
-    font-size: 14px;
-    min-width: 0;
-    flex: 1;
   }
 
   .topbar-nav,
@@ -961,8 +954,7 @@ body.menu-open {
   }
 
   .content-header {
-    padding: 10px 12px 10px;
-    gap: 5px;
+    padding: 18px 16px 16px;
   }
 
   .session-eyebrow {
@@ -1002,9 +994,10 @@ body.menu-open {
   }
 
   .sentence-item {
-    grid-template-columns: auto 1fr;
-    gap: 10px;
-    padding: 12px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    align-items: center;
+    padding: 10px 12px;
     margin: 0 4px 8px;
   }
 
@@ -1012,14 +1005,41 @@ body.menu-open {
     margin-bottom: 34px;
   }
 
+  .sent-num {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+  }
+
+  .sent-text {
+    grid-column: 2 / 4;
+    grid-row: 1;
+  }
+
   .count-wrap {
-    grid-column: 2;
-    justify-content: flex-start;
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+    gap: 6px;
   }
 
   .script-btn {
     grid-column: 2;
+    grid-row: 2;
     width: fit-content;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .count-chip {
+    min-width: 44px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .count-btn {
+    padding: 6px 9px;
+    font-size: 10px;
   }
 
   .player-left {
