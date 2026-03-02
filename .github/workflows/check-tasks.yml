@@ -1,0 +1,16 @@
+name: Check Tasks Format
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify TASKS.md format
+        run: ./scripts/check-tasks.sh

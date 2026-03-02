@@ -1,4 +1,4 @@
-const CACHE = 'english-skills-studio-v8';
+const CACHE = 'english-skills-studio-v9';
 
 const SHELL = [
   './',
@@ -30,6 +30,7 @@ const SHELL = [
   './js/study-settings.js',
   './js/study-sync.js',
   './js/settings-app.js',
+  './js/settings-modal.js',
   './js/slash-app.js',
   './js/slash-state.js',
   './js/slash-ui.js',

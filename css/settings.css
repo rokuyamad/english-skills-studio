@@ -24,6 +24,22 @@ body {
   padding: 18px;
 }
 
+.settings-notice {
+  border-color: rgba(108, 229, 255, 0.4);
+  background: rgba(108, 229, 255, 0.1);
+}
+
+.settings-notice-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #d7f8ff;
+}
+
+.settings-notice a {
+  color: #d7f8ff;
+}
+
 .settings-title {
   font-size: 24px;
   margin-bottom: 8px;

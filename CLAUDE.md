@@ -186,3 +186,15 @@ PWAの要点:
 - 音声（`/audio/`）は Cache First でオフライン再生を補助
 
 Git LFS は使用していない（GitHub PagesがLFSファイルを配信できないため）。音声ファイルは通常のgitオブジェクトとして管理。
+
+## 開発タスク管理ルール
+
+- 開発タスクはリポジトリ直下の `TASKS.md` で管理する
+- セクションは `Inbox` / `Now` / `Next` / `Later` / `Done` を維持する
+- タスク行フォーマット:
+  - 未完了: `- [ ] T-YYYYMMDD-XXX | タイトル | p1|p2|p3 | owner:@<github-id>|me | issue:#123|none | created:YYYY-MM-DD`
+  - 完了: `- [x] T-YYYYMMDD-XXX | タイトル | p1|p2|p3 | owner:@<github-id>|me | issue:#123|none | created:YYYY-MM-DD | done:YYYY-MM-DD`
+- 思いつきは `Inbox` に `issue:none` で追加し、着手時にIssue化して `Now` に移動する
+- `Now` の同時進行は最大5件
+- 完了タスクは `Done` に移し、`done:` 日付を付ける
+- 形式チェックは `scripts/check-tasks.sh` を使う（CIでも実行）

@@ -6,8 +6,10 @@ import { getEffectiveStudySettings, subscribeSettingsChange } from './study-sett
 import { flushStudyEvents } from './study-sync.js';
 import { computeDashboardSnapshot } from './study-metrics.js';
 import { renderDashboard } from './dashboard-ui.js';
+import { MODAL_SETTINGS_IDS, mountSettingsForm } from './settings-modal.js';
 
 let settingsUnsubscribe = null;
+let settingsModalController = null;
 
 async function getCountTotalsByPage() {
   const [imitation, slash, shadowing] = await Promise.all([
@@ -107,6 +109,41 @@ function setupDashboardAutoRefresh() {
   });
 }
 
+async function initSettingsModal() {
+  const dialog = document.getElementById('settingsModal');
+  const openBtn = document.getElementById('openSettingsModalBtn');
+  const closeBtn = document.getElementById('closeSettingsModalBtn');
+  if (!dialog || !openBtn || !closeBtn) return;
+
+  settingsModalController = await mountSettingsForm({
+    scope: dialog,
+    ids: MODAL_SETTINGS_IDS
+  });
+
+  const openModal = async () => {
+    await settingsModalController.reload();
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute('open', 'open');
+    }
+  };
+
+  const closeModal = () => {
+    if (typeof dialog.close === 'function') {
+      dialog.close();
+    } else {
+      dialog.removeAttribute('open');
+    }
+  };
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) closeModal();
+  });
+}
+
 async function bootstrap() {
   const isAuthenticated = await requireAuthOrRedirect();
   if (!isAuthenticated) return;
@@ -117,6 +154,7 @@ async function bootstrap() {
   await initProgressDb();
   await flushStudyEvents().catch((e) => console.error(e));
 
+  await initSettingsModal();
   setupDashboardAutoRefresh();
   await renderDashboardFromData();
 }

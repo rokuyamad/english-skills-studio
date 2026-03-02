@@ -13,13 +13,12 @@
 <body class="dashboard-page">
 <div class="device">
   <header class="topbar">
-    <div class="topbar-title">English Skills Hub</div>
+    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Hub</a>
     <nav class="topbar-nav" aria-label="Primary">
       <a class="nav-link active" href="index.html">Dashboard</a>
       <a class="nav-link" href="imitation.html">Imitation Player</a>
       <a class="nav-link" href="slash.html">Slash Reading</a>
       <a class="nav-link" href="shadowing.html">Shadowing</a>
-      <a class="nav-link" href="settings.html">Settings</a>
     </nav>
     <div class="topbar-actions">
       <span class="auth-user" id="authUser">認証状態を確認中...</span>
@@ -43,7 +42,6 @@
       <a class="mobile-nav-link" href="imitation.html">Imitation Player</a>
       <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
       <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
-      <a class="mobile-nav-link" href="settings.html">Settings</a>
     </nav>
     <div class="mobile-auth-area">
       <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
@@ -63,7 +61,7 @@
       <section class="dashboard-panel" aria-label="学習ダッシュボード">
         <div class="dashboard-head">
           <h2>Learning Dashboard</h2>
-          <a class="dashboard-settings-link" href="settings.html">設定</a>
+          <button class="dashboard-settings-link" id="openSettingsModalBtn" type="button">設定</button>
         </div>
 
         <div class="dashboard-kpis">
@@ -117,6 +115,70 @@
 
         <div class="achievement-list" id="achievementList"></div>
       </section>
+
+      <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsModalTitle">
+        <form class="settings-modal-form" method="dialog">
+          <header class="settings-modal-head">
+            <h2 class="settings-modal-title" id="settingsModalTitle">学習メトリクス設定</h2>
+            <button class="settings-modal-close" id="closeSettingsModalBtn" type="button" aria-label="設定モーダルを閉じる">✕</button>
+          </header>
+          <p class="settings-modal-copy">目標時間、換算秒、レベル計算をダッシュボード上で調整できます。</p>
+
+          <div class="settings-grid">
+            <div class="field">
+              <label for="modalGoalHours">目標時間 (hours)</label>
+              <input id="modalGoalHours" type="number" min="10" max="5000">
+            </div>
+
+            <div class="field">
+              <label for="modalStreakMinutes">Streak判定の1日最低学習分</label>
+              <input id="modalStreakMinutes" type="number" min="1" max="180">
+            </div>
+
+            <div class="field">
+              <label for="modalSecImitation">Imitation: +1秒換算</label>
+              <input id="modalSecImitation" type="number" min="10" max="900">
+            </div>
+
+            <div class="field">
+              <label for="modalSecSlash">Slash: +1秒換算</label>
+              <input id="modalSecSlash" type="number" min="10" max="900">
+            </div>
+
+            <div class="field">
+              <label for="modalSecShadowing">Shadowing: +1秒換算</label>
+              <input id="modalSecShadowing" type="number" min="10" max="900">
+            </div>
+
+            <div class="field">
+              <label for="modalXpPerMinute">XP / minute</label>
+              <input id="modalXpPerMinute" type="number" min="1" max="100">
+            </div>
+
+            <div class="field">
+              <label for="modalLevelCurveFactor">Level係数</label>
+              <input id="modalLevelCurveFactor" type="number" min="10" max="1000">
+            </div>
+
+            <div class="field">
+              <label for="modalTimezone">Timezone</label>
+              <input id="modalTimezone" type="text" placeholder="Asia/Tokyo">
+            </div>
+
+            <div class="field field-span">
+              <label for="modalMilestones">マイルストーン (hours, comma separated)</label>
+              <input id="modalMilestones" type="text" placeholder="100,300,600,1000">
+              <p class="field-hint">昇順で最大8件。例: 50,100,250,500,1000</p>
+            </div>
+          </div>
+
+          <div class="settings-modal-actions">
+            <button class="settings-btn" id="modalResetBtn" type="button">デフォルトに戻す</button>
+            <button class="settings-btn primary" id="modalSaveBtn" type="button">保存</button>
+          </div>
+          <p class="settings-status" id="modalSettingsStatus"></p>
+        </form>
+      </dialog>
     </section>
   </main>
 </div>

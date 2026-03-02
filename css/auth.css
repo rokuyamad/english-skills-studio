@@ -85,6 +85,25 @@ body::after {
   letter-spacing: 0.02em;
 }
 
+.topbar-home-link {
+  text-decoration: none;
+}
+
+.topbar-home-link:visited {
+  color: inherit;
+}
+
+.topbar-home-link:hover,
+.topbar-home-link:focus-visible {
+  opacity: 0.9;
+}
+
+.topbar-home-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .topbar-actions {
   display: flex;
   gap: 8px;
