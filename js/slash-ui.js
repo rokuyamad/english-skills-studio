@@ -1,6 +1,8 @@
 import { state } from './slash-state.js';
 import { getCount, incrementCount, saveOrder } from './progress-db.js';
 import { enableSidebarDnD } from './sidebar-sortable.js';
+import { getEffectiveStudySettings } from './study-settings.js';
+import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 
 let detachSetDnD = null;
 
@@ -228,6 +230,13 @@ export function renderList() {
       const next = await incrementCount(key);
       state.countMap[key] = next;
       countChip.textContent = `${next}回`;
+      const settings = await getEffectiveStudySettings();
+      const event = buildStudyEvent({
+        pageKey: 'slash',
+        contentKey: key,
+        settings
+      });
+      await recordAndMaybeFlush(event);
     });
 
     countWrap.append(countChip, countBtn);

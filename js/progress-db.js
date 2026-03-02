@@ -1,6 +1,7 @@
 const DB_NAME = 'english-skills-studio';
-const DB_VERSION = 1;
-const STORE_NAME = 'kv';
+const DB_VERSION = 2;
+const KV_STORE = 'kv';
+const EVENTS_STORE = 'events';
 
 let dbPromise = null;
 let warned = false;
@@ -26,8 +27,13 @@ function openDb() {
 
     req.onupgradeneeded = () => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+      if (!db.objectStoreNames.contains(KV_STORE)) {
+        db.createObjectStore(KV_STORE, { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains(EVENTS_STORE)) {
+        const events = db.createObjectStore(EVENTS_STORE, { keyPath: 'id' });
+        events.createIndex('bySyncStatus', 'syncStatus', { unique: false });
+        events.createIndex('byOccurredAt', 'occurredAt', { unique: false });
       }
     };
 
@@ -38,13 +44,13 @@ function openDb() {
   return dbPromise;
 }
 
-function runTransaction(mode, job) {
+function runTransaction(storeName, mode, job) {
   return openDb().then(
     (db) =>
       new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, mode);
-        const store = tx.objectStore(STORE_NAME);
-        job(store, resolve, reject);
+        const tx = db.transaction(storeName, mode);
+        const store = tx.objectStore(storeName);
+        job(store, resolve, reject, tx);
       })
   );
 }
@@ -57,6 +63,10 @@ function countStorageKey(counterKey) {
   return `count:${counterKey}`;
 }
 
+function kvStorageKey(key) {
+  return `kv:${key}`;
+}
+
 export async function initProgressDb() {
   try {
     await openDb();
@@ -67,7 +77,7 @@ export async function initProgressDb() {
 
 export async function saveOrder(pageKey, orderedIds) {
   try {
-    await runTransaction('readwrite', (store, resolve, reject) => {
+    await runTransaction(KV_STORE, 'readwrite', (store, resolve, reject) => {
       const req = store.put({
         key: orderStorageKey(pageKey),
         value: Array.isArray(orderedIds) ? orderedIds : [],
@@ -83,7 +93,7 @@ export async function saveOrder(pageKey, orderedIds) {
 
 export async function getOrder(pageKey) {
   try {
-    return await runTransaction('readonly', (store, resolve, reject) => {
+    return await runTransaction(KV_STORE, 'readonly', (store, resolve, reject) => {
       const req = store.get(orderStorageKey(pageKey));
       req.onsuccess = () => {
         const value = req.result?.value;
@@ -99,7 +109,7 @@ export async function getOrder(pageKey) {
 
 export async function getCount(counterKey) {
   try {
-    return await runTransaction('readonly', (store, resolve, reject) => {
+    return await runTransaction(KV_STORE, 'readonly', (store, resolve, reject) => {
       const req = store.get(countStorageKey(counterKey));
       req.onsuccess = () => {
         const count = Number(req.result?.value || 0);
@@ -116,7 +126,7 @@ export async function getCount(counterKey) {
 export async function incrementCount(counterKey) {
   const storageKey = countStorageKey(counterKey);
   try {
-    return await runTransaction('readwrite', (store, resolve, reject) => {
+    return await runTransaction(KV_STORE, 'readwrite', (store, resolve, reject) => {
       const getReq = store.get(storageKey);
       getReq.onsuccess = () => {
         const current = Number(getReq.result?.value || 0);
@@ -137,7 +147,7 @@ export async function getCountsByPrefix(prefix) {
   const result = {};
   const needle = countStorageKey(prefix);
   try {
-    return await runTransaction('readonly', (store, resolve, reject) => {
+    return await runTransaction(KV_STORE, 'readonly', (store, resolve, reject) => {
       const req = store.openCursor();
       req.onsuccess = () => {
         const cursor = req.result;
@@ -157,5 +167,125 @@ export async function getCountsByPrefix(prefix) {
   } catch (error) {
     warn('getCountsByPrefix failed', error);
     return {};
+  }
+}
+
+export async function getKv(key, defaultValue = null) {
+  try {
+    return await runTransaction(KV_STORE, 'readonly', (store, resolve, reject) => {
+      const req = store.get(kvStorageKey(key));
+      req.onsuccess = () => {
+        const value = req.result?.value;
+        resolve(value === undefined ? defaultValue : value);
+      };
+      req.onerror = () => reject(req.error || new Error('Failed to load kv.'));
+    });
+  } catch (error) {
+    warn('getKv failed', error);
+    return defaultValue;
+  }
+}
+
+export async function setKv(key, value) {
+  try {
+    await runTransaction(KV_STORE, 'readwrite', (store, resolve, reject) => {
+      const req = store.put({ key: kvStorageKey(key), value, updatedAt: Date.now() });
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error || new Error('Failed to save kv.'));
+    });
+  } catch (error) {
+    warn('setKv failed', error);
+  }
+}
+
+export async function recordStudyEvent(event) {
+  if (!event?.id) return;
+  try {
+    await runTransaction(EVENTS_STORE, 'readwrite', (store, resolve, reject) => {
+      const req = store.put({
+        ...event,
+        syncStatus: event.syncStatus || 'pending',
+        updatedAt: Date.now()
+      });
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error || new Error('Failed to record study event.'));
+    });
+  } catch (error) {
+    warn('recordStudyEvent failed', error);
+  }
+}
+
+export async function listStudyEvents() {
+  const result = [];
+  try {
+    return await runTransaction(EVENTS_STORE, 'readonly', (store, resolve, reject) => {
+      const req = store.openCursor();
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (!cursor) {
+          resolve(result);
+          return;
+        }
+        result.push(cursor.value);
+        cursor.continue();
+      };
+      req.onerror = () => reject(req.error || new Error('Failed to list study events.'));
+    });
+  } catch (error) {
+    warn('listStudyEvents failed', error);
+    return [];
+  }
+}
+
+export async function listPendingStudyEvents(limit = 200) {
+  const result = [];
+  try {
+    return await runTransaction(EVENTS_STORE, 'readonly', (store, resolve, reject) => {
+      const index = store.index('bySyncStatus');
+      const req = index.openCursor(IDBKeyRange.only('pending'));
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (!cursor || result.length >= limit) {
+          resolve(result);
+          return;
+        }
+        result.push(cursor.value);
+        cursor.continue();
+      };
+      req.onerror = () => reject(req.error || new Error('Failed to list pending study events.'));
+    });
+  } catch (error) {
+    warn('listPendingStudyEvents failed', error);
+    return [];
+  }
+}
+
+export async function markStudyEventsSynced(ids) {
+  if (!Array.isArray(ids) || !ids.length) return;
+  try {
+    await runTransaction(EVENTS_STORE, 'readwrite', (store, resolve, reject) => {
+      let completed = 0;
+      const done = () => {
+        completed += 1;
+        if (completed >= ids.length) resolve();
+      };
+
+      ids.forEach((id) => {
+        const getReq = store.get(id);
+        getReq.onsuccess = () => {
+          const row = getReq.result;
+          if (!row) {
+            done();
+            return;
+          }
+          const putReq = store.put({ ...row, syncStatus: 'synced', syncedAt: new Date().toISOString(), updatedAt: Date.now() });
+          putReq.onsuccess = () => done();
+          putReq.onerror = () => reject(putReq.error || new Error('Failed to mark synced event.'));
+        };
+        getReq.onerror = () => reject(getReq.error || new Error('Failed to load event while syncing.'));
+      });
+    });
+  } catch (error) {
+    warn('markStudyEventsSynced failed', error);
   }
 }

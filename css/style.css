@@ -881,6 +881,136 @@ body.menu-open {
   outline-offset: 2px;
 }
 
+.dashboard-panel {
+  margin: 0 14px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-2);
+  background: rgba(21, 30, 53, 0.72);
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-head h2 {
+  font-size: 16px;
+}
+
+.dashboard-settings-link {
+  color: var(--text-1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.dashboard-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kpi-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.kpi-label {
+  color: var(--text-2);
+  font-size: 11px;
+}
+
+.kpi-value {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.kpi-sub {
+  font-size: 11px;
+  color: var(--text-1);
+}
+
+.goal-progress-shell {
+  display: grid;
+  gap: 8px;
+}
+
+.goal-progress-rail {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.goal-progress-rail span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6ce5ff, #ffcf7a);
+}
+
+.goal-progress-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: var(--text-1);
+  font-size: 12px;
+}
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.chart-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 10px;
+  min-height: 220px;
+  display: grid;
+  gap: 10px;
+}
+
+.chart-card h3 {
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.chart-canvas-wrap {
+  position: relative;
+  min-height: 168px;
+}
+
+.achievement-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.achievement-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text-2);
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.achievement-chip.unlocked {
+  color: #1f2435;
+  border-color: rgba(255, 214, 153, 0.6);
+  background: linear-gradient(130deg, #ffd699, #ffa38a);
+}
+
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 250px 1fr;
@@ -985,6 +1115,19 @@ body.menu-open {
   .progress-meta {
     font-size: 11px;
     gap: 6px;
+  }
+
+  .dashboard-panel {
+    margin: 0 8px 10px;
+    padding: 10px;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-charts {
+    grid-template-columns: 1fr;
   }
 
   .sentence-list {

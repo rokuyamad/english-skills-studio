@@ -3,6 +3,7 @@ import { selectSet } from './shadowing-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { getOrder, initProgressDb } from './progress-db.js';
+import { flushStudyEvents } from './study-sync.js';
 
 function normalizeSets(raw) {
   if (Array.isArray(raw)) {
@@ -68,6 +69,7 @@ async function bootstrap() {
   setupTopbarAuth();
   initSidebarToggle();
   await initProgressDb();
+  await flushStudyEvents().catch((e) => console.error(e));
 
   try {
     const response = await fetch('data/shadowing-data.json');

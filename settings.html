@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101323">
+<meta name="description" content="学習ダッシュボード設定">
+<title>Settings | English Skills Studio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+<div class="device">
+  <header class="topbar">
+    <div class="topbar-title">English Skills Hub</div>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a class="nav-link" href="index.html">Imitation Player</a>
+      <a class="nav-link" href="slash.html">Slash Reading</a>
+      <a class="nav-link" href="shadowing.html">Shadowing</a>
+      <a class="nav-link active" href="settings.html">Settings</a>
+    </nav>
+    <div class="topbar-actions">
+      <span class="auth-user" id="authUser">認証状態を確認中...</span>
+      <a class="auth-link" id="authLink" href="auth.html">ログイン</a>
+      <button class="auth-btn hidden" id="logoutBtn" type="button">ログアウト</button>
+    </div>
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="メニューを開く"
+      aria-controls="mobileDrawer"
+      aria-expanded="false"
+    >☰</button>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
+    <nav class="mobile-nav" aria-label="Mobile Primary">
+      <a class="mobile-nav-link" href="index.html">Imitation Player</a>
+      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
+      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
+      <a class="mobile-nav-link active" href="settings.html">Settings</a>
+    </nav>
+    <div class="mobile-auth-area">
+      <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
+      <a class="mobile-auth-link" id="mobileAuthLink" href="auth.html">ログイン</a>
+      <button class="mobile-auth-btn hidden" id="mobileLogoutBtn" type="button">ログアウト</button>
+    </div>
+  </aside>
+
+  <main class="settings-main">
+    <section class="settings-card">
+      <h1 class="settings-title">学習メトリクス設定</h1>
+      <p class="settings-copy">目標時間、換算秒、レベル計算を自分の学習スタイルに合わせて調整できます。</p>
+    </section>
+
+    <section class="settings-card">
+      <div class="settings-grid">
+        <div class="field">
+          <label for="goalHours">目標時間 (hours)</label>
+          <input id="goalHours" type="number" min="10" max="5000">
+        </div>
+
+        <div class="field">
+          <label for="streakMinutes">Streak判定の1日最低学習分</label>
+          <input id="streakMinutes" type="number" min="1" max="180">
+        </div>
+
+        <div class="field">
+          <label for="secImitation">Imitation: +1秒換算</label>
+          <input id="secImitation" type="number" min="10" max="900">
+        </div>
+
+        <div class="field">
+          <label for="secSlash">Slash: +1秒換算</label>
+          <input id="secSlash" type="number" min="10" max="900">
+        </div>
+
+        <div class="field">
+          <label for="secShadowing">Shadowing: +1秒換算</label>
+          <input id="secShadowing" type="number" min="10" max="900">
+        </div>
+
+        <div class="field">
+          <label for="xpPerMinute">XP / minute</label>
+          <input id="xpPerMinute" type="number" min="1" max="100">
+        </div>
+
+        <div class="field">
+          <label for="levelCurveFactor">Level係数</label>
+          <input id="levelCurveFactor" type="number" min="10" max="1000">
+        </div>
+
+        <div class="field">
+          <label for="timezone">Timezone</label>
+          <input id="timezone" type="text" placeholder="Asia/Tokyo">
+        </div>
+
+        <div class="field" style="grid-column: 1 / -1;">
+          <label for="milestones">マイルストーン (hours, comma separated)</label>
+          <input id="milestones" type="text" placeholder="100,300,600,1000">
+          <p class="field-hint">昇順で最大8件。例: 50,100,250,500,1000</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="settings-card">
+      <div class="settings-actions">
+        <button class="settings-btn" id="resetBtn" type="button">デフォルトに戻す</button>
+        <button class="settings-btn primary" id="saveBtn" type="button">保存</button>
+      </div>
+      <p class="settings-status" id="settingsStatus"></p>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="js/settings-app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

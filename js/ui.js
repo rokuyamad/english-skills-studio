@@ -1,5 +1,7 @@
 import { state } from './state.js';
 import { getCount, incrementCount } from './progress-db.js';
+import { getEffectiveStudySettings } from './study-settings.js';
+import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 
 let _loadAndPlay;
 const MASK_TEXT = '*****';
@@ -74,6 +76,14 @@ function createSentenceItem(track, seg, i) {
     const next = await incrementCount(key);
     state.countMap[key] = next;
     countEl.textContent = `${next}回`;
+
+    const settings = await getEffectiveStudySettings();
+    const event = buildStudyEvent({
+      pageKey: 'imitation',
+      contentKey: key,
+      settings
+    });
+    await recordAndMaybeFlush(event);
   };
 
   countWrap.append(countEl, countBtn);

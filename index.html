@@ -18,6 +18,7 @@
       <a class="nav-link active" href="index.html">Imitation Player</a>
       <a class="nav-link" href="slash.html">Slash Reading</a>
       <a class="nav-link" href="shadowing.html">Shadowing</a>
+      <a class="nav-link" href="settings.html">Settings</a>
     </nav>
     <div class="topbar-actions">
       <span class="auth-user" id="authUser">認証状態を確認中...</span>
@@ -40,6 +41,7 @@
       <a class="mobile-nav-link active" href="index.html">Imitation Player</a>
       <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
       <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
+      <a class="mobile-nav-link" href="settings.html">Settings</a>
     </nav>
     <div class="mobile-auth-area">
       <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
@@ -70,6 +72,64 @@
           </div>
         </div>
       </div>
+
+      <section class="dashboard-panel" aria-label="学習ダッシュボード">
+        <div class="dashboard-head">
+          <h2>Learning Dashboard</h2>
+          <a class="dashboard-settings-link" href="settings.html">設定</a>
+        </div>
+
+        <div class="dashboard-kpis">
+          <article class="kpi-card">
+            <p class="kpi-label">Total</p>
+            <p class="kpi-value" id="kpiTotalHours">0.0h</p>
+          </article>
+          <article class="kpi-card">
+            <p class="kpi-label">Goal</p>
+            <p class="kpi-value" id="kpiGoalHours">1000h</p>
+          </article>
+          <article class="kpi-card">
+            <p class="kpi-label">Remaining</p>
+            <p class="kpi-value" id="kpiRemaining">0.0h</p>
+          </article>
+          <article class="kpi-card">
+            <p class="kpi-label">Streak</p>
+            <p class="kpi-value" id="kpiStreak">0 days</p>
+          </article>
+          <article class="kpi-card">
+            <p class="kpi-label">Level</p>
+            <p class="kpi-value" id="kpiLevel">Lv.1</p>
+            <p class="kpi-sub" id="kpiXp">0 XP</p>
+          </article>
+          <article class="kpi-card">
+            <p class="kpi-label">Next Milestone</p>
+            <p class="kpi-value" id="kpiNextMilestone">100h</p>
+          </article>
+        </div>
+
+        <div class="goal-progress-shell">
+          <div class="goal-progress-rail"><span id="goalProgressFill"></span></div>
+          <div class="goal-progress-meta">
+            <span id="kpiGoalProgress">0%</span>
+            <span>Imitation <strong id="kpiImitation">0.0h</strong></span>
+            <span>Slash <strong id="kpiSlash">0.0h</strong></span>
+            <span>Shadowing <strong id="kpiShadowing">0.0h</strong></span>
+          </div>
+        </div>
+
+        <div class="dashboard-charts">
+          <article class="chart-card">
+            <h3>Daily Minutes (30d)</h3>
+            <div class="chart-canvas-wrap"><canvas id="dailyMinutesChart"></canvas></div>
+          </article>
+          <article class="chart-card">
+            <h3>Content Ratio</h3>
+            <div class="chart-canvas-wrap"><canvas id="contentRatioChart"></canvas></div>
+          </article>
+        </div>
+
+        <div class="achievement-list" id="achievementList"></div>
+      </section>
 
       <div class="sentence-list" id="sentenceList"></div>
     </section>

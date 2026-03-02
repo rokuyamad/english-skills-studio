@@ -3,6 +3,7 @@ import { selectSet } from './slash-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { getOrder, initProgressDb } from './progress-db.js';
+import { flushStudyEvents } from './study-sync.js';
 
 function splitEnglishSentences(text = '') {
   const normalized = text.replace(/\s+/g, ' ').trim();
@@ -162,6 +163,7 @@ async function bootstrap() {
   setupTopbarAuth();
   initSidebarToggle();
   await initProgressDb();
+  await flushStudyEvents().catch((e) => console.error(e));
 
   const response = await fetch('data/slash-data.json');
   const data = await response.json();
