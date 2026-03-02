@@ -18,9 +18,21 @@
   ],
   "shortcuts": [
     {
-      "name": "English Skills Studio",
-      "short_name": "Studio",
+      "name": "Dashboard",
+      "short_name": "Dash",
       "url": "./index.html",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Imitation Player",
+      "short_name": "Imitation",
+      "url": "./imitation.html",
       "icons": [
         {
           "src": "icons/icon.svg",

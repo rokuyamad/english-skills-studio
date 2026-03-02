@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101323">
+<meta name="description" content="英語イミテーション練習プレイヤー">
+<title>Imitation Player | English Skills Studio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="device">
+  <header class="topbar">
+    <div class="topbar-title">English Skills Hub</div>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a class="nav-link" href="index.html">Dashboard</a>
+      <a class="nav-link active" href="imitation.html">Imitation Player</a>
+      <a class="nav-link" href="slash.html">Slash Reading</a>
+      <a class="nav-link" href="shadowing.html">Shadowing</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </nav>
+    <div class="topbar-actions">
+      <span class="auth-user" id="authUser">認証状態を確認中...</span>
+      <a class="auth-link" id="authLink" href="auth.html">ログイン</a>
+      <button class="auth-btn hidden" id="logoutBtn" type="button">ログアウト</button>
+    </div>
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="メニューを開く"
+      aria-controls="mobileDrawer"
+      aria-expanded="false"
+    >☰</button>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
+    <nav class="mobile-nav" aria-label="Mobile Primary">
+      <a class="mobile-nav-link" href="index.html">Dashboard</a>
+      <a class="mobile-nav-link active" href="imitation.html">Imitation Player</a>
+      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
+      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
+      <a class="mobile-nav-link" href="settings.html">Settings</a>
+    </nav>
+    <div class="mobile-auth-area">
+      <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
+      <a class="mobile-auth-link" id="mobileAuthLink" href="auth.html">ログイン</a>
+      <button class="mobile-auth-btn hidden" id="mobileLogoutBtn" type="button">ログアウト</button>
+    </div>
+  </aside>
+
+  <main class="main layout">
+    <aside class="track-panel">
+      <div class="track-panel-title">TRACK LIBRARY</div>
+      <div class="tracklist" id="trackTabs"></div>
+    </aside>
+
+    <section class="content-panel">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="サイドバーを開閉">‹</button>
+
+      <div class="content-header">
+        <p class="session-eyebrow">FOCUS SESSION</p>
+        <h1 class="track-name" id="trackName">—</h1>
+        <p class="session-copy">短い反復を積み上げて、耳と口の同期を育てる。</p>
+        <div class="progress-shell" aria-label="学習進行">
+          <div class="progress-rail"><span class="progress-fill" id="sessionProgress"></span></div>
+          <div class="progress-meta">
+            <span class="meta-count" id="metaCount">—</span>
+            <span class="meta-divider">•</span>
+            <span class="meta-note" id="progressNote">Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sentence-list" id="sentenceList"></div>
+    </section>
+  </main>
+
+  <div class="player-bar">
+    <button
+      class="player-compact-toggle"
+      id="playerCompactToggle"
+      type="button"
+      aria-controls="controls"
+      aria-expanded="true"
+      aria-label="プレイヤー表示を切り替える"
+    >⌄</button>
+
+    <div class="player-left">
+      <div class="vinyl" id="vinyl" aria-hidden="true">
+        <div class="vinyl-inner">Voice</div>
+        <div class="vinyl-dot"></div>
+      </div>
+      <div class="wave-row" id="waveRow" aria-hidden="true"></div>
+    </div>
+
+    <div class="player-center control-deck">
+      <p class="control-title">Playback Controls</p>
+      <div class="control-main">
+        <div class="time-display" id="timeDisplay">
+          <span class="time-current" id="timeEl">01</span>
+          <span class="time-sep">/</span>
+          <span id="totalTime">--</span>
+        </div>
+        <div class="controls" id="controls">
+          <span class="compact-counter" id="compactCounter">01/--</span>
+          <button class="ctrl-btn" id="prevBtn" aria-label="前へ">⏮</button>
+          <button class="play-btn" id="playBtn" aria-label="再生">▶</button>
+          <button class="ctrl-btn" id="nextBtn" aria-label="次へ">⏭</button>
+          <button class="repeat-btn on" id="repeatBtn" aria-label="リピート切替" aria-pressed="true">↺ ON</button>
+        </div>
+      </div>
+      <div class="control-sub">
+        <div class="options-row" aria-label="再生速度">
+          <span class="opt-label">Speed</span>
+          <button class="spd-btn" data-speed="0.75">0.75x</button>
+          <button class="spd-btn on" data-speed="1.0">1.0x</button>
+          <button class="spd-btn" data-speed="1.25">1.25x</button>
+          <button class="spd-btn" data-speed="1.5">1.5x</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/imitation-app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

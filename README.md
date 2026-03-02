@@ -1,8 +1,9 @@
 # English Skills Studio
 
-英語学習用の 3 ページ構成 Web アプリです。GitHub Pages 配信を前提にしています。
+英語学習用の 4 ページ構成 Web アプリです。GitHub Pages 配信を前提にしています。
 
-- `index.html`: 音声ベースの **English Skills Studio**
+- `index.html`: 学習状況の **Dashboard**
+- `imitation.html`: 音声ベースの **Imitation Player**
 - `slash.html`: テキストベースの **slash-reading**
 - `shadowing.html`: 動画ベースの **Shadowing**
 
@@ -10,7 +11,8 @@
 
 GitHub Pages ではリポジトリルートから配信されます。
 
-- `index.html`（または `/`）: English Skills Studio
+- `index.html`（または `/`）: Dashboard
+- `imitation.html`: Imitation Player
 - `slash.html`: slash-reading
 - `shadowing.html`: Shadowing
 
@@ -29,7 +31,8 @@ GitHub Pages ではリポジトリルートから配信されます。
 
 | Path | Role |
 |---|---|
-| `index.html` | English Skills Studio エントリ |
+| `index.html` | Dashboard エントリ |
+| `imitation.html` | Imitation Player エントリ |
 | `slash.html` | slash-reading エントリ |
 | `shadowing.html` | Shadowing エントリ |
 | `auth.html` | Supabase Email OTP ログインページ |
@@ -37,7 +40,8 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `css/slash.css` | slash-reading 用スタイル |
 | `css/shadowing.css` | Shadowing 用スタイル |
 | `css/auth.css` | 認証ページ用スタイル |
-| `js/app.js` | English Skills Studio 初期化・イベント配線 |
+| `js/app.js` | Dashboard 初期化・イベント配線 |
+| `js/imitation-app.js` | Imitation Player 初期化・イベント配線 |
 | `js/auth.js` | Supabase クライアント初期化と認証API |
 | `js/auth-page.js` | auth.html のイベント処理 |
 | `js/auth-ui.js` | topbar のログイン状態表示 |
@@ -89,6 +93,7 @@ uv run python3 -m http.server 8080
 アクセス先:
 
 - `http://localhost:8080/index.html`
+- `http://localhost:8080/imitation.html`
 - `http://localhost:8080/slash.html`
 - `http://localhost:8080/shadowing.html`
 
@@ -171,6 +176,27 @@ OPENAI_API_KEY=sk-... uv run python3 scripts/transcribe.py
 1. `data/slash-data.json` の `sets` に要素を追加
 2. 各 `entries[]` に `id`, `title`, `en`, `slash`, `ja` を記述
 3. `http://localhost:8080/slash.html` で表示確認
+
+## Development Task Management
+
+開発タスクはリポジトリ直下の `TASKS.md` で管理します。  
+運用方針は「思いついたら即メモし、着手時にIssue化」です。
+
+1. 思いつきタスクを `Inbox` に追記（`issue:none`）
+2. 着手時に GitHub Issue を作成し、`issue:#<番号>` に更新して `Now` へ移動
+3. 完了時に `Done` へ移動し、`done:YYYY-MM-DD` を追記
+
+タスクフォーマット（1行）:
+
+```md
+- [ ] T-YYYYMMDD-XXX | タイトル | p1|p2|p3 | owner:@<github-id>|me | issue:#123|none | created:YYYY-MM-DD
+- [x] T-YYYYMMDD-XXX | タイトル | p1|p2|p3 | owner:@<github-id>|me | issue:#123|none | created:YYYY-MM-DD | done:YYYY-MM-DD
+```
+
+補足:
+- `Now` の同時進行は 5 件まで（WIP 制限）
+- `scripts/check-tasks.sh` で形式チェック可能
+- CI でも `TASKS.md` の妥当性を検証
 
 ## Notes
 

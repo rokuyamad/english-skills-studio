@@ -1,8 +1,9 @@
-const CACHE = 'english-skills-studio-v7';
+const CACHE = 'english-skills-studio-v8';
 
 const SHELL = [
   './',
   './index.html',
+  './imitation.html',
   './slash.html',
   './shadowing.html',
   './settings.html',
@@ -13,6 +14,7 @@ const SHELL = [
   './css/auth.css',
   './css/settings.css',
   './js/app.js',
+  './js/imitation-app.js',
   './js/auth.js',
   './js/auth-page.js',
   './js/auth-ui.js',

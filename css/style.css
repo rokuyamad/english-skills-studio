@@ -292,6 +292,29 @@ body.menu-open {
   overflow: hidden;
 }
 
+body.dashboard-page {
+  overflow: auto;
+}
+
+body.dashboard-page .device {
+  height: auto;
+  min-height: 100dvh;
+}
+
+body.dashboard-page .main {
+  overflow: auto;
+}
+
+body.dashboard-page .dashboard-content-panel {
+  max-width: 1200px;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+body.dashboard-page .dashboard-header {
+  border-bottom: none;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 300px 1fr;
