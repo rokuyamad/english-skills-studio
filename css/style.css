@@ -324,6 +324,7 @@ body.dashboard-page {
 body.dashboard-page .device {
   height: auto;
   min-height: 100dvh;
+  overflow: visible;
 }
 
 body.dashboard-page .topbar {
@@ -333,7 +334,7 @@ body.dashboard-page .topbar {
 }
 
 body.dashboard-page .main {
-  overflow: auto;
+  overflow: visible;
 }
 
 body.dashboard-page .dashboard-content-panel {
