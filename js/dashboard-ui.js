@@ -148,13 +148,21 @@ function renderDonutChart(perPageHours) {
 function renderCumulativeChart(series = []) {
   const canvas = document.getElementById('cumulativeInAppChart');
   if (!canvas) return;
+  if (cumulativeChart) cumulativeChart.destroy();
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-  if (cumulativeChart) cumulativeChart.destroy();
 
-  const gradient = ctx.createLinearGradient(0, 0, 0, 220);
-  gradient.addColorStop(0, 'rgba(142, 247, 184, 0.4)');
-  gradient.addColorStop(1, 'rgba(142, 247, 184, 0.03)');
+  const imitationGradient = ctx.createLinearGradient(0, 0, 0, 220);
+  imitationGradient.addColorStop(0, 'rgba(78, 203, 255, 0.42)');
+  imitationGradient.addColorStop(1, 'rgba(78, 203, 255, 0.03)');
+
+  const slashGradient = ctx.createLinearGradient(0, 0, 0, 220);
+  slashGradient.addColorStop(0, 'rgba(255, 196, 107, 0.38)');
+  slashGradient.addColorStop(1, 'rgba(255, 196, 107, 0.03)');
+
+  const shadowingGradient = ctx.createLinearGradient(0, 0, 0, 220);
+  shadowingGradient.addColorStop(0, 'rgba(255, 159, 139, 0.34)');
+  shadowingGradient.addColorStop(1, 'rgba(255, 159, 139, 0.03)');
 
   cumulativeChart = new Chart(canvas, {
     type: 'line',
@@ -162,10 +170,33 @@ function renderCumulativeChart(series = []) {
       labels: series.map((d) => d.date),
       datasets: [
         {
-          label: 'Cumulative In-app Hours',
-          data: series.map((d) => d.hours),
-          borderColor: '#8ef7b8',
-          backgroundColor: gradient,
+          label: 'Imitation',
+          data: series.map((d) => d.imitationHours),
+          borderColor: '#4ecbff',
+          backgroundColor: imitationGradient,
+          stack: 'inAppHours',
+          fill: true,
+          tension: 0.24,
+          pointRadius: 0,
+          pointHoverRadius: 3
+        },
+        {
+          label: 'Slash',
+          data: series.map((d) => d.slashHours),
+          borderColor: '#ffc46b',
+          backgroundColor: slashGradient,
+          stack: 'inAppHours',
+          fill: true,
+          tension: 0.24,
+          pointRadius: 0,
+          pointHoverRadius: 3
+        },
+        {
+          label: 'Shadowing',
+          data: series.map((d) => d.shadowingHours),
+          borderColor: '#ff9f8b',
+          backgroundColor: shadowingGradient,
+          stack: 'inAppHours',
           fill: true,
           tension: 0.24,
           pointRadius: 0,
@@ -178,15 +209,20 @@ function renderCumulativeChart(series = []) {
       maintainAspectRatio: false,
       animation: makeAnimationOption(),
       plugins: {
-        legend: { display: false }
+        legend: {
+          position: 'bottom',
+          labels: { color: '#e0e8f8' }
+        }
       },
       scales: {
         x: {
           grid: { color: 'rgba(255,255,255,0.06)' },
-          ticks: { color: '#cfd8ea', autoSkip: true, maxTicksLimit: 10 }
+          ticks: { color: '#cfd8ea', autoSkip: true, maxTicksLimit: 10 },
+          stacked: true
         },
         y: {
           beginAtZero: true,
+          stacked: true,
           grid: { color: 'rgba(255,255,255,0.08)' },
           ticks: {
             color: '#cfd8ea',
@@ -216,7 +252,7 @@ export function renderDashboard(snapshot) {
   renderAchievements(snapshot.achievements);
   renderLineChart(snapshot.dailySeries);
   renderDonutChart(snapshot.perPageHours);
-  renderCumulativeChart(snapshot.cumulativeInAppSeries);
+  renderCumulativeChart(snapshot.cumulativeInAppPerPageSeries || []);
 }
 
 export function clearDashboardCharts() {

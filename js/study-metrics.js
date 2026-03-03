@@ -94,6 +94,70 @@ export function buildCumulativeInAppSeries(events, timezone, baselineSecondsTota
   return series;
 }
 
+export function buildCumulativeInAppPerPageSeries(events, timezone, baselineSecondsByPage = {}) {
+  const map = new Map();
+  const eventDates = [];
+  const keys = ['imitation', 'slash', 'shadowing'];
+
+  events.forEach((ev) => {
+    const occurred = new Date(ev.occurredAt || ev.occurred_at);
+    if (Number.isNaN(occurred.getTime())) return;
+
+    const pageKey = ev.pageKey || ev.page_key;
+    if (!keys.includes(pageKey)) return;
+
+    const label = dateLabel(occurred, timezone);
+    const current = map.get(label) || { imitation: 0, slash: 0, shadowing: 0 };
+    current[pageKey] += toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
+    map.set(label, current);
+    eventDates.push(occurred);
+  });
+
+  const now = new Date();
+  const start = eventDates.length
+    ? new Date(Math.min(...eventDates.map((d) => d.getTime())))
+    : new Date(now);
+
+  const running = {
+    imitation: 0,
+    slash: 0,
+    shadowing: 0
+  };
+  let isFirstDay = true;
+  const series = [];
+
+  for (const cursor = new Date(start); cursor <= now; cursor.setDate(cursor.getDate() + 1)) {
+    const label = dateLabel(cursor, timezone);
+    const day = map.get(label) || { imitation: 0, slash: 0, shadowing: 0 };
+
+    if (isFirstDay) {
+      running.imitation += toNumber(baselineSecondsByPage.imitation, 0);
+      running.slash += toNumber(baselineSecondsByPage.slash, 0);
+      running.shadowing += toNumber(baselineSecondsByPage.shadowing, 0);
+      isFirstDay = false;
+    }
+
+    running.imitation += day.imitation;
+    running.slash += day.slash;
+    running.shadowing += day.shadowing;
+
+    const imitationHours = round1(running.imitation / 3600);
+    const slashHours = round1(running.slash / 3600);
+    const shadowingHours = round1(running.shadowing / 3600);
+    const totalHours = round1((running.imitation + running.slash + running.shadowing) / 3600);
+
+    series.push({
+      date: label,
+      imitationHours,
+      slashHours,
+      shadowingHours,
+      totalHours
+    });
+  }
+
+  return series;
+}
+
 export function computeStreak(events, minMinutes, timezone) {
   const map = new Map();
   events.forEach((ev) => {
@@ -199,7 +263,11 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   const xp = computeXp(totalMinutes, settings.xp_per_minute);
   const level = computeLevel(xp, settings.level_curve_factor);
   const dailySeries = buildDailySeries(events, settings.timezone);
-  const cumulativeInAppSeries = buildCumulativeInAppSeries(events, settings.timezone, baselineSecondsTotal);
+  const cumulativeInAppPerPageSeries = buildCumulativeInAppPerPageSeries(events, settings.timezone, baselineSecondsByPage);
+  const cumulativeInAppSeries = cumulativeInAppPerPageSeries.map((d) => ({
+    date: d.date,
+    hours: d.totalHours
+  }));
   const momentum = computeMomentum(dailySeries);
   const goalProgress = Math.max(0, Math.min(1, totalHours / goalHours));
 
@@ -227,6 +295,7 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
     nextMilestone,
     dailySeries,
     cumulativeInAppSeries,
+    cumulativeInAppPerPageSeries,
     baselineInAppHours: round1(baselineSecondsTotal / 3600),
     momentum,
     missionStage: resolveMissionStage(goalProgress),
