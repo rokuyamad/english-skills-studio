@@ -43,7 +43,7 @@ body::before {
   padding: 16px 34px; background: linear-gradient(180deg, rgba(12, 17, 32, 0.9), rgba(12, 17, 32, 0.66));
   border-bottom: 1px solid var(--line-soft); backdrop-filter: blur(14px); flex-shrink: 0;
 }
-.topbar-title { font-family: 'Fraunces', serif; font-size: 18px; color: var(--text-0); white-space: nowrap; }
+.topbar-title { font-family: 'Fraunces', serif; font-size: 18px; letter-spacing: 0.02em; color: var(--text-0); white-space: nowrap; }
 .topbar-home-link { text-decoration: none; }
 .topbar-home-link:visited { color: inherit; }
 .topbar-home-link:hover, .topbar-home-link:focus-visible { opacity: 0.9; }
