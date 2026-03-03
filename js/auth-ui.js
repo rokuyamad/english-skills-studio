@@ -15,7 +15,8 @@ function renderLoggedOut(slot) {
 
 function renderLoggedIn(slot, email) {
   const { userEl, linkEl, logoutBtn } = slot;
-  userEl.textContent = email || 'ログイン済み';
+  const isDesktopTopbarUser = userEl.id === 'authUser';
+  userEl.textContent = isDesktopTopbarUser ? 'ログイン済み' : (email || 'ログイン済み');
   linkEl.classList.add('hidden');
   logoutBtn.classList.remove('hidden');
 }
