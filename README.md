@@ -127,13 +127,22 @@ uv run python3 -m http.server 8080
           "title": "SNSの使用時間",
           "en": "English script...",
           "slash": "English script / with slashes...",
-          "ja": "日本語訳..."
+          "ja": "日本語訳...",
+          "chunks": [
+            {
+              "en": "Chunked English text...",
+              "slash": "Chunked English / with slashes...",
+              "ja": "チャンク対応の日本語訳..."
+            }
+          ]
         }
       ]
     }
   ]
 }
 ```
+
+`chunks` がある場合は表示時にそれを優先して使います。未定義の場合のみフォールバックとして自動分割します。
 
 ### `data/shadowing-data.json`（Shadowing）
 
@@ -176,6 +185,12 @@ OPENAI_API_KEY=sk-... uv run python3 scripts/transcribe.py
 1. `data/slash-data.json` の `sets` に要素を追加
 2. 各 `entries[]` に `id`, `title`, `en`, `slash`, `ja` を記述
 3. `http://localhost:8080/slash.html` で表示確認
+
+4. チャンク整合チェック（任意）
+
+```bash
+node scripts/validate-slash-chunks.js
+```
 
 ## Development Task Management
 

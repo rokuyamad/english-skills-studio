@@ -81,6 +81,19 @@ function groupByChunkCount(sentences, chunkCount) {
 }
 
 function buildEntryChunks(item) {
+  if (Array.isArray(item.chunks) && item.chunks.length > 0) {
+    const normalized = item.chunks
+      .map((chunk) => ({
+        en: (chunk?.en || '').trim(),
+        slash: (chunk?.slash || '').trim(),
+        ja: (chunk?.ja || '').trim()
+      }))
+      .filter((chunk) => chunk.en && chunk.slash && chunk.ja);
+
+    if (normalized.length > 0) return normalized;
+    console.warn(`[slash] invalid chunks for ${item.id || item.title || 'entry'}; fallback to auto split`);
+  }
+
   const enSentences = splitEnglishSentences(item.en || '');
   const slashSentences = splitEnglishSentences(item.slash || '');
   const jaSentences = splitJapaneseSentences(item.ja || '');
