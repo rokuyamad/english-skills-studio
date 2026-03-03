@@ -7,7 +7,7 @@ import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 let detachSetDnD = null;
 
 function initializeEntryState(entries) {
-  state.entryOpen = entries.map((_, i) => i === 0);
+  state.entryOpen = entries.map(() => false);
   state.slashVisible = entries.map((entry) => new Array(entry.chunks.length).fill(false));
   state.jaVisible = entries.map((entry) => new Array(entry.chunks.length).fill(false));
 }
@@ -230,6 +230,7 @@ export function renderList() {
       const next = await incrementCount(key);
       state.countMap[key] = next;
       countChip.textContent = `${next}回`;
+      refreshCurrentSetBadge();
       const settings = await getEffectiveStudySettings();
       const event = buildStudyEvent({
         pageKey: 'slash',
