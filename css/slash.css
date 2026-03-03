@@ -260,6 +260,10 @@ body.menu-open { overflow: hidden; }
 .hidden { display: none !important; }
 :focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
 
+@media (min-width: 641px) {
+  .auth-user { display: none; }
+}
+
 @media (max-width: 640px) {
   .topbar { padding: 12px; }
   .topbar-nav, .topbar-actions { display: none; }

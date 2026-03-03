@@ -326,6 +326,12 @@ body.dashboard-page .device {
   min-height: 100dvh;
 }
 
+body.dashboard-page .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+}
+
 body.dashboard-page .main {
   overflow: auto;
 }
@@ -1203,6 +1209,12 @@ body.dashboard-page .dashboard-header {
 
   .control-deck {
     width: min(100%, 760px);
+  }
+}
+
+@media (min-width: 641px) {
+  .auth-user {
+    display: none;
   }
 }
 
