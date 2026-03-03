@@ -28,6 +28,8 @@ function formToSettings(scope, ids) {
   return validateStudySettings({
     version: 1,
     goal_hours: Number(getEl(scope, ids.goalHours)?.value),
+    external_carryover_hours: Number(getEl(scope, ids.externalCarryoverHours)?.value),
+    external_carryover_note: getEl(scope, ids.externalCarryoverNote)?.value,
     seconds_per_count: {
       imitation: Number(getEl(scope, ids.secImitation)?.value),
       slash: Number(getEl(scope, ids.secSlash)?.value),
@@ -43,6 +45,8 @@ function formToSettings(scope, ids) {
 
 function fillForm(scope, ids, settings) {
   getEl(scope, ids.goalHours).value = settings.goal_hours;
+  getEl(scope, ids.externalCarryoverHours).value = settings.external_carryover_hours;
+  getEl(scope, ids.externalCarryoverNote).value = settings.external_carryover_note || '';
   getEl(scope, ids.secImitation).value = settings.seconds_per_count.imitation;
   getEl(scope, ids.secSlash).value = settings.seconds_per_count.slash;
   getEl(scope, ids.secShadowing).value = settings.seconds_per_count.shadowing;
@@ -55,6 +59,8 @@ function fillForm(scope, ids, settings) {
 
 export const PAGE_SETTINGS_IDS = {
   goalHours: 'goalHours',
+  externalCarryoverHours: 'externalCarryoverHours',
+  externalCarryoverNote: 'externalCarryoverNote',
   secImitation: 'secImitation',
   secSlash: 'secSlash',
   secShadowing: 'secShadowing',
@@ -70,6 +76,8 @@ export const PAGE_SETTINGS_IDS = {
 
 export const MODAL_SETTINGS_IDS = {
   goalHours: 'modalGoalHours',
+  externalCarryoverHours: 'modalExternalCarryoverHours',
+  externalCarryoverNote: 'modalExternalCarryoverNote',
   secImitation: 'modalSecImitation',
   secSlash: 'modalSecSlash',
   secShadowing: 'modalSecShadowing',

@@ -3,6 +3,10 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function round1(value) {
+  return Math.round(value * 10) / 10;
+}
+
 export function computeXp(totalMinutes, xpPerMinute) {
   return Math.floor(Math.max(0, totalMinutes) * Math.max(1, toNumber(xpPerMinute, 10)));
 }
@@ -93,8 +97,6 @@ function computeAchievements(totalHours, streak, perPageHours, milestones) {
   const hours = totalHours;
   const page = perPageHours;
 
-  const milestoneSet = new Set((milestones || []).map((v) => Math.round(v)));
-
   return [
     { id: 'first_step', label: 'First Step', unlocked: hours > 0 },
     { id: 'week_streak', label: '7-Day Streak', unlocked: streak >= 7 },
@@ -104,10 +106,35 @@ function computeAchievements(totalHours, streak, perPageHours, milestones) {
       label: 'Balanced Learner',
       unlocked: (page.imitation || 0) >= 3 && (page.slash || 0) >= 3 && (page.shadowing || 0) >= 3
     },
-    { id: 'century', label: '100h', unlocked: hours >= 100 || milestoneSet.has(100) && hours >= 100 },
+    { id: 'century', label: '100h', unlocked: hours >= 100 },
     { id: 'halfway', label: 'Halfway', unlocked: hours >= 500 },
     { id: 'master_track', label: 'Goal Complete', unlocked: milestones.length ? hours >= milestones[milestones.length - 1] : hours >= 1000 }
   ];
+}
+
+function computeMomentum(dailySeries = []) {
+  const values = dailySeries.map((d) => toNumber(d.minutes, 0));
+  const latest7 = values.slice(-7);
+  const prev7 = values.slice(-14, -7);
+  const avg = (arr) => (arr.length ? arr.reduce((sum, v) => sum + v, 0) / arr.length : 0);
+  const last7Avg = avg(latest7);
+  const prev7Avg = avg(prev7);
+  const delta = last7Avg - prev7Avg;
+  const trend = delta > 0.2 ? 'up' : delta < -0.2 ? 'down' : 'flat';
+  return {
+    last7Avg: round1(last7Avg),
+    prev7Avg: round1(prev7Avg),
+    delta: round1(delta),
+    trend
+  };
+}
+
+function resolveMissionStage(goalProgress) {
+  if (goalProgress >= 1) return 'Mission Complete';
+  if (goalProgress >= 0.8) return 'Final Approach';
+  if (goalProgress >= 0.5) return 'Deep Focus';
+  if (goalProgress >= 0.2) return 'Orbit';
+  return 'Launch';
 }
 
 export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = {} }, settings) {
@@ -122,13 +149,18 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
     perPageSeconds[key] += toNumber(baselineSecondsByPage[key], 0);
   });
 
-  const totalSeconds = Object.values(perPageSeconds).reduce((sum, v) => sum + v, 0);
+  const inAppTotalSeconds = Object.values(perPageSeconds).reduce((sum, v) => sum + v, 0);
+  const externalCarryoverSeconds = toNumber(settings.external_carryover_hours, 0) * 3600;
+  const totalSeconds = inAppTotalSeconds + externalCarryoverSeconds;
   const totalHours = totalSeconds / 3600;
   const totalMinutes = totalSeconds / 60;
   const goalHours = Math.max(1, toNumber(settings.goal_hours, 1000));
   const streak = computeStreak(events, settings.streak_min_minutes_per_day, settings.timezone);
   const xp = computeXp(totalMinutes, settings.xp_per_minute);
   const level = computeLevel(xp, settings.level_curve_factor);
+  const dailySeries = buildDailySeries(events, settings.timezone);
+  const momentum = computeMomentum(dailySeries);
+  const goalProgress = Math.max(0, Math.min(1, totalHours / goalHours));
 
   const perPageHours = {
     imitation: perPageSeconds.imitation / 3600,
@@ -140,17 +172,21 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   const nextMilestone = milestones.find((h) => totalHours < h) || null;
 
   return {
-    totalHours,
+    totalHours: round1(totalHours),
+    inAppHours: round1(inAppTotalSeconds / 3600),
+    externalCarryoverHours: round1(externalCarryoverSeconds / 3600),
     totalMinutes,
     goalHours,
-    remainingHours: Math.max(0, goalHours - totalHours),
-    goalProgress: Math.max(0, Math.min(1, totalHours / goalHours)),
+    remainingHours: round1(Math.max(0, goalHours - totalHours)),
+    goalProgress,
     perPageHours,
     streak,
     xp,
     level,
     nextMilestone,
-    dailySeries: buildDailySeries(events, settings.timezone),
+    dailySeries,
+    momentum,
+    missionStage: resolveMissionStage(goalProgress),
     achievements: computeAchievements(totalHours, streak, perPageHours, milestones)
   };
 }

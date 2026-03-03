@@ -73,7 +73,12 @@ function makeAnimationOption() {
 function renderLineChart(series = []) {
   const canvas = document.getElementById('dailyMinutesChart');
   if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
   if (lineChart) lineChart.destroy();
+  const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+  gradient.addColorStop(0, 'rgba(108, 229, 255, 0.42)');
+  gradient.addColorStop(1, 'rgba(108, 229, 255, 0.02)');
 
   lineChart = new Chart(canvas, {
     type: 'line',
@@ -83,11 +88,12 @@ function renderLineChart(series = []) {
         {
           label: 'Daily Minutes',
           data: series.map((d) => d.minutes),
-          borderColor: '#2e7d32',
-          backgroundColor: 'rgba(46, 125, 50, 0.16)',
+          borderColor: '#6ce5ff',
+          backgroundColor: gradient,
           fill: true,
           tension: 0.35,
-          pointRadius: 2
+          pointRadius: 2.5,
+          pointHoverRadius: 4
         }
       ]
     },
@@ -99,8 +105,8 @@ function renderLineChart(series = []) {
         legend: { display: false }
       },
       scales: {
-        x: { grid: { display: false } },
-        y: { beginAtZero: true }
+        x: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#cfd8ea' } },
+        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.08)' }, ticks: { color: '#cfd8ea' } }
       }
     }
   });
@@ -118,7 +124,7 @@ function renderDonutChart(perPageHours) {
       datasets: [
         {
           data: [perPageHours.imitation, perPageHours.slash, perPageHours.shadowing],
-          backgroundColor: ['#1b5e20', '#ef6c00', '#0d47a1'],
+          backgroundColor: ['#4ecbff', '#ffc46b', '#ff9f8b'],
           borderWidth: 0
         }
       ]
@@ -128,21 +134,18 @@ function renderDonutChart(perPageHours) {
       maintainAspectRatio: false,
       animation: makeAnimationOption(),
       plugins: {
-        legend: { position: 'bottom' }
+        legend: { position: 'bottom', labels: { color: '#e0e8f8' } }
       }
     }
   });
 }
 
-export function renderDashboard(snapshot, settings) {
+export function renderDashboard(snapshot) {
   if (!snapshot) return;
 
   setText('kpiTotalHours', hoursLabel(snapshot.totalHours));
-  setText('kpiGoalHours', `${Math.round(settings.goal_hours)}h`);
+  setText('kpiTotalBreakdown', `In-app ${hoursLabel(snapshot.inAppHours)} + External ${hoursLabel(snapshot.externalCarryoverHours)}`);
   setText('kpiRemaining', hoursLabel(snapshot.remainingHours));
-  setText('kpiStreak', `${snapshot.streak} days`);
-  setText('kpiLevel', `Lv.${snapshot.level.level}`);
-  setText('kpiXp', `${snapshot.xp} XP`);
   setText('kpiGoalProgress', percentLabel(snapshot.goalProgress));
   setText('kpiImitation', hoursLabel(snapshot.perPageHours.imitation));
   setText('kpiSlash', hoursLabel(snapshot.perPageHours.slash));

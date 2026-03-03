@@ -66,25 +66,13 @@
 
         <div class="dashboard-kpis">
           <article class="kpi-card">
-            <p class="kpi-label">Total</p>
+            <p class="kpi-label">Total (All Learning)</p>
             <p class="kpi-value" id="kpiTotalHours">0.0h</p>
-          </article>
-          <article class="kpi-card">
-            <p class="kpi-label">Goal</p>
-            <p class="kpi-value" id="kpiGoalHours">1000h</p>
+            <p class="kpi-sub" id="kpiTotalBreakdown">In-app 0.0h + External 0.0h</p>
           </article>
           <article class="kpi-card">
             <p class="kpi-label">Remaining</p>
             <p class="kpi-value" id="kpiRemaining">0.0h</p>
-          </article>
-          <article class="kpi-card">
-            <p class="kpi-label">Streak</p>
-            <p class="kpi-value" id="kpiStreak">0 days</p>
-          </article>
-          <article class="kpi-card">
-            <p class="kpi-label">Level</p>
-            <p class="kpi-value" id="kpiLevel">Lv.1</p>
-            <p class="kpi-sub" id="kpiXp">0 XP</p>
           </article>
           <article class="kpi-card">
             <p class="kpi-label">Next Milestone</p>
@@ -96,19 +84,19 @@
           <div class="goal-progress-rail"><span id="goalProgressFill"></span></div>
           <div class="goal-progress-meta">
             <span id="kpiGoalProgress">0%</span>
-            <span>Imitation <strong id="kpiImitation">0.0h</strong></span>
-            <span>Slash <strong id="kpiSlash">0.0h</strong></span>
-            <span>Shadowing <strong id="kpiShadowing">0.0h</strong></span>
+            <span>Imitation (In-app) <strong id="kpiImitation">0.0h</strong></span>
+            <span>Slash (In-app) <strong id="kpiSlash">0.0h</strong></span>
+            <span>Shadowing (In-app) <strong id="kpiShadowing">0.0h</strong></span>
           </div>
         </div>
 
         <div class="dashboard-charts">
           <article class="chart-card">
-            <h3>Daily Minutes (30d)</h3>
+            <h3>Daily Minutes (30d · In-app)</h3>
             <div class="chart-canvas-wrap"><canvas id="dailyMinutesChart"></canvas></div>
           </article>
           <article class="chart-card">
-            <h3>Content Ratio</h3>
+            <h3>Content Ratio (In-app)</h3>
             <div class="chart-canvas-wrap"><canvas id="contentRatioChart"></canvas></div>
           </article>
         </div>
@@ -136,6 +124,17 @@
             </div>
 
             <div class="field">
+              <label for="modalExternalCarryoverHours">外部学習時間 (hours)</label>
+              <input id="modalExternalCarryoverHours" type="number" min="0" max="20000" step="0.1">
+              <p class="field-hint">アプリ外での学習総量。ページ配分は行いません。</p>
+            </div>
+
+            <div class="field">
+              <label for="modalExternalCarryoverNote">外部学習メモ (optional)</label>
+              <input id="modalExternalCarryoverNote" type="text" maxlength="120" placeholder="例: 2023年までの英会話学習など">
+            </div>
+
+            <div class="field">
               <label for="modalSecImitation">Imitation: +1秒換算</label>
               <input id="modalSecImitation" type="number" min="10" max="900">
             </div>
@@ -158,6 +157,7 @@
             <div class="field">
               <label for="modalLevelCurveFactor">Level係数</label>
               <input id="modalLevelCurveFactor" type="number" min="10" max="1000">
+              <p class="field-hint">現在のDashboardではLevelは非表示です（設定値は保持されます）。</p>
             </div>
 
             <div class="field">

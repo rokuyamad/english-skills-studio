@@ -7,6 +7,8 @@ let cachedSettings = null;
 export const DEFAULT_STUDY_SETTINGS = {
   version: 1,
   goal_hours: 1000,
+  external_carryover_hours: 0,
+  external_carryover_note: '',
   seconds_per_count: {
     imitation: 45,
     slash: 75,
@@ -40,10 +42,15 @@ function normalizeMilestones(input, goalHours) {
 export function validateStudySettings(raw = {}) {
   const goalHours = clampNumber(raw.goal_hours, 10, 5000, DEFAULT_STUDY_SETTINGS.goal_hours);
   const secondsPerCount = raw.seconds_per_count || {};
+  const externalCarryoverNote = typeof raw.external_carryover_note === 'string'
+    ? raw.external_carryover_note.trim().slice(0, 120)
+    : DEFAULT_STUDY_SETTINGS.external_carryover_note;
 
   const settings = {
     version: 1,
     goal_hours: goalHours,
+    external_carryover_hours: clampNumber(raw.external_carryover_hours, 0, 20000, DEFAULT_STUDY_SETTINGS.external_carryover_hours),
+    external_carryover_note: externalCarryoverNote,
     seconds_per_count: {
       imitation: clampNumber(secondsPerCount.imitation, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.imitation),
       slash: clampNumber(secondsPerCount.slash, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.slash),

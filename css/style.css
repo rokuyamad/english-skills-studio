@@ -760,15 +760,15 @@ body.dashboard-page .dashboard-header {
   background: linear-gradient(165deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-3);
-  padding: 10px 14px 12px;
+  padding: 8px 11px 9px;
   box-shadow: 0 16px 26px rgba(6, 8, 16, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .control-title {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.1em;
   color: var(--text-2);
   text-transform: uppercase;
@@ -778,7 +778,7 @@ body.dashboard-page .dashboard-header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 9px;
   flex-wrap: wrap;
 }
 
@@ -786,24 +786,24 @@ body.dashboard-page .dashboard-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .time-display {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-2);
   letter-spacing: 0.06em;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
-  padding: 6px 11px;
+  padding: 5px 9px;
   background: rgba(7, 12, 22, 0.45);
 }
 
 .time-current {
   color: var(--text-0);
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .time-sep {
@@ -813,7 +813,7 @@ body.dashboard-page .dashboard-header {
 .controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 9px;
   margin-left: auto;
   flex-wrap: nowrap;
 }
@@ -840,10 +840,10 @@ body.dashboard-page .dashboard-header {
 }
 
 .ctrl-btn {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  font-size: 17px;
+  font-size: 15px;
   transition: transform var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast);
 }
 
@@ -854,13 +854,13 @@ body.dashboard-page .dashboard-header {
 }
 
 .play-btn {
-  width: 68px;
-  height: 68px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   border: 1px solid rgba(255, 214, 153, 0.62);
   background: linear-gradient(135deg, rgba(255, 214, 153, 0.95), rgba(255, 157, 135, 0.88));
   color: #1f2435;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   box-shadow: var(--shadow-soft);
   transition: transform var(--motion-fast), box-shadow var(--motion-fast);
@@ -878,10 +878,10 @@ body.dashboard-page .dashboard-header {
 
 .repeat-btn {
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.04em;
   font-weight: 700;
-  padding: 8px 13px;
+  padding: 6px 10px;
 }
 
 .repeat-btn.on {
@@ -908,10 +908,10 @@ body.dashboard-page .dashboard-header {
 
 .spd-btn {
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 7px 10px;
-  min-width: 56px;
+  padding: 6px 8px;
+  min-width: 46px;
 }
 
 .spd-btn.on {
@@ -931,9 +931,13 @@ body.dashboard-page .dashboard-header {
 
 .dashboard-panel {
   margin: 0 14px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(127, 206, 255, 0.24);
   border-radius: var(--radius-2);
-  background: rgba(21, 30, 53, 0.72);
+  background:
+    radial-gradient(120% 180% at 0% 0%, rgba(108, 229, 255, 0.1), transparent 44%),
+    radial-gradient(100% 160% at 100% 100%, rgba(255, 157, 135, 0.08), transparent 48%),
+    rgba(21, 30, 53, 0.76);
+  box-shadow: inset 0 0 0 1px rgba(108, 229, 255, 0.06), 0 18px 46px rgba(9, 13, 24, 0.42);
   padding: 14px;
   display: grid;
   gap: 12px;
@@ -947,6 +951,7 @@ body.dashboard-page .dashboard-header {
 
 .dashboard-head h2 {
   font-size: 16px;
+  letter-spacing: 0.04em;
 }
 
 .dashboard-settings-link {
@@ -1082,26 +1087,28 @@ body.dashboard-page .dashboard-header {
 }
 
 .kpi-card {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(108, 229, 255, 0.22);
   border-radius: 14px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 11px;
+  background: linear-gradient(160deg, rgba(10, 20, 38, 0.58), rgba(20, 34, 57, 0.48));
 }
 
 .kpi-label {
-  color: var(--text-2);
+  color: #9bb1d7;
   font-size: 11px;
+  letter-spacing: 0.04em;
 }
 
 .kpi-value {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .kpi-sub {
   font-size: 11px;
-  color: var(--text-1);
+  color: #bfd0ee;
+  margin-top: 3px;
 }
 
 .goal-progress-shell {
@@ -1127,7 +1134,7 @@ body.dashboard-page .dashboard-header {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;
-  color: var(--text-1);
+  color: #c8d6f0;
   font-size: 12px;
 }
 
@@ -1138,17 +1145,19 @@ body.dashboard-page .dashboard-header {
 }
 
 .chart-card {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(108, 229, 255, 0.2);
   border-radius: 14px;
   padding: 10px;
   min-height: 220px;
   display: grid;
   gap: 10px;
+  background: rgba(10, 18, 34, 0.42);
 }
 
 .chart-card h3 {
   font-size: 13px;
-  color: var(--text-1);
+  color: #d4e2fa;
+  letter-spacing: 0.03em;
 }
 
 .chart-canvas-wrap {
@@ -1291,7 +1300,7 @@ body.dashboard-page .dashboard-header {
   }
 
   .dashboard-kpis {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .dashboard-charts {

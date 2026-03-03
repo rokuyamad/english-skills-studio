@@ -1,4 +1,4 @@
-const CACHE = 'english-skills-studio-v9';
+const CACHE = 'english-skills-studio-v10';
 
 const SHELL = [
   './',
@@ -71,7 +71,7 @@ self.addEventListener('fetch', e => {
         c.match(e.request).then(cached => {
           if (cached) return cached;
           return fetch(e.request).then(res => {
-            if (res.ok) c.put(e.request, res.clone());
+            if (res.ok && e.request.method === 'GET') c.put(e.request, res.clone());
             return res;
           });
         })
@@ -81,21 +81,26 @@ self.addEventListener('fetch', e => {
   }
 
   // App Shell・その他: Network First、失敗時はキャッシュにフォールバック
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        if (res.ok) {
-          caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        }
-        return res;
-      })
-      .catch(async () => {
-        const cached = await caches.match(e.request);
-        if (cached) return cached;
-        if (e.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-        return Response.error();
-      })
-  );
+  e.respondWith((async () => {
+    try {
+      const res = await fetch(e.request);
+      if (res.ok && e.request.method === 'GET') {
+        const resForCache = res.clone();
+        e.waitUntil(
+          caches
+            .open(CACHE)
+            .then(c => c.put(e.request, resForCache))
+            .catch(err => console.warn('[sw] cache put failed:', err))
+        );
+      }
+      return res;
+    } catch (_) {
+      const cached = await caches.match(e.request);
+      if (cached) return cached;
+      if (e.request.mode === 'navigate') {
+        return caches.match('./index.html');
+      }
+      return Response.error();
+    }
+  })());
 });

@@ -75,6 +75,17 @@
         </div>
 
         <div class="field">
+          <label for="externalCarryoverHours">外部学習時間 (hours)</label>
+          <input id="externalCarryoverHours" type="number" min="0" max="20000" step="0.1">
+          <p class="field-hint">アプリ外での学習総量。ページ配分は行いません。</p>
+        </div>
+
+        <div class="field">
+          <label for="externalCarryoverNote">外部学習メモ (optional)</label>
+          <input id="externalCarryoverNote" type="text" maxlength="120" placeholder="例: 2023年までの英会話学習など">
+        </div>
+
+        <div class="field">
           <label for="secImitation">Imitation: +1秒換算</label>
           <input id="secImitation" type="number" min="10" max="900">
         </div>
@@ -97,6 +108,7 @@
         <div class="field">
           <label for="levelCurveFactor">Level係数</label>
           <input id="levelCurveFactor" type="number" min="10" max="1000">
+          <p class="field-hint">現在のDashboardではLevelは非表示です（設定値は保持されます）。</p>
         </div>
 
         <div class="field">
