@@ -27,6 +27,7 @@ Chart.register(
 
 let lineChart = null;
 let donutChart = null;
+let cumulativeChart = null;
 
 function hoursLabel(hours) {
   return `${hours.toFixed(1)}h`;
@@ -61,6 +62,10 @@ function destroyCharts() {
   if (donutChart) {
     donutChart.destroy();
     donutChart = null;
+  }
+  if (cumulativeChart) {
+    cumulativeChart.destroy();
+    cumulativeChart = null;
   }
 }
 
@@ -140,6 +145,59 @@ function renderDonutChart(perPageHours) {
   });
 }
 
+function renderCumulativeChart(series = []) {
+  const canvas = document.getElementById('cumulativeInAppChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  if (cumulativeChart) cumulativeChart.destroy();
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+  gradient.addColorStop(0, 'rgba(142, 247, 184, 0.4)');
+  gradient.addColorStop(1, 'rgba(142, 247, 184, 0.03)');
+
+  cumulativeChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: series.map((d) => d.date),
+      datasets: [
+        {
+          label: 'Cumulative In-app Hours',
+          data: series.map((d) => d.hours),
+          borderColor: '#8ef7b8',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.24,
+          pointRadius: 0,
+          pointHoverRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: makeAnimationOption(),
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#cfd8ea', autoSkip: true, maxTicksLimit: 10 }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          ticks: {
+            color: '#cfd8ea',
+            callback: (value) => `${value}h`
+          }
+        }
+      }
+    }
+  });
+}
+
 export function renderDashboard(snapshot) {
   if (!snapshot) return;
 
@@ -158,6 +216,7 @@ export function renderDashboard(snapshot) {
   renderAchievements(snapshot.achievements);
   renderLineChart(snapshot.dailySeries);
   renderDonutChart(snapshot.perPageHours);
+  renderCumulativeChart(snapshot.cumulativeInAppSeries);
 }
 
 export function clearDashboardCharts() {

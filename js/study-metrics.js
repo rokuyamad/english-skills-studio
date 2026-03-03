@@ -55,6 +55,45 @@ export function buildDailySeries(events, timezone) {
   return days;
 }
 
+export function buildCumulativeInAppSeries(events, timezone, baselineSecondsTotal = 0) {
+  const map = new Map();
+  const eventDates = [];
+
+  events.forEach((ev) => {
+    const occurred = new Date(ev.occurredAt || ev.occurred_at);
+    if (Number.isNaN(occurred.getTime())) return;
+
+    const label = dateLabel(occurred, timezone);
+    const seconds = toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
+    map.set(label, (map.get(label) || 0) + seconds);
+    eventDates.push(occurred);
+  });
+
+  const now = new Date();
+  const start = eventDates.length
+    ? new Date(Math.min(...eventDates.map((d) => d.getTime())))
+    : new Date(now);
+
+  const series = [];
+  let runningSeconds = 0;
+  let isFirstDay = true;
+
+  for (const cursor = new Date(start); cursor <= now; cursor.setDate(cursor.getDate() + 1)) {
+    const label = dateLabel(cursor, timezone);
+    if (isFirstDay) {
+      runningSeconds += toNumber(baselineSecondsTotal, 0);
+      isFirstDay = false;
+    }
+    runningSeconds += map.get(label) || 0;
+    series.push({
+      date: label,
+      hours: round1(runningSeconds / 3600)
+    });
+  }
+
+  return series;
+}
+
 export function computeStreak(events, minMinutes, timezone) {
   const map = new Map();
   events.forEach((ev) => {
@@ -150,6 +189,7 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   });
 
   const inAppTotalSeconds = Object.values(perPageSeconds).reduce((sum, v) => sum + v, 0);
+  const baselineSecondsTotal = Object.values(baselineSecondsByPage).reduce((sum, v) => sum + toNumber(v, 0), 0);
   const externalCarryoverSeconds = toNumber(settings.external_carryover_hours, 0) * 3600;
   const totalSeconds = inAppTotalSeconds + externalCarryoverSeconds;
   const totalHours = totalSeconds / 3600;
@@ -159,6 +199,7 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   const xp = computeXp(totalMinutes, settings.xp_per_minute);
   const level = computeLevel(xp, settings.level_curve_factor);
   const dailySeries = buildDailySeries(events, settings.timezone);
+  const cumulativeInAppSeries = buildCumulativeInAppSeries(events, settings.timezone, baselineSecondsTotal);
   const momentum = computeMomentum(dailySeries);
   const goalProgress = Math.max(0, Math.min(1, totalHours / goalHours));
 
@@ -185,6 +226,8 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
     level,
     nextMilestone,
     dailySeries,
+    cumulativeInAppSeries,
+    baselineInAppHours: round1(baselineSecondsTotal / 3600),
     momentum,
     missionStage: resolveMissionStage(goalProgress),
     achievements: computeAchievements(totalHours, streak, perPageHours, milestones)
