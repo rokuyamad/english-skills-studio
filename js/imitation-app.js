@@ -6,6 +6,7 @@ import { initMobileTopbar } from './mobile-topbar.js';
 import { enableSidebarDnD } from './sidebar-sortable.js';
 import { getOrder, initProgressDb, saveOrder } from './progress-db.js';
 import { flushStudyEvents } from './study-sync.js';
+import { initSelectionQuickAdd } from './srs-quick-add.js';
 
 let detachTrackDnD = null;
 
@@ -134,6 +135,7 @@ async function bootstrap() {
   initMobileTopbar();
   initPlayerCompactToggle();
   setupTopbarAuth();
+  initSelectionQuickAdd({ containerId: 'sentenceList' });
 
   const sidebarToggleBtn = document.getElementById('sidebarToggle');
   const layoutEl = document.querySelector('.layout');

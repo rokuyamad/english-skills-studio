@@ -1,4 +1,4 @@
-const CACHE = 'english-skills-studio-v10';
+const CACHE = 'english-skills-studio-v12';
 
 const SHELL = [
   './',
@@ -6,6 +6,7 @@ const SHELL = [
   './imitation.html',
   './slash.html',
   './shadowing.html',
+  './review.html',
   './settings.html',
   './auth.html',
   './css/style.css',
@@ -13,6 +14,7 @@ const SHELL = [
   './css/shadowing.css',
   './css/auth.css',
   './css/settings.css',
+  './css/review.css',
   './js/app.js',
   './js/imitation-app.js',
   './js/auth.js',
@@ -31,6 +33,10 @@ const SHELL = [
   './js/study-sync.js',
   './js/settings-app.js',
   './js/settings-modal.js',
+  './js/review-app.js',
+  './js/srs-api.js',
+  './js/srs-quick-add.js',
+  './js/srs-scheduler.js',
   './js/slash-app.js',
   './js/slash-state.js',
   './js/slash-ui.js',

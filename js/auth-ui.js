@@ -4,6 +4,7 @@ import {
   isSupabaseConfigured,
   signOut
 } from './auth.js';
+import { fetchDueCount } from './srs-api.js';
 
 function renderLoggedOut(slot) {
   const { userEl, linkEl, logoutBtn } = slot;
@@ -25,6 +26,44 @@ function bindLogoutButton(btn, onLogout) {
   if (btn.dataset.bound === 'true') return;
   btn.dataset.bound = 'true';
   btn.addEventListener('click', onLogout);
+}
+
+function getDueSlots() {
+  const desktop = document.getElementById('dueLink');
+  const mobile = document.getElementById('mobileDueLink');
+  return [desktop, mobile].filter(Boolean);
+}
+
+function hideDueSlots() {
+  getDueSlots().forEach((el) => {
+    el.classList.add('hidden');
+    el.textContent = '復習 0件';
+  });
+}
+
+export async function refreshDueBadge() {
+  const slots = getDueSlots();
+  if (!slots.length) return;
+  if (!isSupabaseConfigured()) {
+    hideDueSlots();
+    return;
+  }
+
+  try {
+    const count = await fetchDueCount({ cardType: 'all' });
+    slots.forEach((el) => {
+      if (count > 0) {
+        el.textContent = `復習 ${count}件`;
+        el.classList.remove('hidden');
+      } else {
+        el.textContent = '復習 0件';
+        el.classList.add('hidden');
+      }
+    });
+  } catch (error) {
+    console.warn('[auth-ui] due badge skipped', error);
+    hideDueSlots();
+  }
 }
 
 export async function setupTopbarAuth() {
@@ -50,6 +89,7 @@ export async function setupTopbarAuth() {
   });
 
   if (!isSupabaseConfigured()) {
+    hideDueSlots();
     slots.forEach((slot) => {
       slot.userEl.textContent = 'Auth未設定';
       slot.linkEl.textContent = '設定方法';
@@ -61,10 +101,16 @@ export async function setupTopbarAuth() {
 
   try {
     const user = await getSessionUser();
-    if (user) slots.forEach((slot) => renderLoggedIn(slot, user.email));
-    else slots.forEach((slot) => renderLoggedOut(slot));
+    if (user) {
+      slots.forEach((slot) => renderLoggedIn(slot, user.email));
+      await refreshDueBadge();
+    } else {
+      slots.forEach((slot) => renderLoggedOut(slot));
+      hideDueSlots();
+    }
   } catch (e) {
     console.error(e);
+    hideDueSlots();
     slots.forEach((slot) => {
       slot.userEl.textContent = '認証エラー';
       slot.linkEl.classList.remove('hidden');
@@ -76,6 +122,7 @@ export async function setupTopbarAuth() {
     try {
       await signOut();
       slots.forEach((slot) => renderLoggedOut(slot));
+      hideDueSlots();
       window.location.href = 'auth.html';
     } catch (e) {
       console.error(e);

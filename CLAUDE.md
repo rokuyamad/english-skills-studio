@@ -198,3 +198,18 @@ Git LFS は使用していない（GitHub PagesがLFSファイルを配信でき
 - `Now` の同時進行は最大5件
 - 完了タスクは `Done` に移し、`done:` 日付を付ける
 - 形式チェックは `scripts/check-tasks.sh` を使う（CIでも実行）
+
+## Codex 合図ワード運用
+
+Codex CLI運用では、以下の合図ワードがユーザー入力されたら、追加確認なしで対応する。
+
+- `SRS:RUN`
+  - 実行: `bash scripts/run-srs-draft-batch.sh --codex-auto --dry-run`
+  - 目的: SRS下書き補完バッチの検証実行（DB反映なし）
+- `SRS:APPLY`
+  - 実行: `bash scripts/run-srs-draft-batch.sh --codex-auto`
+  - 目的: SRS下書き補完バッチの本適用（DB反映あり）
+
+補足:
+- いずれも `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` が環境変数に設定済みであることを前提とする。
+- 実行後は、成功/失敗件数と主要ログパスを要約してユーザーに返す。

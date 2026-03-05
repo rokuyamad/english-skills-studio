@@ -4,6 +4,7 @@ import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { getOrder, initProgressDb } from './progress-db.js';
 import { flushStudyEvents } from './study-sync.js';
+import { initSelectionQuickAdd } from './srs-quick-add.js';
 
 function splitEnglishSentences(text = '') {
   const normalized = text.replace(/\s+/g, ' ').trim();
@@ -174,6 +175,7 @@ async function bootstrap() {
   if (!isAuthenticated) return;
   initMobileTopbar();
   setupTopbarAuth();
+  initSelectionQuickAdd({ containerId: 'readingList' });
   initSidebarToggle();
   await initProgressDb();
   await flushStudyEvents().catch((e) => console.error(e));

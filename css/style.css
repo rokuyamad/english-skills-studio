@@ -184,8 +184,10 @@ body::after {
 
 .auth-link,
 .auth-btn,
+.due-link,
 .mobile-auth-link,
-.mobile-auth-btn {
+.mobile-auth-btn,
+.mobile-due-link {
   border: 1px solid rgba(108, 229, 255, 0.35);
   background: rgba(108, 229, 255, 0.12);
   color: #d7f8ff;
@@ -198,6 +200,8 @@ body::after {
 
 .auth-btn,
 .mobile-auth-btn,
+.due-link,
+.mobile-due-link,
 .menu-toggle,
 .sidebar-toggle,
 .track-tab,
@@ -212,10 +216,25 @@ body::after {
 
 .auth-link:hover,
 .auth-btn:hover,
+.due-link:hover,
 .mobile-auth-link:hover,
-.mobile-auth-btn:hover {
+.mobile-auth-btn:hover,
+.mobile-due-link:hover {
   border-color: rgba(108, 229, 255, 0.6);
   background: rgba(108, 229, 255, 0.2);
+}
+
+.due-link,
+.mobile-due-link {
+  border-color: rgba(255, 214, 153, 0.56);
+  background: rgba(255, 214, 153, 0.14);
+  color: #ffe8be;
+}
+
+.due-link:hover,
+.mobile-due-link:hover {
+  border-color: rgba(255, 214, 153, 0.8);
+  background: rgba(255, 214, 153, 0.24);
 }
 
 .menu-toggle,
@@ -309,6 +328,43 @@ body.menu-open {
   color: var(--text-2);
   font-size: 12px;
   word-break: break-all;
+}
+
+.srs-quick-add-btn {
+  position: fixed;
+  z-index: 70;
+  border: 1px solid rgba(255, 214, 153, 0.65);
+  background: linear-gradient(130deg, rgba(255, 214, 153, 0.96), rgba(255, 157, 135, 0.95));
+  color: #1f2435;
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(4, 10, 24, 0.5);
+}
+
+.srs-quick-add-btn:disabled {
+  opacity: 0.66;
+}
+
+.srs-quick-add-toast {
+  position: fixed;
+  z-index: 70;
+  right: 14px;
+  bottom: 16px;
+  border: 1px solid rgba(108, 241, 187, 0.5);
+  background: rgba(12, 30, 25, 0.95);
+  color: #d8ffee;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  box-shadow: 0 8px 20px rgba(4, 10, 24, 0.45);
+}
+
+.srs-quick-add-toast.error {
+  border-color: rgba(255, 143, 143, 0.5);
+  background: rgba(40, 14, 14, 0.95);
+  color: #ffd2d2;
 }
 
 .main {

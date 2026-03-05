@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101323">
+<meta name="description" content="SRS単語・フレーズ復習">
+<title>SRS Review | English Skills Studio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/review.css">
+</head>
+<body>
+<div class="device">
+  <header class="topbar">
+    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Hub</a>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a class="nav-link" href="index.html">Dashboard</a>
+      <a class="nav-link" href="imitation.html">Imitation Player</a>
+      <a class="nav-link" href="slash.html">Slash Reading</a>
+      <a class="nav-link" href="shadowing.html">Shadowing</a>
+      <a class="nav-link active" href="review.html">SRS Review</a>
+    </nav>
+    <div class="topbar-actions">
+      <a class="due-link hidden" id="dueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
+      <span class="auth-user" id="authUser">認証状態を確認中...</span>
+      <a class="auth-link" id="authLink" href="auth.html">ログイン</a>
+      <button class="auth-btn hidden" id="logoutBtn" type="button">ログアウト</button>
+    </div>
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="メニューを開く"
+      aria-controls="mobileDrawer"
+      aria-expanded="false"
+    >☰</button>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
+    <nav class="mobile-nav" aria-label="Mobile Primary">
+      <a class="mobile-nav-link" href="index.html">Dashboard</a>
+      <a class="mobile-nav-link" href="imitation.html">Imitation Player</a>
+      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
+      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
+      <a class="mobile-nav-link active" href="review.html">SRS Review</a>
+    </nav>
+    <div class="mobile-auth-area">
+      <a class="mobile-due-link hidden" id="mobileDueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
+      <span class="mobile-auth-user" id="mobileAuthUser">認証状態を確認中...</span>
+      <a class="mobile-auth-link" id="mobileAuthLink" href="auth.html">ログイン</a>
+      <button class="mobile-auth-btn hidden" id="mobileLogoutBtn" type="button">ログアウト</button>
+    </div>
+  </aside>
+
+  <main class="review-main">
+    <section class="review-head-card">
+      <div class="review-head-top">
+        <p class="review-eyebrow">SPACED REPETITION</p>
+        <button class="review-new-btn" id="newCardBtn" type="button">+ New</button>
+      </div>
+      <h1 class="review-title">Word / Idiom / Phrase Review</h1>
+      <p class="review-copy">EN→JA / JA→EN をランダム混在で復習します。評価は Again / Good / Easy の3段階です。</p>
+      <div class="review-meta-row">
+        <span id="dueCountLabel">Due 0</span>
+        <span id="queueCountLabel">Queue 0</span>
+      </div>
+      <div class="review-filter-row" role="tablist" aria-label="復習カテゴリ">
+        <button class="review-filter-btn active" type="button" data-filter="all">All</button>
+        <button class="review-filter-btn" type="button" data-filter="word">Word</button>
+        <button class="review-filter-btn" type="button" data-filter="idiom">Idiom</button>
+        <button class="review-filter-btn" type="button" data-filter="phrase">Phrase</button>
+      </div>
+    </section>
+
+    <section class="review-card" aria-live="polite">
+      <div class="review-badges">
+        <p class="review-category" id="cardCategory">CARD</p>
+        <p class="review-direction" id="cardDirection">EN→JA</p>
+      </div>
+
+      <p class="review-front" id="cardFront">読み込み中...</p>
+
+      <div class="review-hint-wrap hidden" id="cardHintWrap">
+        <p class="review-hint-label">Hint</p>
+        <p class="review-hint" id="cardHint"></p>
+      </div>
+
+      <div class="review-back-wrap hidden" id="cardBackWrap">
+        <p class="review-back-label">Answer</p>
+        <p class="review-back-primary" id="cardBackPrimary"></p>
+        <p class="review-back-secondary" id="cardBackSecondary"></p>
+      </div>
+
+      <div class="review-empty hidden" id="emptyState">現在、復習待ちはありません。</div>
+
+      <div class="review-actions">
+        <div class="review-action-row">
+          <button class="review-hint-btn" id="hintBtn" type="button">Hint</button>
+          <button class="review-reveal-btn" id="revealBtn" type="button">答えを見る</button>
+        </div>
+        <div class="review-grade-row">
+          <button class="review-grade-btn again" type="button" data-grade="again">Again</button>
+          <button class="review-grade-btn good" type="button" data-grade="good">Good</button>
+          <button class="review-grade-btn easy" type="button" data-grade="easy">Easy</button>
+        </div>
+      </div>
+      <p class="review-status" id="reviewStatus"></p>
+    </section>
+  </main>
+</div>
+
+<div class="review-modal-backdrop hidden" id="newCardModalBackdrop">
+  <section class="review-modal" role="dialog" aria-modal="true" aria-labelledby="newCardModalTitle">
+    <h2 class="review-modal-title" id="newCardModalTitle">新しいSRSカードを追加</h2>
+    <p class="review-modal-copy">英単語を1語だけ入力してください。下書きカード（inactive）として保存されます。</p>
+    <label class="review-modal-label" for="newCardWordInput">Word</label>
+    <input class="review-modal-input" id="newCardWordInput" type="text" autocomplete="off" placeholder="e.g. simultaneously">
+    <p class="review-modal-error hidden" id="newCardModalError"></p>
+    <div class="review-modal-actions">
+      <button class="review-modal-cancel" id="newCardCancelBtn" type="button">Cancel</button>
+      <button class="review-modal-save" id="newCardSaveBtn" type="button">Save</button>
+    </div>
+  </section>
+</div>
+
+<script type="module" src="js/review-app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

@@ -66,6 +66,18 @@
       ]
     },
     {
+      "name": "SRS Review",
+      "short_name": "Review",
+      "url": "./review.html",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
       "name": "Settings",
       "short_name": "Settings",
       "url": "./settings.html",

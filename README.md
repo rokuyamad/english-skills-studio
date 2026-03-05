@@ -1,11 +1,12 @@
 # English Skills Studio
 
-英語学習用の 4 ページ構成 Web アプリです。GitHub Pages 配信を前提にしています。
+英語学習用の 5 ページ構成 Web アプリです。GitHub Pages 配信を前提にしています。
 
 - `index.html`: 学習状況の **Dashboard**
 - `imitation.html`: 音声ベースの **Imitation Player**
 - `slash.html`: テキストベースの **slash-reading**
 - `shadowing.html`: 動画ベースの **Shadowing**
+- `review.html`: 単語・フレーズの **SRS Review**
 
 ## Demo / Pages
 
@@ -15,6 +16,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 - `imitation.html`: Imitation Player
 - `slash.html`: slash-reading
 - `shadowing.html`: Shadowing
+- `review.html`: SRS Review
 
 ## Features
 
@@ -23,6 +25,10 @@ GitHub Pages ではリポジトリルートから配信されます。
 - slash-reading のセット切替とチャンク表示（2-3 文）
 - チャンク単位の `Slash` / `JP` トグル
 - Shadowing のセット切替と YouTube 練習動画一覧
+- Anki風 SRS（`Again / Good / Easy`）で単語・フレーズ復習
+- Imitation / Slash で選択した英単語をワンクリックで SRS 下書き追加
+- Review の `+ New` から単語1語の SRS 下書き追加
+- ログイン時に復習Due件数をヘッダー表示（アプリ内通知）
 - Supabase Auth（Email OTP）によるログイン導線（`auth.html`）
 - PWA 対応（`manifest.json` + `sw.js`）
 - オフライン時のキャッシュ再生補助（`/audio/` は Cache First）
@@ -35,6 +41,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `imitation.html` | Imitation Player エントリ |
 | `slash.html` | slash-reading エントリ |
 | `shadowing.html` | Shadowing エントリ |
+| `review.html` | SRS Review エントリ |
 | `auth.html` | Supabase Email OTP ログインページ |
 | `css/style.css` | English Skills Studio 用スタイル |
 | `css/slash.css` | slash-reading 用スタイル |
@@ -56,6 +63,10 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `js/shadowing-app.js` | Shadowing 初期化・データ読み込み |
 | `js/shadowing-ui.js` | Shadowing 描画・埋め込みトグル |
 | `js/shadowing-state.js` | Shadowing 状態 |
+| `js/review-app.js` | SRS Review 初期化・イベント配線 |
+| `js/srs-api.js` | SRSカード取得 / レビュー保存API |
+| `js/srs-quick-add.js` | テキスト選択からSRS下書きカードを追加 |
+| `js/srs-scheduler.js` | 忘却曲線ベースの次回復習日時計算 |
 | `data/data.json` | トラック/セグメント定義（音声ページ用） |
 | `data/slash-data.json` | セット/英文/スラッシュ/和訳（slash 用） |
 | `data/shadowing-data.json` | セット/練習動画URL（Shadowing 用） |
@@ -63,6 +74,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `scripts/transcribe.py` | 音声分割 + Whisper API 文字起こし + JSON 更新 |
 | `manifest.json` | PWA マニフェスト |
 | `sw.js` | Service Worker |
+| `docs/srs-supabase.sql` | SRS用Supabaseテーブル定義 |
 
 ## Supabase Auth Setup (Email OTP)
 
@@ -81,6 +93,87 @@ export const SUPABASE_ANON_KEY = 'eyJ...';
 ```
 
 7. `auth.html` を開いて認証コード送信とログインを確認
+
+## SRS Tables Setup (Supabase)
+
+SRS Review を使うには `docs/srs-supabase.sql` を SQL Editor で実行してください。
+
+作成される主なテーブル:
+
+- `srs_cards`（単語・フレーズのカード本体）
+- `srs_card_states`（復習状態: due / stability / difficulty など）
+- `srs_review_logs`（レビュー履歴）
+
+`srs_cards` には下書き運用のため `status`（`draft|ready`）と `normalized_term`（重複判定用）を持たせます。  
+`draft` は `is_active=false` で保存され、`ready` になったカードのみ復習対象として有効化します。
+
+## Draft Enrichment (Local)
+
+下書きカードの補完はローカル運用（Codex等）を想定しています。  
+`scripts/enrich-srs-drafts.py` を使って下書き一覧取得と ready 化更新を行えます。
+
+```bash
+# 下書き一覧
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+uv run python3 scripts/enrich-srs-drafts.py --list
+
+# 補完JSONを適用（dry run）
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+uv run python3 scripts/enrich-srs-drafts.py --input enrichments.json --dry-run
+
+# 実適用
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+uv run python3 scripts/enrich-srs-drafts.py --input enrichments.json
+```
+
+### Daily Batch (Recommended)
+
+日次バッチは `scripts/run-srs-draft-batch.sh` を **2段階** で実行します（list -> Codex補完 -> apply）。
+
+```bash
+# Step 1: draft一覧を取得（Codexに渡す）
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+bash scripts/run-srs-draft-batch.sh --prepare
+
+# Step 2: Codexが作った enrichments.json を検証（DB反映なし）
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+bash scripts/run-srs-draft-batch.sh --input /path/to/enrichments.json --dry-run
+
+# Step 3: 本反映
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+bash scripts/run-srs-draft-batch.sh --input /path/to/enrichments.json
+```
+
+Codex自動補完まで含めて一括実行する場合:
+
+```bash
+# 一括 dry-run（DB反映なし）
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+bash scripts/run-srs-draft-batch.sh --codex-auto --dry-run
+
+# 一括本反映
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+bash scripts/run-srs-draft-batch.sh --codex-auto
+```
+
+補完JSONは Codex が作成する前提ですが、必要ならローカルLLM生成スクリプトも使えます:
+
+```bash
+LOCAL_LLM_BASE_URL=http://127.0.0.1:11434/v1 \
+LOCAL_LLM_API_KEY=local \
+LOCAL_LLM_MODEL=gpt-4.1-mini \
+uv run python3 scripts/generate-srs-enrichments.py \
+  --in /tmp/drafts.json \
+  --out /tmp/enrichments.json \
+  --errors-out /tmp/batch-errors.json
+```
+
+`cron` 例（毎日 03:00 JST）:
+
+```cron
+# 例: 03:00にdraftsをエクスポート（補完はCodex運用）
+0 3 * * * cd /path/to/english-skills-studio && SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... bash scripts/run-srs-draft-batch.sh --prepare >> /tmp/srs-draft-batch.log 2>&1
+```
 
 ## Local Development
 
