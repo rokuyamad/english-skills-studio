@@ -33,7 +33,8 @@ function formToSettings(scope, ids) {
     seconds_per_count: {
       imitation: Number(getEl(scope, ids.secImitation)?.value),
       slash: Number(getEl(scope, ids.secSlash)?.value),
-      shadowing: Number(getEl(scope, ids.secShadowing)?.value)
+      shadowing: Number(getEl(scope, ids.secShadowing)?.value),
+      srs: Number(getEl(scope, ids.secSrs)?.value)
     },
     streak_min_minutes_per_day: Number(getEl(scope, ids.streakMinutes)?.value),
     xp_per_minute: Number(getEl(scope, ids.xpPerMinute)?.value),
@@ -50,6 +51,7 @@ function fillForm(scope, ids, settings) {
   getEl(scope, ids.secImitation).value = settings.seconds_per_count.imitation;
   getEl(scope, ids.secSlash).value = settings.seconds_per_count.slash;
   getEl(scope, ids.secShadowing).value = settings.seconds_per_count.shadowing;
+  getEl(scope, ids.secSrs).value = settings.seconds_per_count.srs;
   getEl(scope, ids.streakMinutes).value = settings.streak_min_minutes_per_day;
   getEl(scope, ids.xpPerMinute).value = settings.xp_per_minute;
   getEl(scope, ids.levelCurveFactor).value = settings.level_curve_factor;
@@ -64,6 +66,7 @@ export const PAGE_SETTINGS_IDS = {
   secImitation: 'secImitation',
   secSlash: 'secSlash',
   secShadowing: 'secShadowing',
+  secSrs: 'secSrs',
   streakMinutes: 'streakMinutes',
   xpPerMinute: 'xpPerMinute',
   milestones: 'milestones',
@@ -81,6 +84,7 @@ export const MODAL_SETTINGS_IDS = {
   secImitation: 'modalSecImitation',
   secSlash: 'modalSecSlash',
   secShadowing: 'modalSecShadowing',
+  secSrs: 'modalSecSrs',
   streakMinutes: 'modalStreakMinutes',
   xpPerMinute: 'modalXpPerMinute',
   milestones: 'modalMilestones',

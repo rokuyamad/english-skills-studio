@@ -12,7 +12,8 @@ export const DEFAULT_STUDY_SETTINGS = {
   seconds_per_count: {
     imitation: 45,
     slash: 75,
-    shadowing: 120
+    shadowing: 120,
+    srs: 60
   },
   streak_min_minutes_per_day: 10,
   xp_per_minute: 10,
@@ -54,7 +55,8 @@ export function validateStudySettings(raw = {}) {
     seconds_per_count: {
       imitation: clampNumber(secondsPerCount.imitation, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.imitation),
       slash: clampNumber(secondsPerCount.slash, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.slash),
-      shadowing: clampNumber(secondsPerCount.shadowing, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.shadowing)
+      shadowing: clampNumber(secondsPerCount.shadowing, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.shadowing),
+      srs: clampNumber(secondsPerCount.srs, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.srs)
     },
     streak_min_minutes_per_day: clampNumber(
       raw.streak_min_minutes_per_day,

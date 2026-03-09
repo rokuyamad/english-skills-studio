@@ -125,11 +125,11 @@ function renderDonutChart(perPageHours) {
   donutChart = new Chart(canvas, {
     type: 'doughnut',
     data: {
-      labels: ['Imitation', 'Slash', 'Shadowing'],
+      labels: ['Imitation', 'Slash', 'Shadowing', 'SRS'],
       datasets: [
         {
-          data: [perPageHours.imitation, perPageHours.slash, perPageHours.shadowing],
-          backgroundColor: ['#4ecbff', '#ffc46b', '#ff9f8b'],
+          data: [perPageHours.imitation, perPageHours.slash, perPageHours.shadowing, perPageHours.srs],
+          backgroundColor: ['#4ecbff', '#ffc46b', '#ff9f8b', '#91f2a2'],
           borderWidth: 0
         }
       ]
@@ -164,6 +164,10 @@ function renderCumulativeChart(series = []) {
   shadowingGradient.addColorStop(0, 'rgba(255, 159, 139, 0.34)');
   shadowingGradient.addColorStop(1, 'rgba(255, 159, 139, 0.03)');
 
+  const srsGradient = ctx.createLinearGradient(0, 0, 0, 220);
+  srsGradient.addColorStop(0, 'rgba(145, 242, 162, 0.34)');
+  srsGradient.addColorStop(1, 'rgba(145, 242, 162, 0.03)');
+
   cumulativeChart = new Chart(canvas, {
     type: 'line',
     data: {
@@ -196,6 +200,17 @@ function renderCumulativeChart(series = []) {
           data: series.map((d) => d.shadowingHours),
           borderColor: '#ff9f8b',
           backgroundColor: shadowingGradient,
+          stack: 'inAppHours',
+          fill: true,
+          tension: 0.24,
+          pointRadius: 0,
+          pointHoverRadius: 3
+        },
+        {
+          label: 'SRS',
+          data: series.map((d) => d.srsHours),
+          borderColor: '#91f2a2',
+          backgroundColor: srsGradient,
           stack: 'inAppHours',
           fill: true,
           tension: 0.24,
@@ -244,6 +259,7 @@ export function renderDashboard(snapshot) {
   setText('kpiImitation', hoursLabel(snapshot.perPageHours.imitation));
   setText('kpiSlash', hoursLabel(snapshot.perPageHours.slash));
   setText('kpiShadowing', hoursLabel(snapshot.perPageHours.shadowing));
+  setText('kpiSrs', hoursLabel(snapshot.perPageHours.srs));
   setText('kpiNextMilestone', snapshot.nextMilestone ? `${snapshot.nextMilestone}h` : 'Complete');
 
   const fill = document.getElementById('goalProgressFill');

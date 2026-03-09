@@ -1,6 +1,8 @@
 import { requireAuthOrRedirect, setupTopbarAuth, refreshDueBadge } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { createDraftCard, fetchDueCards, fetchDueCount, submitReview } from './srs-api.js';
+import { getEffectiveStudySettings } from './study-settings.js';
+import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 
 const state = {
   cardTypeFilter: 'all',
@@ -207,11 +209,19 @@ function bindGradeButtons() {
       setStatus('レビュー結果を保存中...');
 
       try {
+        const reviewedCard = state.current;
         await submitReview({
-          cardId: state.current.cardId,
-          direction: state.current.direction,
+          cardId: reviewedCard.cardId,
+          direction: reviewedCard.direction,
           grade
         });
+        const settings = await getEffectiveStudySettings();
+        const event = buildStudyEvent({
+          pageKey: 'srs',
+          contentKey: `srs:${reviewedCard.cardId}:${reviewedCard.direction}`,
+          settings
+        });
+        await recordAndMaybeFlush(event);
         await loadQueue();
       } catch (error) {
         console.error(error);

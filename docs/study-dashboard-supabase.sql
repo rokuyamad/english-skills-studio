@@ -4,7 +4,7 @@ create table if not exists public.study_events (
   id uuid primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
   occurred_at timestamptz not null,
-  page_key text not null check (page_key in ('imitation', 'slash', 'shadowing')),
+  page_key text not null check (page_key in ('imitation', 'slash', 'shadowing', 'srs')),
   content_key text not null,
   unit_count int not null default 1 check (unit_count > 0),
   estimated_seconds int not null check (estimated_seconds > 0),

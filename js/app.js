@@ -12,16 +12,18 @@ let settingsUnsubscribe = null;
 let settingsModalController = null;
 
 async function getCountTotalsByPage() {
-  const [imitation, slash, shadowing] = await Promise.all([
+  const [imitation, slash, shadowing, srs] = await Promise.all([
     getCountsByPrefix('imitation'),
     getCountsByPrefix('slash'),
-    getCountsByPrefix('shadowing')
+    getCountsByPrefix('shadowing'),
+    getCountsByPrefix('srs')
   ]);
 
   return {
     imitation: Object.values(imitation).reduce((sum, v) => sum + Number(v || 0), 0),
     slash: Object.values(slash).reduce((sum, v) => sum + Number(v || 0), 0),
-    shadowing: Object.values(shadowing).reduce((sum, v) => sum + Number(v || 0), 0)
+    shadowing: Object.values(shadowing).reduce((sum, v) => sum + Number(v || 0), 0),
+    srs: Object.values(srs).reduce((sum, v) => sum + Number(v || 0), 0)
   };
 }
 
@@ -76,12 +78,13 @@ async function renderDashboardFromData() {
     if (!Object.prototype.hasOwnProperty.call(acc, key)) return acc;
     acc[key] += Number(ev.unitCount || ev.unit_count || 1);
     return acc;
-  }, { imitation: 0, slash: 0, shadowing: 0 });
+  }, { imitation: 0, slash: 0, shadowing: 0, srs: 0 });
 
   const baselineSecondsByPage = {
     imitation: Math.max(0, countTotals.imitation - eventUnits.imitation) * Number(settings.seconds_per_count.imitation || 45),
     slash: Math.max(0, countTotals.slash - eventUnits.slash) * Number(settings.seconds_per_count.slash || 75),
-    shadowing: Math.max(0, countTotals.shadowing - eventUnits.shadowing) * Number(settings.seconds_per_count.shadowing || 120)
+    shadowing: Math.max(0, countTotals.shadowing - eventUnits.shadowing) * Number(settings.seconds_per_count.shadowing || 120),
+    srs: 0
   };
 
   const snapshot = computeDashboardSnapshot({ events, baselineSecondsByPage }, settings);
