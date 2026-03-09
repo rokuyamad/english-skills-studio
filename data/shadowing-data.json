@@ -19,6 +19,23 @@
         { "id": "sh-012", "title": "日本の四季", "wpm": 156, "youtubeUrl": "https://youtu.be/n7ph5KGXROM" },
         { "id": "sh-013", "title": "LA旅行の感想", "wpm": 152, "youtubeUrl": "https://youtu.be/ZbhzlhoCUZo" }
       ]
+    },
+    {
+      "id": "shadowing-business-scene",
+      "label": "シャドーイング（ビジネスシーン）",
+      "source": "https://dirt-cupboard-b80.notion.site/19fe9ea5aebc80149c80c73e1f8ae680",
+      "entries": [
+        { "id": "sh-biz-001", "title": "自己紹介をする", "wpm": 176, "youtubeUrl": "https://youtu.be/rCb0IBiBo00" },
+        { "id": "sh-biz-002", "title": "新しいプロジェクトを始める", "wpm": 173, "youtubeUrl": "https://youtu.be/2SWP-OmQB6M" },
+        { "id": "sh-biz-003", "title": "チームの成果発表をする", "wpm": 177, "youtubeUrl": "https://youtu.be/ZJJgOWlwGu0" },
+        { "id": "sh-biz-004", "title": "会議の予定を確認する", "wpm": 174, "youtubeUrl": "https://youtu.be/n7bn7reeI3s" },
+        { "id": "sh-biz-005", "title": "リスケをお願いする", "wpm": 175, "youtubeUrl": "https://youtu.be/wL-wf-xX9R0" },
+        { "id": "sh-biz-006", "title": "プロジェクトの進捗を確認する", "wpm": 192, "youtubeUrl": "https://youtu.be/jpYMhShZtok" },
+        { "id": "sh-biz-007", "title": "会議の準備をする", "wpm": 173, "youtubeUrl": "https://youtu.be/qlZJKK20zw0" },
+        { "id": "sh-biz-008", "title": "ワークショップを開く", "wpm": 166, "youtubeUrl": "https://youtu.be/XNvQYvP2lgY" },
+        { "id": "sh-biz-009", "title": "参加者へのフィードバック", "wpm": 197, "youtubeUrl": "https://youtu.be/qfPmptiFe6I" },
+        { "id": "sh-biz-010", "title": "提案書のレビューをする", "wpm": 184, "youtubeUrl": "https://youtu.be/DRplEBoqTgM" }
+      ]
     }
   ]
 }

@@ -72,6 +72,7 @@ GitHub Pages ではリポジトリルートから配信されます。
 | `data/shadowing-data.json` | セット/練習動画URL（Shadowing 用） |
 | `audio/segments/{key}/{nn}.mp3` | セグメント音声 |
 | `scripts/transcribe.py` | 音声分割 + Whisper API 文字起こし + JSON 更新 |
+| `scripts/import-shadowing-set.py` | 公開 Notion ページから Shadowing セットを抽出して JSON 更新 |
 | `manifest.json` | PWA マニフェスト |
 | `sw.js` | Service Worker |
 | `docs/srs-supabase.sql` | SRS用Supabaseテーブル定義 |
@@ -189,6 +190,26 @@ uv run python3 -m http.server 8080
 - `http://localhost:8080/imitation.html`
 - `http://localhost:8080/slash.html`
 - `http://localhost:8080/shadowing.html`
+
+## Add a Shadowing Set
+
+新しい公開 Notion ページから Shadowing セットを追加する場合は、以下を実行します。
+
+```bash
+uv run python3 scripts/import-shadowing-set.py \
+  --url "https://<your-page>.notion.site/<page-id>"
+```
+
+事前確認だけしたい場合:
+
+```bash
+uv run python3 scripts/import-shadowing-set.py \
+  --url "https://<your-page>.notion.site/<page-id>" \
+  --dry-run
+```
+
+成功すると `data/shadowing-data.json` が source URL ベースで upsert されます。  
+このスクリプトは各セクションの `YouTubeはこちら` に含まれる YouTube 動画だけを抽出し、Vimeo 埋め込みや補助リンクは無視します。
 
 ## Data Schema
 
