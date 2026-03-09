@@ -88,7 +88,8 @@ def extract_page_id(url: str) -> tuple[str, str, str]:
     if parsed.scheme not in {"http", "https"} or not parsed.netloc.endswith("notion.site"):
         raise ImportErrorWithContext("Expected a public Notion URL on notion.site.")
 
-    match = re.search(r"([0-9a-f]{32})", parsed.path.replace("-", ""))
+    compact_path = parsed.path.replace("-", "")
+    match = re.search(r"([0-9a-f]{32})/?$", compact_path)
     if not match:
         raise ImportErrorWithContext("Could not extract a Notion page ID from the URL.")
 

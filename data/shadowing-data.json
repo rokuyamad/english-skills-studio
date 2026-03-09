@@ -5,19 +5,84 @@
       "label": "シャドーイング（初級2）",
       "source": "https://dirt-cupboard-b80.notion.site/2-c0ce98aa21764c74ab516f5f7f94e8b1",
       "entries": [
-        { "id": "sh-001", "title": "ニューヨーク旅行", "wpm": 177, "youtubeUrl": "https://youtu.be/9RVnNzYhnl4" },
-        { "id": "sh-002", "title": "ジムに通うメリット", "wpm": 183, "youtubeUrl": "https://youtu.be/jtih-PSIuSs" },
-        { "id": "sh-003", "title": "私の好きなもの", "wpm": 210, "youtubeUrl": "https://youtu.be/oh8zCQjubhA" },
-        { "id": "sh-004", "title": "ミートローフの作り方", "wpm": 175, "youtubeUrl": "https://youtu.be/eq5GSA1eNtA" },
-        { "id": "sh-005", "title": "パリでの生活", "wpm": 169, "youtubeUrl": "https://youtu.be/g_HCZaR-nP0" },
-        { "id": "sh-006", "title": "質の良い睡眠を得る方法", "wpm": 164, "youtubeUrl": "https://youtu.be/xE-Hy-whsGQ" },
-        { "id": "sh-007", "title": "犬と猫にまつわる話", "wpm": 175, "youtubeUrl": "https://youtu.be/wmkmf9SCgZE" },
-        { "id": "sh-008", "title": "家族との時間", "wpm": 156, "youtubeUrl": "https://youtu.be/gtZcelQb_Cs" },
-        { "id": "sh-009", "title": "日本でのカルチャーショック", "wpm": 162, "youtubeUrl": "https://youtu.be/CK0I92tsFUg" },
-        { "id": "sh-010", "title": "私が英語を学ぶ理由", "wpm": 156, "youtubeUrl": "https://youtu.be/d3IelD2QAmE" },
-        { "id": "sh-011", "title": "英語学習のポイント", "wpm": 144, "youtubeUrl": "https://youtu.be/l2Es6ScQbaA" },
-        { "id": "sh-012", "title": "日本の四季", "wpm": 156, "youtubeUrl": "https://youtu.be/n7ph5KGXROM" },
-        { "id": "sh-013", "title": "LA旅行の感想", "wpm": 152, "youtubeUrl": "https://youtu.be/ZbhzlhoCUZo" }
+        {
+          "id": "sh-001",
+          "title": "ニューヨーク旅行",
+          "wpm": 177,
+          "youtubeUrl": "https://youtu.be/9RVnNzYhnl4"
+        },
+        {
+          "id": "sh-002",
+          "title": "ジムに通うメリット",
+          "wpm": 183,
+          "youtubeUrl": "https://youtu.be/jtih-PSIuSs"
+        },
+        {
+          "id": "sh-003",
+          "title": "私の好きなもの",
+          "wpm": 210,
+          "youtubeUrl": "https://youtu.be/oh8zCQjubhA"
+        },
+        {
+          "id": "sh-004",
+          "title": "ミートローフの作り方",
+          "wpm": 175,
+          "youtubeUrl": "https://youtu.be/eq5GSA1eNtA"
+        },
+        {
+          "id": "sh-005",
+          "title": "パリでの生活",
+          "wpm": 169,
+          "youtubeUrl": "https://youtu.be/g_HCZaR-nP0"
+        },
+        {
+          "id": "sh-006",
+          "title": "質の良い睡眠を得る方法",
+          "wpm": 164,
+          "youtubeUrl": "https://youtu.be/xE-Hy-whsGQ"
+        },
+        {
+          "id": "sh-007",
+          "title": "犬と猫にまつわる話",
+          "wpm": 175,
+          "youtubeUrl": "https://youtu.be/wmkmf9SCgZE"
+        },
+        {
+          "id": "sh-008",
+          "title": "家族との時間",
+          "wpm": 156,
+          "youtubeUrl": "https://youtu.be/gtZcelQb_Cs"
+        },
+        {
+          "id": "sh-009",
+          "title": "日本でのカルチャーショック",
+          "wpm": 162,
+          "youtubeUrl": "https://youtu.be/CK0I92tsFUg"
+        },
+        {
+          "id": "sh-010",
+          "title": "私が英語を学ぶ理由",
+          "wpm": 156,
+          "youtubeUrl": "https://youtu.be/d3IelD2QAmE"
+        },
+        {
+          "id": "sh-011",
+          "title": "英語学習のポイント",
+          "wpm": 144,
+          "youtubeUrl": "https://youtu.be/l2Es6ScQbaA"
+        },
+        {
+          "id": "sh-012",
+          "title": "日本の四季",
+          "wpm": 156,
+          "youtubeUrl": "https://youtu.be/n7ph5KGXROM"
+        },
+        {
+          "id": "sh-013",
+          "title": "LA旅行の感想",
+          "wpm": 152,
+          "youtubeUrl": "https://youtu.be/ZbhzlhoCUZo"
+        }
       ]
     },
     {
@@ -25,16 +90,151 @@
       "label": "シャドーイング（ビジネスシーン）",
       "source": "https://dirt-cupboard-b80.notion.site/19fe9ea5aebc80149c80c73e1f8ae680",
       "entries": [
-        { "id": "sh-biz-001", "title": "自己紹介をする", "wpm": 176, "youtubeUrl": "https://youtu.be/rCb0IBiBo00" },
-        { "id": "sh-biz-002", "title": "新しいプロジェクトを始める", "wpm": 173, "youtubeUrl": "https://youtu.be/2SWP-OmQB6M" },
-        { "id": "sh-biz-003", "title": "チームの成果発表をする", "wpm": 177, "youtubeUrl": "https://youtu.be/ZJJgOWlwGu0" },
-        { "id": "sh-biz-004", "title": "会議の予定を確認する", "wpm": 174, "youtubeUrl": "https://youtu.be/n7bn7reeI3s" },
-        { "id": "sh-biz-005", "title": "リスケをお願いする", "wpm": 175, "youtubeUrl": "https://youtu.be/wL-wf-xX9R0" },
-        { "id": "sh-biz-006", "title": "プロジェクトの進捗を確認する", "wpm": 192, "youtubeUrl": "https://youtu.be/jpYMhShZtok" },
-        { "id": "sh-biz-007", "title": "会議の準備をする", "wpm": 173, "youtubeUrl": "https://youtu.be/qlZJKK20zw0" },
-        { "id": "sh-biz-008", "title": "ワークショップを開く", "wpm": 166, "youtubeUrl": "https://youtu.be/XNvQYvP2lgY" },
-        { "id": "sh-biz-009", "title": "参加者へのフィードバック", "wpm": 197, "youtubeUrl": "https://youtu.be/qfPmptiFe6I" },
-        { "id": "sh-biz-010", "title": "提案書のレビューをする", "wpm": 184, "youtubeUrl": "https://youtu.be/DRplEBoqTgM" }
+        {
+          "id": "sh-biz-001",
+          "title": "自己紹介をする",
+          "wpm": 176,
+          "youtubeUrl": "https://youtu.be/rCb0IBiBo00"
+        },
+        {
+          "id": "sh-biz-002",
+          "title": "新しいプロジェクトを始める",
+          "wpm": 173,
+          "youtubeUrl": "https://youtu.be/2SWP-OmQB6M"
+        },
+        {
+          "id": "sh-biz-003",
+          "title": "チームの成果発表をする",
+          "wpm": 177,
+          "youtubeUrl": "https://youtu.be/ZJJgOWlwGu0"
+        },
+        {
+          "id": "sh-biz-004",
+          "title": "会議の予定を確認する",
+          "wpm": 174,
+          "youtubeUrl": "https://youtu.be/n7bn7reeI3s"
+        },
+        {
+          "id": "sh-biz-005",
+          "title": "リスケをお願いする",
+          "wpm": 175,
+          "youtubeUrl": "https://youtu.be/wL-wf-xX9R0"
+        },
+        {
+          "id": "sh-biz-006",
+          "title": "プロジェクトの進捗を確認する",
+          "wpm": 192,
+          "youtubeUrl": "https://youtu.be/jpYMhShZtok"
+        },
+        {
+          "id": "sh-biz-007",
+          "title": "会議の準備をする",
+          "wpm": 173,
+          "youtubeUrl": "https://youtu.be/qlZJKK20zw0"
+        },
+        {
+          "id": "sh-biz-008",
+          "title": "ワークショップを開く",
+          "wpm": 166,
+          "youtubeUrl": "https://youtu.be/XNvQYvP2lgY"
+        },
+        {
+          "id": "sh-biz-009",
+          "title": "参加者へのフィードバック",
+          "wpm": 197,
+          "youtubeUrl": "https://youtu.be/qfPmptiFe6I"
+        },
+        {
+          "id": "sh-biz-010",
+          "title": "提案書のレビューをする",
+          "wpm": 184,
+          "youtubeUrl": "https://youtu.be/DRplEBoqTgM"
+        }
+      ]
+    },
+    {
+      "id": "shadowing-2",
+      "label": "シャドーイング（ビジネスシーン2）",
+      "source": "https://dirt-cupboard-b80.notion.site/2-2a1e9ea5aebc80dba1a3e0a2ddd90bdc",
+      "entries": [
+        {
+          "id": "sh-2-001",
+          "title": "Internal Training Program Launch",
+          "wpm": 146,
+          "youtubeUrl": "https://youtu.be/n0_dBGenjXI"
+        },
+        {
+          "id": "sh-2-002",
+          "title": "Weekly Product Review Meeting",
+          "wpm": 150,
+          "youtubeUrl": "https://youtu.be/C6hpjO_H6AQ"
+        },
+        {
+          "id": "sh-2-003",
+          "title": "Sales Report Presentation",
+          "wpm": 158,
+          "youtubeUrl": "https://youtu.be/XY7kDoy7hUM"
+        },
+        {
+          "id": "sh-2-004",
+          "title": "Describing a Marketing Strategy",
+          "wpm": 158,
+          "youtubeUrl": "https://youtu.be/cNdGh50nyOE"
+        },
+        {
+          "id": "sh-2-005",
+          "title": "Creative & Design Agency",
+          "wpm": 153,
+          "youtubeUrl": "https://youtu.be/hD4JvhhXW_0"
+        },
+        {
+          "id": "sh-2-006",
+          "title": "App Development",
+          "wpm": 164,
+          "youtubeUrl": "https://youtu.be/EOa_6gir25A"
+        },
+        {
+          "id": "sh-2-007",
+          "title": "AI tech",
+          "wpm": 166,
+          "youtubeUrl": "https://youtu.be/dxhbcBANu8c"
+        },
+        {
+          "id": "sh-2-008",
+          "title": "Advertising Industry",
+          "wpm": 168,
+          "youtubeUrl": "https://youtu.be/XpnKyxZ_GpI"
+        },
+        {
+          "id": "sh-2-009",
+          "title": "Handling a Client Complaint",
+          "wpm": 171,
+          "youtubeUrl": "https://youtu.be/XaK8aolK_e4"
+        },
+        {
+          "id": "sh-2-010",
+          "title": "Talking About a Company Merger",
+          "wpm": 172,
+          "youtubeUrl": "https://youtu.be/v6-EtCiddKA"
+        },
+        {
+          "id": "sh-2-011",
+          "title": "Talking About Future Company Vision",
+          "wpm": 173,
+          "youtubeUrl": "https://youtu.be/TAezqDeIE9Y"
+        },
+        {
+          "id": "sh-2-012",
+          "title": "Explaining a Product Launch",
+          "wpm": 173,
+          "youtubeUrl": "https://youtu.be/NeCUkCzBaX4"
+        },
+        {
+          "id": "sh-2-013",
+          "title": "Discussing Sustainability Efforts",
+          "wpm": 197,
+          "youtubeUrl": "https://youtu.be/wE417qfy1zs"
+        }
       ]
     }
   ]
