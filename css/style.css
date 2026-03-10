@@ -1252,6 +1252,99 @@ body.dashboard-page .dashboard-header {
   background: linear-gradient(130deg, #ffd699, #ffa38a);
 }
 
+/* ── External Learning Log ────────────────────────────────── */
+.external-log-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.external-log-head h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.external-log-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.external-log-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.external-log-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.external-log-fields .field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.external-log-fields .field-memo {
+  flex: 1;
+  min-width: 200px;
+}
+
+.external-log-entries {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.external-log-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-2);
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ext-entry-date {
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+
+.ext-entry-duration {
+  color: var(--accent-cyan, #6ce5ff);
+  flex-shrink: 0;
+  min-width: 56px;
+}
+
+.ext-entry-memo {
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.external-log-empty {
+  font-size: 12px;
+  color: var(--text-2);
+  font-style: italic;
+  list-style: none;
+}
+
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 290px 1fr;

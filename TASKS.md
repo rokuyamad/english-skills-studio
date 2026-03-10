@@ -2,7 +2,6 @@
 
 ## Inbox
 - [ ] T-20260302-001 | settingsページの保存完了トーストを改善 | p2 | owner:me | issue:none | created:2026-03-02
-- [ ] T-20260304-002 | 外部学習時間を記録する機能を追加（学習内容の簡易メモ欄付き） | p1 | owner:me | issue:none | created:2026-03-04
 
 ## Now
 
@@ -22,3 +21,4 @@
 - [x] T-20260302-003 | 学習進捗UIの文言を統一する | p1 | owner:me | issue:none | created:2026-03-02 | done:2026-03-04
 - [x] T-20260302-010 | ダッシュボードに本アプリでの積み上げ学習時間グラフを追加する | p1 | owner:me | issue:none | created:2026-03-02 | done:2026-03-04
 - [x] T-20260304-001 | Anki風SRSで単語・フレーズ復習カテゴリを追加（忘却曲線ベース通知） | p1 | owner:me | issue:none | created:2026-03-04 | done:2026-03-05
+- [x] T-20260304-002 | 外部学習時間を記録する機能を追加（学習内容の簡易メモ欄付き） | p1 | owner:me | issue:none | created:2026-03-04 | done:2026-03-10

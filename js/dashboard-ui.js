@@ -253,7 +253,10 @@ export function renderDashboard(snapshot) {
   if (!snapshot) return;
 
   setText('kpiTotalHours', hoursLabel(snapshot.totalHours));
-  setText('kpiTotalBreakdown', `In-app ${hoursLabel(snapshot.inAppHours)} + External ${hoursLabel(snapshot.externalCarryoverHours)}`);
+  const breakdownParts = [`In-app ${hoursLabel(snapshot.inAppHours)}`];
+  if ((snapshot.externalEventHours || 0) > 0) breakdownParts.push(`Logged ${hoursLabel(snapshot.externalEventHours)}`);
+  if ((snapshot.externalCarryoverHours || 0) > 0) breakdownParts.push(`Carryover ${hoursLabel(snapshot.externalCarryoverHours)}`);
+  setText('kpiTotalBreakdown', breakdownParts.join(' + '));
   setText('kpiRemaining', hoursLabel(snapshot.remainingHours));
   setText('kpiGoalProgress', percentLabel(snapshot.goalProgress));
   setText('kpiImitation', hoursLabel(snapshot.perPageHours.imitation));
