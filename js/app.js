@@ -7,9 +7,12 @@ import { flushStudyEvents } from './study-sync.js';
 import { computeDashboardSnapshot } from './study-metrics.js';
 import { renderDashboard } from './dashboard-ui.js';
 import { MODAL_SETTINGS_IDS, mountSettingsForm } from './settings-modal.js';
+import { mountExternalLogSection } from './external-log-ui.js';
 
 let settingsUnsubscribe = null;
 let settingsModalController = null;
+let lastRemoteEvents = [];
+let externalLogController = null;
 
 async function getCountTotalsByPage() {
   const [imitation, slash, shadowing, srs] = await Promise.all([
@@ -71,6 +74,7 @@ async function renderDashboardFromData() {
     fetchRemoteStudyEvents(),
     getCountTotalsByPage()
   ]);
+  lastRemoteEvents = remoteEvents;
 
   const events = mergeEvents(localEvents, remoteEvents);
   const eventUnits = events.reduce((acc, ev) => {
@@ -160,6 +164,15 @@ async function bootstrap() {
   await initSettingsModal();
   setupDashboardAutoRefresh();
   await renderDashboardFromData();
+
+  externalLogController = mountExternalLogSection({
+    scope: document.getElementById('externalLogSection'),
+    getExternalEvents: () => lastRemoteEvents.filter((ev) => (ev.pageKey || ev.page_key) === 'external'),
+    onSaved: async () => {
+      await renderDashboardFromData();
+      if (externalLogController) externalLogController.refresh();
+    }
+  });
 }
 
 bootstrap();

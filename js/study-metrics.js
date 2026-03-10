@@ -246,21 +246,24 @@ function resolveMissionStage(goalProgress) {
 }
 
 export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = {} }, settings) {
-  const perPageSeconds = { imitation: 0, slash: 0, shadowing: 0, srs: 0 };
+  const perPageSeconds = { imitation: 0, slash: 0, shadowing: 0, srs: 0, external: 0 };
   events.forEach((ev) => {
     const key = ev.pageKey || ev.page_key;
     if (!Object.prototype.hasOwnProperty.call(perPageSeconds, key)) return;
     perPageSeconds[key] += toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
   });
 
-  Object.keys(perPageSeconds).forEach((key) => {
+  const externalEventSeconds = perPageSeconds.external;
+
+  ['imitation', 'slash', 'shadowing', 'srs'].forEach((key) => {
     perPageSeconds[key] += toNumber(baselineSecondsByPage[key], 0);
   });
 
-  const inAppTotalSeconds = Object.values(perPageSeconds).reduce((sum, v) => sum + v, 0);
+  const inAppTotalSeconds =
+    perPageSeconds.imitation + perPageSeconds.slash + perPageSeconds.shadowing + perPageSeconds.srs;
   const baselineSecondsTotal = Object.values(baselineSecondsByPage).reduce((sum, v) => sum + toNumber(v, 0), 0);
   const externalCarryoverSeconds = toNumber(settings.external_carryover_hours, 0) * 3600;
-  const totalSeconds = inAppTotalSeconds + externalCarryoverSeconds;
+  const totalSeconds = inAppTotalSeconds + externalCarryoverSeconds + externalEventSeconds;
   const totalHours = totalSeconds / 3600;
   const totalMinutes = totalSeconds / 60;
   const goalHours = Math.max(1, toNumber(settings.goal_hours, 1000));
@@ -289,6 +292,7 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   return {
     totalHours: round1(totalHours),
     inAppHours: round1(inAppTotalSeconds / 3600),
+    externalEventHours: round1(externalEventSeconds / 3600),
     externalCarryoverHours: round1(externalCarryoverSeconds / 3600),
     totalMinutes,
     goalHours,

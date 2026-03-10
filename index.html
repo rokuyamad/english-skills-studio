@@ -111,6 +111,39 @@
         </div>
 
         <div class="achievement-list" id="achievementList"></div>
+
+        <section class="external-log-section" id="externalLogSection" aria-label="外部学習ログ">
+          <div class="external-log-head">
+            <h3>外部学習を記録</h3>
+            <p class="external-log-desc">アプリ外の学習時間を追記してダッシュボードに反映します。</p>
+          </div>
+          <form class="external-log-form" id="externalLogForm" novalidate>
+            <div class="external-log-fields">
+              <div class="field">
+                <label for="extMinutes">学習時間</label>
+                <select id="extMinutes">
+                  <option value="15">15分</option>
+                  <option value="30">30分</option>
+                  <option value="45">45分</option>
+                  <option value="60">1時間</option>
+                  <option value="90">1時間30分</option>
+                  <option value="120">2時間</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="extDate">日付</label>
+                <input id="extDate" type="date">
+              </div>
+              <div class="field field-memo">
+                <label for="extMemo">メモ (任意)</label>
+                <input id="extMemo" type="text" maxlength="120" placeholder="例: 単語帳30枚 など">
+              </div>
+            </div>
+            <button class="settings-btn primary" id="extSubmitBtn" type="submit">記録</button>
+            <p class="settings-status" id="extStatus"></p>
+          </form>
+          <ul class="external-log-entries" id="externalLogEntries"></ul>
+        </section>
       </section>
 
       <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsModalTitle">
