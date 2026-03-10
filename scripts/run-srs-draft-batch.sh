@@ -84,13 +84,16 @@ if [[ "$CODEX_AUTO" -eq 1 ]]; then
 
 各要素は必ず以下のキーを含めること:
 - id
+- term_en
 - card_type (word|idiom|phrase)
 - term_ja
 - example_en
 - example_ja
 
 制約:
-- example_en には元単語(term_en)を必ず含める
+- 既に入っている term_en / example_en / example_ja は原則そのまま維持する
+- 欠けている項目だけを補完する
+- example_en には元表現(term_en)を必ず含める
 - できるだけ自然で短い文
 
 drafts:
@@ -118,7 +121,7 @@ else:
     data = json.loads(text[left:right+1])
 if not isinstance(data, list):
     raise SystemExit("Codex output is not a JSON array.")
-required = {"id", "card_type", "term_ja", "example_en", "example_ja"}
+required = {"id", "term_en", "card_type", "term_ja", "example_en", "example_ja"}
 for i, row in enumerate(data):
     if not isinstance(row, dict):
         raise SystemExit(f"row {i} is not object")
@@ -138,6 +141,7 @@ if [[ "$MODE" == "prepare" || (-z "$ENRICHMENTS_JSON" && "$CODEX_AUTO" -eq 0) ]]
 [
   {
     "id": "card-uuid",
+    "term_en": "simultaneously",
     "card_type": "word",
     "term_ja": "同時に",
     "example_en": "She completed two tasks simultaneously.",

@@ -1,4 +1,5 @@
-import { createDraftCard, normalizeEnglishWord } from './srs-api.js';
+import { normalizeEnglishExpression } from './srs-api.js';
+import { openSrsDraftModal } from './srs-draft-modal.js';
 
 function removeSelection() {
   const selection = window.getSelection();
@@ -30,18 +31,18 @@ function ensureToast() {
   return toast;
 }
 
-export function initSelectionQuickAdd({ containerId }) {
+export function initSelectionQuickAdd({ containerId, resolveSelectionContext } = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
   const button = ensureButton();
   const toast = ensureToast();
-  let currentWord = '';
+  let currentSelection = null;
   let toastTimer = null;
   let busy = false;
 
   function hideButton() {
-    currentWord = '';
+    currentSelection = null;
     button.classList.add('hidden');
   }
 
@@ -55,11 +56,11 @@ export function initSelectionQuickAdd({ containerId }) {
     }, 1800);
   }
 
-  function selectionWordInContainer() {
+  function selectionInContainer() {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return null;
     const raw = selection.toString();
-    const normalized = normalizeEnglishWord(raw);
+    const normalized = normalizeEnglishExpression(raw);
     if (!normalized) return null;
 
     const range = selection.getRangeAt(0);
@@ -70,11 +71,18 @@ export function initSelectionQuickAdd({ containerId }) {
 
     const rect = range.getBoundingClientRect();
     if (!rect || (rect.width <= 0 && rect.height <= 0)) return null;
-    return { normalized, rect };
+    return {
+      termEn: normalized,
+      rawText: raw.trim(),
+      rect,
+      container,
+      commonAncestor: range.commonAncestorContainer
+    };
   }
 
-  function showButton(rect, word) {
-    currentWord = word;
+  function showButton(selectionInfo) {
+    currentSelection = selectionInfo;
+    const { rect } = selectionInfo;
     const top = Math.max(12, window.scrollY + rect.top - 40);
     const left = Math.min(window.innerWidth - 108, Math.max(12, window.scrollX + rect.left));
     button.style.top = `${top}px`;
@@ -84,12 +92,12 @@ export function initSelectionQuickAdd({ containerId }) {
 
   function handleSelectionChange() {
     if (busy) return;
-    const result = selectionWordInContainer();
+    const result = selectionInContainer();
     if (!result) {
       hideButton();
       return;
     }
-    showButton(result.rect, result.normalized);
+    showButton(result);
   }
 
   button.addEventListener('mousedown', (event) => {
@@ -98,25 +106,48 @@ export function initSelectionQuickAdd({ containerId }) {
   });
 
   button.addEventListener('click', async () => {
-    if (busy || !currentWord) return;
+    if (busy || !currentSelection?.termEn) return;
     busy = true;
     button.disabled = true;
 
     try {
-      const result = await createDraftCard({ termEn: currentWord });
-      if (result.result === 'duplicate') {
-        showToast(`「${result.termEn}」は既に登録済みです。`);
-      } else {
-        showToast(`「${result.termEn}」を下書きカードに追加しました。`);
-      }
+      const initialValues = typeof resolveSelectionContext === 'function'
+        ? await resolveSelectionContext(currentSelection)
+        : {};
+      const termEn = currentSelection.termEn;
+      hideButton();
+      removeSelection();
+      openSrsDraftModal({
+        initialValues: {
+          termEn,
+          ...(initialValues || {})
+        },
+        onSaved: async (result) => {
+          if (result.result === 'duplicate') {
+            showToast(`「${result.termEn}」は既に登録済みです。`);
+            return;
+          }
+          if (result.result === 'updated') {
+            showToast(
+              result.status === 'ready'
+                ? `「${result.termEn}」の既存draftを更新して復習対象にしました。`
+                : `「${result.termEn}」の既存draftを更新しました。`
+            );
+            return;
+          }
+          showToast(
+            result.status === 'ready'
+              ? `「${result.termEn}」を追加して復習対象にしました。`
+              : `「${result.termEn}」を下書きカードに追加しました。`
+          );
+        }
+      });
     } catch (error) {
       console.error(error);
       showToast('SRS追加に失敗しました。', true);
     } finally {
       busy = false;
       button.disabled = false;
-      hideButton();
-      removeSelection();
     }
   });
 

@@ -2,7 +2,7 @@ import { getSessionUser, getSupabaseClient } from './auth.js';
 import { computeNextState } from './srs-scheduler.js';
 
 const DIRECTIONS = ['en_to_ja', 'ja_to_en'];
-const WORD_RE = /^[a-z]+(?:'[a-z]+)*$/i;
+const EXPRESSION_RE = /^[a-z]+(?:['-][a-z]+)*(?:\s+[a-z]+(?:['-][a-z]+)*)*$/i;
 
 function normalizeCardType(raw) {
   const value = String(raw || '').toLowerCase();
@@ -11,14 +11,58 @@ function normalizeCardType(raw) {
 }
 
 export function normalizeEnglishWord(raw) {
+  return normalizeEnglishExpression(raw).includes(' ') ? '' : normalizeEnglishExpression(raw);
+}
+
+export function normalizeEnglishExpression(raw) {
   const value = String(raw || '')
     .replace(/[’`]/g, "'")
+    .replace(/\s+/g, ' ')
     .trim();
 
-  if (!value || /\s/.test(value)) return '';
+  if (!value) return '';
   const stripped = value.replace(/^[^a-zA-Z']+|[^a-zA-Z']+$/g, '');
-  if (!stripped || !WORD_RE.test(stripped)) return '';
+  if (!stripped || !EXPRESSION_RE.test(stripped)) return '';
   return stripped.toLowerCase();
+}
+
+export function inferCardType(termEn) {
+  const normalized = normalizeEnglishExpression(termEn);
+  if (!normalized) return 'word';
+  return normalized.includes(' ') ? 'phrase' : 'word';
+}
+
+function normalizeCardInput(input = {}) {
+  const termEn = normalizeEnglishExpression(input.termEn);
+  const cardType = normalizeCardType(input.cardType || inferCardType(termEn));
+  const termJa = String(input.termJa || '').trim();
+  const exampleEn = String(input.exampleEn || '').replace(/\s+/g, ' ').trim();
+  const exampleJa = String(input.exampleJa || '').replace(/\s+/g, ' ').trim();
+
+  return {
+    termEn,
+    cardType,
+    termJa,
+    exampleEn,
+    exampleJa
+  };
+}
+
+function normalizeMatchText(text) {
+  return String(text || '')
+    .replace(/[’`]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function exampleContainsTerm(exampleEn, termEn) {
+  if (!exampleEn || !termEn) return false;
+  return normalizeMatchText(exampleEn).includes(normalizeMatchText(termEn));
+}
+
+function isReadyPayload({ termEn, termJa, exampleEn, exampleJa }) {
+  return Boolean(termEn && termJa && exampleEn && exampleJa);
 }
 
 function applyCardTypeFilter(query, cardType) {
@@ -234,10 +278,15 @@ export async function submitReview({ cardId, direction, grade }) {
   return { current, next };
 }
 
-export async function createDraftCard({ termEn } = {}) {
-  const normalized = normalizeEnglishWord(termEn);
-  if (!normalized) {
-    throw new Error('Invalid word. Select or input a single English word.');
+export async function saveSrsCard(input = {}) {
+  const normalizedInput = normalizeCardInput(input);
+  const { termEn, cardType, termJa, exampleEn, exampleJa } = normalizedInput;
+
+  if (!termEn) {
+    throw new Error('Invalid expression. Use English word or phrase only.');
+  }
+  if (exampleEn && !exampleContainsTerm(exampleEn, termEn)) {
+    throw new Error('Example must contain the original term.');
   }
 
   const user = await getSessionUser();
@@ -246,33 +295,93 @@ export async function createDraftCard({ termEn } = {}) {
 
   const { data: existing, error: existingError } = await supabase
     .from('srs_cards')
-    .select('id, term_en, status, is_active')
+    .select('id, card_type, term_en, term_ja, example_en, example_ja, status, is_active')
     .eq('user_id', user.id)
-    .eq('normalized_term', normalized)
+    .eq('normalized_term', termEn)
     .maybeSingle();
 
   if (existingError) throw existingError;
   if (existing?.id) {
-    return {
-      result: 'duplicate',
-      cardId: existing.id,
-      termEn: existing.term_en || normalized,
-      status: existing.status || 'draft',
-      isActive: Boolean(existing.is_active)
+    if (existing.status === 'ready' || existing.is_active) {
+      return {
+        result: 'duplicate',
+        cardId: existing.id,
+        termEn: existing.term_en || termEn,
+        status: existing.status || 'ready',
+        isActive: Boolean(existing.is_active)
+      };
+    }
+
+    const merged = {
+      cardType: existing.card_type || cardType,
+      termEn: existing.term_en || termEn,
+      termJa: existing.term_ja || termJa,
+      exampleEn: existing.example_en || exampleEn,
+      exampleJa: existing.example_ja || exampleJa
     };
+    if (merged.exampleEn && !exampleContainsTerm(merged.exampleEn, merged.termEn)) {
+      throw new Error('Existing example must contain the original term.');
+    }
+    const nextReady = isReadyPayload(merged);
+    const nextRow = {
+      card_type: normalizeCardType(merged.cardType),
+      term_en: merged.termEn,
+      term_ja: merged.termJa,
+      example_en: merged.exampleEn,
+      example_ja: merged.exampleJa,
+      normalized_term: merged.termEn,
+      status: nextReady ? 'ready' : 'draft',
+      is_active: nextReady
+    };
+    const hasChanges = (
+      existing.card_type !== nextRow.card_type
+      || (existing.term_ja || '') !== nextRow.term_ja
+      || (existing.example_en || '') !== nextRow.example_en
+      || (existing.example_ja || '') !== nextRow.example_ja
+      || (existing.status || 'draft') !== nextRow.status
+      || Boolean(existing.is_active) !== nextRow.is_active
+    );
+
+    if (!hasChanges) {
+      return {
+        result: 'duplicate',
+        cardId: existing.id,
+        termEn: existing.term_en || termEn,
+        status: existing.status || 'draft',
+        isActive: Boolean(existing.is_active)
+      };
+    }
+
+    const { data: updated, error: updateError } = await supabase
+      .from('srs_cards')
+      .update(nextRow)
+      .eq('id', existing.id)
+      .eq('user_id', user.id)
+      .select('id, term_en, status, is_active')
+      .single();
+    if (updateError) throw updateError;
+
+      return {
+        result: 'updated',
+        cardId: updated.id,
+        termEn: updated.term_en || termEn,
+        status: updated.status || (nextReady ? 'ready' : 'draft'),
+        isActive: Boolean(updated.is_active)
+      };
   }
 
+  const nextReady = isReadyPayload(normalizedInput);
   const row = {
     id: crypto.randomUUID(),
     user_id: user.id,
-    card_type: 'word',
-    term_en: normalized,
-    term_ja: '',
-    example_en: '',
-    example_ja: '',
-    normalized_term: normalized,
-    status: 'draft',
-    is_active: false
+    card_type: cardType,
+    term_en: termEn,
+    term_ja: termJa,
+    example_en: exampleEn,
+    example_ja: exampleJa,
+    normalized_term: termEn,
+    status: nextReady ? 'ready' : 'draft',
+    is_active: nextReady
   };
 
   const { data: inserted, error: insertError } = await supabase
@@ -288,14 +397,14 @@ export async function createDraftCard({ termEn } = {}) {
         .from('srs_cards')
         .select('id, term_en, status, is_active')
         .eq('user_id', user.id)
-        .eq('normalized_term', normalized)
+        .eq('normalized_term', termEn)
         .maybeSingle();
       if (dupError) throw dupError;
       if (dup?.id) {
         return {
           result: 'duplicate',
           cardId: dup.id,
-          termEn: dup.term_en || normalized,
+          termEn: dup.term_en || termEn,
           status: dup.status || 'draft',
           isActive: Boolean(dup.is_active)
         };
@@ -307,8 +416,8 @@ export async function createDraftCard({ termEn } = {}) {
   return {
     result: 'created',
     cardId: inserted.id,
-    termEn: inserted.term_en || normalized,
-    status: inserted.status || 'draft',
+    termEn: inserted.term_en || termEn,
+    status: inserted.status || (nextReady ? 'ready' : 'draft'),
     isActive: Boolean(inserted.is_active)
   };
 }

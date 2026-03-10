@@ -374,6 +374,10 @@
   gap: 10px;
 }
 
+.review-modal-wide {
+  width: min(620px, 100%);
+}
+
 .review-modal-title {
   font-family: 'Fraunces', serif;
   font-size: 24px;
@@ -391,6 +395,21 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
+.review-modal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 10px;
+}
+
+.review-modal-field {
+  display: grid;
+  gap: 6px;
+}
+
+.review-modal-field-wide {
+  grid-column: 1 / -1;
+}
+
 .review-modal-input {
   width: 100%;
   border: 1px solid var(--line-soft);
@@ -399,6 +418,17 @@
   color: var(--text-0);
   padding: 10px 11px;
   font-size: 16px;
+}
+
+.review-modal-select {
+  appearance: none;
+}
+
+.review-modal-textarea {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.6;
+  font-family: inherit;
 }
 
 .review-modal-error {
@@ -462,5 +492,9 @@
     bottom: 0;
     background: linear-gradient(180deg, rgba(12, 19, 35, 0), rgba(12, 19, 35, 0.95) 28%);
     padding-top: 8px;
+  }
+
+  .review-modal-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

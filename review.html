@@ -112,20 +112,6 @@
   </main>
 </div>
 
-<div class="review-modal-backdrop hidden" id="newCardModalBackdrop">
-  <section class="review-modal" role="dialog" aria-modal="true" aria-labelledby="newCardModalTitle">
-    <h2 class="review-modal-title" id="newCardModalTitle">新しいSRSカードを追加</h2>
-    <p class="review-modal-copy">英単語を1語だけ入力してください。下書きカード（inactive）として保存されます。</p>
-    <label class="review-modal-label" for="newCardWordInput">Word</label>
-    <input class="review-modal-input" id="newCardWordInput" type="text" autocomplete="off" placeholder="e.g. simultaneously">
-    <p class="review-modal-error hidden" id="newCardModalError"></p>
-    <div class="review-modal-actions">
-      <button class="review-modal-cancel" id="newCardCancelBtn" type="button">Cancel</button>
-      <button class="review-modal-save" id="newCardSaveBtn" type="button">Save</button>
-    </div>
-  </section>
-</div>
-
 <script type="module" src="js/review-app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {

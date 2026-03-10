@@ -6,6 +6,42 @@ import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 
 let detachSetDnD = null;
 
+function splitEnglishSentences(text = '') {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (!normalized) return [];
+  const matches = normalized.match(/[^.!?]+[.!?]+(?:["')\]]+)?|[^.!?]+$/g);
+  return (matches || []).map((s) => s.trim()).filter(Boolean);
+}
+
+function splitJapaneseSentences(text = '') {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (!normalized) return [];
+  const matches = normalized.match(/[^。！？]+[。！？]?/g);
+  return (matches || []).map((s) => s.trim()).filter(Boolean);
+}
+
+function normalizeMatchText(text = '') {
+  return String(text || '')
+    .replace(/[’`]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function resolveSentenceExample(termEn, chunkEn, chunkJa) {
+  const enSentences = splitEnglishSentences(chunkEn);
+  const jaSentences = splitJapaneseSentences(chunkJa);
+  if (enSentences.length === 0) return null;
+  if (enSentences.length !== jaSentences.length) return null;
+
+  const matchIdx = enSentences.findIndex((sentence) => normalizeMatchText(sentence).includes(normalizeMatchText(termEn)));
+  if (matchIdx < 0) return null;
+  return {
+    exampleEn: enSentences[matchIdx],
+    exampleJa: jaSentences[matchIdx] || chunkJa
+  };
+}
+
 function initializeEntryState(entries) {
   state.entryOpen = entries.map(() => false);
   state.slashVisible = entries.map((entry) => new Array(entry.chunks.length).fill(false));
@@ -110,6 +146,8 @@ function toggleJa(entryIdx, chunkIdx) {
 function buildChunk(entryIdx, chunkIdx, chunk) {
   const block = document.createElement('section');
   block.className = 'chunk-card';
+  block.dataset.chunkEn = chunk.en;
+  block.dataset.chunkJa = chunk.ja;
 
   const head = document.createElement('div');
   head.className = 'chunk-head';
@@ -159,6 +197,24 @@ function buildChunk(entryIdx, chunkIdx, chunk) {
   block.appendChild(ja);
 
   return block;
+}
+
+export function resolveSelectionContext(selectionInfo) {
+  const node = selectionInfo?.commonAncestor;
+  const element = node instanceof Element ? node : node?.parentElement;
+  const chunkCard = element?.closest?.('.chunk-card');
+  const chunkEn = chunkCard?.dataset?.chunkEn || '';
+  const chunkJa = chunkCard?.dataset?.chunkJa || '';
+
+  if (!chunkEn) return {};
+
+  const sentenceExample = resolveSentenceExample(selectionInfo.termEn, chunkEn, chunkJa);
+  if (sentenceExample) return sentenceExample;
+
+  return {
+    exampleEn: chunkEn,
+    exampleJa: chunkJa
+  };
 }
 
 function buildEntryCounterKey(setId, entryId, entryIdx) {

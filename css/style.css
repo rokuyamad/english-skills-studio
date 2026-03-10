@@ -367,6 +367,117 @@ body.menu-open {
   color: #ffd2d2;
 }
 
+.review-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 11, 23, 0.7);
+  backdrop-filter: blur(6px);
+  padding: 12px;
+}
+
+.review-modal {
+  width: min(460px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(11, 17, 33, 0.97), rgba(16, 23, 42, 0.97));
+  box-shadow: 0 18px 46px rgba(4, 10, 24, 0.62);
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.review-modal-wide {
+  width: min(620px, 100%);
+}
+
+.review-modal-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+}
+
+.review-modal-copy {
+  color: var(--text-1);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.review-modal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 10px;
+}
+
+.review-modal-field {
+  display: grid;
+  gap: 6px;
+}
+
+.review-modal-field-wide {
+  grid-column: 1 / -1;
+}
+
+.review-modal-label {
+  color: var(--text-2);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.review-modal-input {
+  width: 100%;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-0);
+  padding: 10px 11px;
+  font-size: 16px;
+}
+
+.review-modal-select {
+  appearance: none;
+}
+
+.review-modal-textarea {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.6;
+  font-family: inherit;
+}
+
+.review-modal-error {
+  color: #ffb0b0;
+  font-size: 12px;
+}
+
+.review-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.review-modal-cancel,
+.review-modal-save {
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.review-modal-cancel {
+  border: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-1);
+}
+
+.review-modal-save {
+  border: 1px solid rgba(255, 214, 153, 0.72);
+  background: linear-gradient(130deg, #ffd699, #ffa38a);
+  color: #1f2435;
+}
+
 .main {
   flex: 1;
   min-height: 0;
@@ -1641,6 +1752,10 @@ body.dashboard-page .dashboard-header {
 
   body.player-compact .sentence-item:last-child {
     margin-bottom: 18px;
+  }
+
+  .review-modal-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

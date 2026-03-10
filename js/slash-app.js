@@ -1,5 +1,5 @@
 import { state } from './slash-state.js';
-import { selectSet } from './slash-ui.js';
+import { resolveSelectionContext, selectSet } from './slash-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { getOrder, initProgressDb } from './progress-db.js';
@@ -175,7 +175,7 @@ async function bootstrap() {
   if (!isAuthenticated) return;
   initMobileTopbar();
   setupTopbarAuth();
-  initSelectionQuickAdd({ containerId: 'readingList' });
+  initSelectionQuickAdd({ containerId: 'readingList', resolveSelectionContext });
   initSidebarToggle();
   await initProgressDb();
   await flushStudyEvents().catch((e) => console.error(e));

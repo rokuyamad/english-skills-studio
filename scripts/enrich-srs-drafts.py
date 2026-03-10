@@ -14,6 +14,7 @@ Input JSON format:
 [
   {
     "id": "card-uuid",
+    "term_en": "social media",
     "card_type": "word",
     "term_ja": "同時に",
     "example_en": "She completed two tasks simultaneously.",
@@ -27,14 +28,22 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 
 
+EXPRESSION_RE = re.compile(r"^[a-z]+(?:['-][a-z]+)*(?:\s+[a-z]+(?:['-][a-z]+)*)*$", re.IGNORECASE)
+
+
 def normalize_term(value: str) -> str:
-    return value.strip().lower()
+    return re.sub(r"\s+", " ", value.strip().replace("’", "'").replace("`", "'")).lower()
+
+
+def contains_term(example_en: str, term_en: str) -> bool:
+    return normalize_term(term_en) in normalize_term(example_en)
 
 
 def build_headers(service_role_key: str) -> dict[str, str]:
@@ -62,7 +71,7 @@ def request_json(method: str, url: str, headers: dict[str, str], payload: dict |
 def fetch_drafts(base_url: str, headers: dict[str, str]) -> list[dict]:
     query = urllib.parse.urlencode(
         {
-            "select": "id,user_id,term_en,status,is_active,created_at",
+            "select": "id,user_id,card_type,term_en,term_ja,example_en,example_ja,status,is_active,created_at",
             "status": "eq.draft",
             "order": "created_at.asc",
         }
@@ -76,30 +85,35 @@ def apply_enrichments(base_url: str, headers: dict[str, str], enrichments: list[
     applied = 0
     for idx, item in enumerate(enrichments):
         card_id = str(item.get("id", "")).strip()
+        term_en = normalize_term(str(item.get("term_en", "")).strip())
         card_type = str(item.get("card_type", "word")).strip().lower()
         term_ja = str(item.get("term_ja", "")).strip()
         example_en = str(item.get("example_en", "")).strip()
         example_ja = str(item.get("example_ja", "")).strip()
-        term_en = str(item.get("term_en", "")).strip()
 
         if not card_id:
             raise ValueError(f"Input #{idx + 1}: id is required.")
+        if not term_en:
+            raise ValueError(f"Input #{idx + 1}: term_en is required.")
+        if not EXPRESSION_RE.match(term_en):
+            raise ValueError(f"Input #{idx + 1}: invalid term_en={term_en}")
         if card_type not in {"word", "idiom", "phrase"}:
             raise ValueError(f"Input #{idx + 1}: invalid card_type={card_type}")
         if not term_ja or not example_en or not example_ja:
             raise ValueError(f"Input #{idx + 1}: term_ja/example_en/example_ja must be non-empty.")
+        if not contains_term(example_en, term_en):
+            raise ValueError(f"Input #{idx + 1}: example_en must contain term_en.")
 
         payload = {
+            "term_en": term_en,
             "card_type": card_type,
             "term_ja": term_ja,
             "example_en": example_en,
             "example_ja": example_ja,
+            "normalized_term": term_en,
             "status": "ready",
             "is_active": True,
         }
-        if term_en:
-            payload["term_en"] = term_en
-            payload["normalized_term"] = normalize_term(term_en)
 
         if dry_run:
             print(f"[dry-run] patch {card_id}: {json.dumps(payload, ensure_ascii=False)}")

@@ -1,22 +1,5 @@
 #!/usr/bin/env python3
-"""Generate SRS enrichment JSON from draft cards using a local OpenAI-compatible LLM.
-
-Input draft JSON example:
-[
-  {"id":"...","term_en":"simultaneously","status":"draft","is_active":false}
-]
-
-Output enrichments JSON example:
-[
-  {
-    "id": "...",
-    "card_type": "word",
-    "term_ja": "同時に",
-    "example_en": "She completed two tasks simultaneously.",
-    "example_ja": "彼女は2つの作業を同時に終えた。"
-  }
-]
-"""
+"""Generate SRS enrichment JSON from draft cards using a local OpenAI-compatible LLM."""
 
 from __future__ import annotations
 
@@ -24,17 +7,28 @@ import argparse
 import json
 import os
 import re
-import sys
 import time
 import urllib.error
 import urllib.request
 
 
-WORD_RE = re.compile(r"^[a-z]+(?:'[a-z]+)*$", re.IGNORECASE)
+EXPRESSION_RE = re.compile(r"^[a-z]+(?:['-][a-z]+)*(?:\s+[a-z]+(?:['-][a-z]+)*)*$", re.IGNORECASE)
 
 
-def normalize_word(value: str) -> str:
-    return value.strip().replace("’", "'").lower()
+def normalize_term(value: str) -> str:
+    return re.sub(r"\s+", " ", value.strip().replace("’", "'").replace("`", "'")).lower()
+
+
+def normalize_text(value: str) -> str:
+    return re.sub(r"\s+", " ", str(value or "").strip())
+
+
+def infer_card_type(term_en: str) -> str:
+    return "phrase" if " " in normalize_term(term_en) else "word"
+
+
+def contains_term(example_en: str, term_en: str) -> bool:
+    return normalize_term(term_en) in normalize_term(example_en)
 
 
 def request_chat_completion(
@@ -59,6 +53,7 @@ def request_chat_completion(
                 "content": (
                     "You are an English-learning content generator. "
                     "Return only one-line JSON object with keys: card_type, term_ja, example_en, example_ja. "
+                    "Preserve provided fields unless they are empty. "
                     "Use natural Japanese and CEFR A2-B1 level English example sentence. "
                     "No markdown, no explanation."
                 ),
@@ -92,7 +87,6 @@ def request_chat_completion(
 
 
 def parse_json_object(text: str) -> dict:
-    # Accept exact JSON or JSON embedded in text.
     if text.startswith("{") and text.endswith("}"):
         return json.loads(text)
 
@@ -103,29 +97,6 @@ def parse_json_object(text: str) -> dict:
     raise ValueError("No JSON object found in LLM output.")
 
 
-def validate_item(word: str, item: dict) -> dict:
-    card_type = str(item.get("card_type", "word")).strip().lower()
-    term_ja = str(item.get("term_ja", "")).strip()
-    example_en = str(item.get("example_en", "")).strip()
-    example_ja = str(item.get("example_ja", "")).strip()
-    if card_type not in {"word", "idiom", "phrase"}:
-        raise ValueError(f"invalid card_type={card_type}")
-    if not term_ja:
-        raise ValueError("term_ja is empty")
-    if not example_en:
-        raise ValueError("example_en is empty")
-    if not example_ja:
-        raise ValueError("example_ja is empty")
-    if word.lower() not in example_en.lower():
-        raise ValueError("example_en must contain original word")
-    return {
-        "card_type": card_type,
-        "term_ja": term_ja,
-        "example_en": example_en,
-        "example_ja": example_ja,
-    }
-
-
 def load_drafts(path: str) -> list[dict]:
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -134,16 +105,80 @@ def load_drafts(path: str) -> list[dict]:
     return data
 
 
-def build_prompt(word: str) -> str:
+def build_prompt(row: dict) -> str:
+    term_en = normalize_term(row.get("term_en", ""))
+    card_type = normalize_text(row.get("card_type", ""))
+    term_ja = normalize_text(row.get("term_ja", ""))
+    example_en = normalize_text(row.get("example_en", ""))
+    example_ja = normalize_text(row.get("example_ja", ""))
     return (
-        f"Word: {word}\n"
-        "Task: create one card for Japanese learner.\n"
-        "Constraints:\n"
-        "- card_type: choose from word/idiom/phrase (usually word)\n"
-        "- term_ja: concise meaning in Japanese\n"
-        "- example_en: one simple natural sentence including the exact word\n"
-        "- example_ja: natural Japanese translation of example_en\n"
-        "Output JSON only."
+        "Task: fill missing SRS card fields for Japanese learner.\n"
+        f"term_en: {term_en}\n"
+        f"current card_type: {card_type or '(missing)'}\n"
+        f"current term_ja: {term_ja or '(missing)'}\n"
+        f"current example_en: {example_en or '(missing)'}\n"
+        f"current example_ja: {example_ja or '(missing)'}\n"
+        "Rules:\n"
+        "- Keep any non-empty current field unchanged in your answer.\n"
+        "- If example_en already exists, do not rewrite it.\n"
+        "- If example_ja already exists, do not rewrite it.\n"
+        "- If example_en is missing, create one natural short sentence including the exact term_en.\n"
+        "- If example_ja is missing, provide a natural Japanese translation of example_en.\n"
+        "- card_type must be one of word/phrase/idiom.\n"
+        "- Output JSON only.\n"
+    )
+
+
+def validate_item(term_en: str, item: dict) -> dict:
+    normalized_term = normalize_term(term_en)
+    card_type = normalize_text(item.get("card_type", infer_card_type(normalized_term))).lower()
+    term_ja = normalize_text(item.get("term_ja", ""))
+    example_en = normalize_text(item.get("example_en", ""))
+    example_ja = normalize_text(item.get("example_ja", ""))
+
+    if card_type not in {"word", "idiom", "phrase"}:
+        raise ValueError(f"invalid card_type={card_type}")
+    if not term_ja:
+        raise ValueError("term_ja is empty")
+    if not example_en:
+        raise ValueError("example_en is empty")
+    if not example_ja:
+        raise ValueError("example_ja is empty")
+    if not contains_term(example_en, normalized_term):
+        raise ValueError("example_en must contain original term")
+
+    return {
+        "term_en": normalized_term,
+        "card_type": card_type,
+        "term_ja": term_ja,
+        "example_en": example_en,
+        "example_ja": example_ja,
+    }
+
+
+def build_final_item(row: dict, generated: dict | None = None) -> dict:
+    term_en = normalize_term(row.get("term_en", ""))
+    fallback = generated or {}
+    merged = {
+        "term_en": term_en,
+        "card_type": normalize_text(row.get("card_type") or fallback.get("card_type") or infer_card_type(term_en)),
+        "term_ja": normalize_text(row.get("term_ja") or fallback.get("term_ja")),
+        "example_en": normalize_text(row.get("example_en") or fallback.get("example_en")),
+        "example_ja": normalize_text(row.get("example_ja") or fallback.get("example_ja")),
+    }
+    return validate_item(term_en, merged)
+
+
+def needs_generation(row: dict) -> bool:
+    card_type = normalize_text(row.get("card_type", "")).lower()
+    term_ja = normalize_text(row.get("term_ja", ""))
+    example_en = normalize_text(row.get("example_en", ""))
+    example_ja = normalize_text(row.get("example_ja", ""))
+    return not (
+        card_type in {"word", "idiom", "phrase"}
+        and term_ja
+        and example_en
+        and example_ja
     )
 
 
@@ -159,15 +194,28 @@ def generate(
 ) -> tuple[list[dict], list[dict]]:
     enrichments: list[dict] = []
     errors: list[dict] = []
+
     for row in drafts:
         card_id = str(row.get("id", "")).strip()
-        term_en = normalize_word(str(row.get("term_en", "")))
+        term_en = normalize_term(str(row.get("term_en", "")))
 
         if not card_id:
             errors.append({"id": "", "term_en": term_en, "error": "missing id"})
             continue
-        if not term_en or not WORD_RE.match(term_en):
-            errors.append({"id": card_id, "term_en": term_en, "error": "invalid single-word term_en"})
+        if not term_en or not EXPRESSION_RE.match(term_en):
+            errors.append({"id": card_id, "term_en": term_en, "error": "invalid term_en"})
+            continue
+
+        existing_example_en = normalize_text(row.get("example_en", ""))
+        if existing_example_en and not contains_term(existing_example_en, term_en):
+            errors.append({"id": card_id, "term_en": term_en, "error": "existing example_en does not contain term_en"})
+            continue
+
+        if not needs_generation(row):
+            try:
+                enrichments.append({"id": card_id, **build_final_item(row)})
+            except Exception as err:  # noqa: BLE001
+                errors.append({"id": card_id, "term_en": term_en, "error": str(err)})
             continue
 
         last_err = None
@@ -178,11 +226,10 @@ def generate(
                     api_key=api_key,
                     model=model,
                     timeout_sec=timeout_sec,
-                    prompt=build_prompt(term_en),
+                    prompt=build_prompt(row),
                 )
                 obj = parse_json_object(text)
-                valid = validate_item(term_en, obj)
-                enrichments.append({"id": card_id, **valid})
+                enrichments.append({"id": card_id, **build_final_item(row, obj)})
                 last_err = None
                 break
             except Exception as err:  # noqa: BLE001

@@ -1,6 +1,7 @@
 import { requireAuthOrRedirect, setupTopbarAuth, refreshDueBadge } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
-import { createDraftCard, fetchDueCards, fetchDueCount, submitReview } from './srs-api.js';
+import { fetchDueCards, fetchDueCount, submitReview } from './srs-api.js';
+import { openSrsDraftModal } from './srs-draft-modal.js';
 import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 
@@ -234,107 +235,36 @@ function bindGradeButtons() {
   });
 }
 
-function setNewCardModalOpen(isOpen) {
-  const backdrop = getEl('newCardModalBackdrop');
-  if (!backdrop) return;
-  backdrop.classList.toggle('hidden', !isOpen);
-
-  const input = getEl('newCardWordInput');
-  const errorEl = getEl('newCardModalError');
-  if (errorEl) {
-    errorEl.textContent = '';
-    errorEl.classList.add('hidden');
-  }
-
-  if (isOpen && input) {
-    input.value = '';
-    input.focus();
-  }
-}
-
-async function saveNewWordFromModal() {
-  const input = getEl('newCardWordInput');
-  const saveBtn = getEl('newCardSaveBtn');
-  const errorEl = getEl('newCardModalError');
-  if (!input || !saveBtn || !errorEl) return;
-
-  const value = String(input.value || '').trim();
-  if (!value) {
-    errorEl.textContent = '単語を入力してください。';
-    errorEl.classList.remove('hidden');
-    input.focus();
-    return;
-  }
-
-  saveBtn.disabled = true;
-  errorEl.classList.add('hidden');
-
-  try {
-    const result = await createDraftCard({ termEn: value });
-    if (result.result === 'duplicate') {
-      setStatus(`「${result.termEn}」は既に登録済みです。`);
-    } else {
-      setStatus(`「${result.termEn}」を下書きカードとして追加しました。`);
-    }
-    setNewCardModalOpen(false);
-    await refreshDueBadge();
-  } catch (error) {
-    console.error(error);
-    errorEl.textContent = '1語の英単語のみ登録できます（例: simultaneously）。';
-    errorEl.classList.remove('hidden');
-  } finally {
-    saveBtn.disabled = false;
-  }
-}
-
 function bindNewCardModal() {
   const openBtn = getEl('newCardBtn');
-  const backdrop = getEl('newCardModalBackdrop');
-  const cancelBtn = getEl('newCardCancelBtn');
-  const saveBtn = getEl('newCardSaveBtn');
-  const input = getEl('newCardWordInput');
-  if (!openBtn || !backdrop || !cancelBtn || !saveBtn || !input) return;
+  if (!openBtn || openBtn.dataset.bound === 'true') return;
 
-  if (openBtn.dataset.bound !== 'true') {
-    openBtn.dataset.bound = 'true';
-    openBtn.addEventListener('click', () => setNewCardModalOpen(true));
-  }
-
-  if (cancelBtn.dataset.bound !== 'true') {
-    cancelBtn.dataset.bound = 'true';
-    cancelBtn.addEventListener('click', () => setNewCardModalOpen(false));
-  }
-
-  if (saveBtn.dataset.bound !== 'true') {
-    saveBtn.dataset.bound = 'true';
-    saveBtn.addEventListener('click', saveNewWordFromModal);
-  }
-
-  if (input.dataset.bound !== 'true') {
-    input.dataset.bound = 'true';
-    input.addEventListener('keydown', async (event) => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      await saveNewWordFromModal();
+  openBtn.dataset.bound = 'true';
+  openBtn.addEventListener('click', () => {
+    openSrsDraftModal({
+      onSaved: async (result) => {
+        await loadQueue();
+        await refreshDueBadge();
+        if (result.result === 'duplicate') {
+          setStatus(`「${result.termEn}」は既に登録済みです。`);
+          return;
+        }
+        if (result.result === 'updated') {
+          setStatus(
+            result.status === 'ready'
+              ? `「${result.termEn}」の既存draftを更新して復習対象にしました。`
+              : `「${result.termEn}」の既存draftを更新しました。`
+          );
+          return;
+        }
+        setStatus(
+          result.status === 'ready'
+            ? `「${result.termEn}」を追加して復習対象にしました。`
+            : `「${result.termEn}」を下書きカードとして追加しました。`
+        );
+      }
     });
-  }
-
-  if (backdrop.dataset.bound !== 'true') {
-    backdrop.dataset.bound = 'true';
-    backdrop.addEventListener('click', (event) => {
-      if (event.target !== backdrop) return;
-      setNewCardModalOpen(false);
-    });
-  }
-
-  if (document.body.dataset.reviewModalEscBound !== 'true') {
-    document.body.dataset.reviewModalEscBound = 'true';
-    document.addEventListener('keydown', (event) => {
-      if (event.key !== 'Escape') return;
-      if (backdrop.classList.contains('hidden')) return;
-      setNewCardModalOpen(false);
-    });
-  }
+  });
 }
 
 async function bootstrap() {
