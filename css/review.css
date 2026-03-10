@@ -4,6 +4,8 @@
   display: grid;
   gap: 14px;
   overflow: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 :root {
@@ -120,7 +122,7 @@
   background: var(--review-card-surface);
   border-color: var(--review-card-border);
   box-shadow: var(--review-card-glow);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .review-card::before {
