@@ -114,6 +114,49 @@ function shuffleInPlace(items) {
   return items;
 }
 
+function buildInitialStateRows({ userId, cardId, nowIso }) {
+  return DIRECTIONS.map((direction) => ({
+    card_id: cardId,
+    direction,
+    user_id: userId,
+    due_at: nowIso,
+    reps: 0,
+    lapses: 0,
+    stability_days: 0,
+    difficulty: 5,
+    last_reviewed_at: null,
+    updated_at: nowIso
+  }));
+}
+
+async function ensureCardStates({ supabase, userId, cardId, nowIso = new Date().toISOString() }) {
+  const { data: existing, error: existingError } = await supabase
+    .from('srs_card_states')
+    .select('direction')
+    .eq('user_id', userId)
+    .eq('card_id', cardId)
+    .in('direction', DIRECTIONS);
+
+  if (existingError) throw existingError;
+
+  const existingDirections = new Set(
+    Array.isArray(existing)
+      ? existing.map((row) => String(row.direction || '').toLowerCase()).filter((direction) => DIRECTIONS.includes(direction))
+      : []
+  );
+
+  const missingRows = buildInitialStateRows({ userId, cardId, nowIso })
+    .filter((row) => !existingDirections.has(row.direction));
+
+  if (!missingRows.length) return;
+
+  const { error: insertError } = await supabase
+    .from('srs_card_states')
+    .insert(missingRows);
+
+  if (insertError && insertError.code !== '23505') throw insertError;
+}
+
 function buildDueBaseQuery(supabase, userId, nowIso) {
   return supabase
     .from('srs_card_states')
@@ -292,6 +335,7 @@ export async function saveSrsCard(input = {}) {
   const user = await getSessionUser();
   const supabase = await getSupabaseClient();
   if (!user || !supabase) throw new Error('Authentication required.');
+  const nowIso = new Date().toISOString();
 
   const { data: existing, error: existingError } = await supabase
     .from('srs_cards')
@@ -361,13 +405,22 @@ export async function saveSrsCard(input = {}) {
       .single();
     if (updateError) throw updateError;
 
-      return {
-        result: 'updated',
+    if (updated.is_active) {
+      await ensureCardStates({
+        supabase,
+        userId: user.id,
         cardId: updated.id,
-        termEn: updated.term_en || termEn,
-        status: updated.status || (nextReady ? 'ready' : 'draft'),
-        isActive: Boolean(updated.is_active)
-      };
+        nowIso
+      });
+    }
+
+    return {
+      result: 'updated',
+      cardId: updated.id,
+      termEn: updated.term_en || termEn,
+      status: updated.status || (nextReady ? 'ready' : 'draft'),
+      isActive: Boolean(updated.is_active)
+    };
   }
 
   const nextReady = isReadyPayload(normalizedInput);
@@ -411,6 +464,15 @@ export async function saveSrsCard(input = {}) {
       }
     }
     throw insertError;
+  }
+
+  if (inserted.is_active) {
+    await ensureCardStates({
+      supabase,
+      userId: user.id,
+      cardId: inserted.id,
+      nowIso
+    });
   }
 
   return {
