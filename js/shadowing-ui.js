@@ -3,6 +3,7 @@ import { enableSidebarDnD } from './sidebar-sortable.js';
 import { getCount, incrementCount, saveOrder } from './progress-db.js';
 import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
+import { playCountFeedback } from './count-feedback.js';
 
 const setListEl = document.getElementById('setList');
 const setNameEl = document.getElementById('setName');
@@ -163,6 +164,11 @@ function renderEntries() {
       const next = await incrementCount(key);
       state.countMap[key] = next;
       countChip.textContent = `${next}回`;
+      playCountFeedback({
+        wrapEl: countWrap,
+        chipEl: countChip,
+        buttonEl: countBtn
+      });
       const settings = await getEffectiveStudySettings();
       const event = buildStudyEvent({
         pageKey: 'shadowing',

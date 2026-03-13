@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { getCount, incrementCount } from './progress-db.js';
 import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
+import { playCountFeedback } from './count-feedback.js';
 
 let _loadAndPlay;
 const MASK_TEXT = '*****';
@@ -76,6 +77,11 @@ function createSentenceItem(track, seg, i) {
     const next = await incrementCount(key);
     state.countMap[key] = next;
     countEl.textContent = `${next}回`;
+    playCountFeedback({
+      wrapEl: countWrap,
+      chipEl: countEl,
+      buttonEl: countBtn
+    });
 
     const settings = await getEffectiveStudySettings();
     const event = buildStudyEvent({
