@@ -50,7 +50,7 @@ export async function flushStudyEvents() {
       user_id: user.id,
       occurred_at: ev.occurredAt,
       page_key: ev.pageKey,
-      content_key: ev.contentKey,
+      content_key: ev.contentKey ?? '',
       unit_count: ev.unitCount,
       estimated_seconds: ev.estimatedSeconds,
       source: ev.source || 'counter'

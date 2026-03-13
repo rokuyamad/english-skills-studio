@@ -105,7 +105,7 @@ export function mountExternalLogSection({ scope, getExternalEvents, onSaved }) {
         id: crypto.randomUUID(),
         occurredAt: `${date}T12:00:00.000Z`,
         pageKey: 'external',
-        contentKey: memo || null,
+        contentKey: memo || '',
         unitCount: 1,
         estimatedSeconds: minutes * 60,
         source: 'manual',
