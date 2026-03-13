@@ -114,6 +114,78 @@ function shuffleInPlace(items) {
   return items;
 }
 
+function getDateTimeParts(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  });
+
+  return formatter.formatToParts(date).reduce((acc, part) => {
+    if (part.type !== 'literal') acc[part.type] = part.value;
+    return acc;
+  }, {});
+}
+
+function getTimeZoneOffsetMs(date, timeZone) {
+  const parts = getDateTimeParts(date, timeZone);
+  const asUtc = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour),
+    Number(parts.minute),
+    Number(parts.second)
+  );
+  return asUtc - date.getTime();
+}
+
+function zonedDateTimeToUtc(parts, timeZone) {
+  let utcMs = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+
+  for (let i = 0; i < 2; i += 1) {
+    const offsetMs = getTimeZoneOffsetMs(new Date(utcMs), timeZone);
+    utcMs = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second) - offsetMs;
+  }
+
+  return new Date(utcMs);
+}
+
+function getDayBounds(timeZone, now = new Date()) {
+  const parts = getDateTimeParts(now, timeZone);
+  const year = Number(parts.year);
+  const month = Number(parts.month);
+  const day = Number(parts.day);
+
+  const start = zonedDateTimeToUtc({
+    year,
+    month,
+    day,
+    hour: 0,
+    minute: 0,
+    second: 0
+  }, timeZone);
+
+  const end = zonedDateTimeToUtc({
+    year,
+    month,
+    day: day + 1,
+    hour: 0,
+    minute: 0,
+    second: 0
+  }, timeZone);
+
+  return {
+    startIso: start.toISOString(),
+    endIso: end.toISOString()
+  };
+}
+
 function buildInitialStateRows({ userId, cardId, nowIso }) {
   return DIRECTIONS.map((direction) => ({
     card_id: cardId,
@@ -207,6 +279,24 @@ export async function fetchDueCards({ cardType = 'all', limit = 30 } = {}) {
   const cards = Array.isArray(data) ? data.map(toDisplayCard) : [];
   shuffleInPlace(cards);
   return cards;
+}
+
+export async function fetchTodayReviewCount({ timeZone = 'Asia/Tokyo' } = {}) {
+  const user = await getSessionUser();
+  const supabase = await getSupabaseClient();
+  if (!user || !supabase) return 0;
+
+  const { startIso, endIso } = getDayBounds(timeZone);
+
+  const { count, error } = await supabase
+    .from('srs_review_logs')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .gte('reviewed_at', startIso)
+    .lt('reviewed_at', endIso);
+
+  if (error) throw error;
+  return Number(count || 0);
 }
 
 async function fetchCardStateOrBootstrap({ supabase, userId, cardId, direction, nowIso }) {

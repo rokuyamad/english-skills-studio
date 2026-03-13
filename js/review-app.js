@@ -1,9 +1,11 @@
 import { requireAuthOrRedirect, setupTopbarAuth, refreshDueBadge } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
-import { fetchDueCards, fetchDueCount, submitReview } from './srs-api.js';
+import { fetchDueCards, fetchDueCount, fetchTodayReviewCount, submitReview } from './srs-api.js';
 import { openSrsDraftModal } from './srs-draft-modal.js';
 import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
+
+const DAILY_REVIEW_LIMIT = 20;
 
 const state = {
   cardTypeFilter: 'all',
@@ -11,7 +13,8 @@ const state = {
   current: null,
   showingHint: false,
   showingAnswer: false,
-  busy: false
+  busy: false,
+  todayReviewed: 0
 };
 
 function getEl(id) {
@@ -48,8 +51,14 @@ function updateFilterUI() {
 function renderQueueMeta(totalDue) {
   const dueEl = getEl('dueCountLabel');
   const queueEl = getEl('queueCountLabel');
+  const todayEl = getEl('todayCountLabel');
   if (dueEl) dueEl.textContent = `Due ${totalDue}`;
   if (queueEl) queueEl.textContent = `Queue ${state.queue.length}`;
+  if (todayEl) todayEl.textContent = `Today ${Math.min(state.todayReviewed, DAILY_REVIEW_LIMIT)}/${DAILY_REVIEW_LIMIT}`;
+}
+
+function hasReachedDailyLimit() {
+  return state.todayReviewed >= DAILY_REVIEW_LIMIT;
 }
 
 function renderCard() {
@@ -130,10 +139,17 @@ async function loadQueue() {
   setStatus('復習キューを読み込み中...');
 
   try {
-    const [queue, totalDue] = await Promise.all([
-      fetchDueCards({ cardType: state.cardTypeFilter, limit: 60 }),
+    const settings = await getEffectiveStudySettings();
+    const [todayReviewed, totalDue] = await Promise.all([
+      fetchTodayReviewCount({ timeZone: settings.timezone }),
       fetchDueCount({ cardType: 'all' })
     ]);
+
+    state.todayReviewed = todayReviewed;
+    const remaining = Math.max(0, DAILY_REVIEW_LIMIT - state.todayReviewed);
+    const queue = remaining > 0
+      ? await fetchDueCards({ cardType: state.cardTypeFilter, limit: Math.min(60, remaining) })
+      : [];
 
     state.queue = queue;
     state.current = queue[0] || null;
@@ -144,7 +160,9 @@ async function loadQueue() {
     renderCard();
     await refreshDueBadge();
 
-    if (!state.current) {
+    if (hasReachedDailyLimit()) {
+      setStatus(`本日のSRSは上限 ${DAILY_REVIEW_LIMIT} 件に達しました。`);
+    } else if (!state.current) {
       setStatus('現在、復習待ちはありません。');
     } else {
       setStatus('カードを表示しました。');
@@ -224,6 +242,9 @@ function bindGradeButtons() {
         });
         await recordAndMaybeFlush(event);
         await loadQueue();
+        if (hasReachedDailyLimit()) {
+          setStatus(`本日のSRSは上限 ${DAILY_REVIEW_LIMIT} 件に達しました。`);
+        }
       } catch (error) {
         console.error(error);
         setStatus('保存に失敗しました。通信状態とDB設定を確認してください。', true);
