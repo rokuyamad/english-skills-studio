@@ -1216,13 +1216,20 @@ body.dashboard-page .dashboard-header {
   gap: 12px;
 }
 
+.dashboard-panel > * {
+  min-width: 0;
+}
+
 .dashboard-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .dashboard-head h2 {
+  min-width: 0;
   font-size: 16px;
   letter-spacing: 0.04em;
 }
@@ -1387,6 +1394,7 @@ body.dashboard-page .dashboard-header {
 .goal-progress-shell {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .goal-progress-rail {
@@ -1409,12 +1417,18 @@ body.dashboard-page .dashboard-header {
   gap: 8px 12px;
   color: #c8d6f0;
   font-size: 12px;
+  min-width: 0;
 }
 
 .dashboard-charts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  min-width: 0;
+}
+
+.dashboard-charts > * {
+  min-width: 0;
 }
 
 .chart-card {
@@ -1425,6 +1439,7 @@ body.dashboard-page .dashboard-header {
   display: grid;
   gap: 10px;
   background: rgba(10, 18, 34, 0.42);
+  min-width: 0;
 }
 
 .chart-card-cumulative {
@@ -1440,6 +1455,13 @@ body.dashboard-page .dashboard-header {
 .chart-canvas-wrap {
   position: relative;
   min-height: 168px;
+  min-width: 0;
+}
+
+.chart-canvas-wrap canvas {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
 }
 
 .achievement-list {
@@ -1489,6 +1511,7 @@ body.dashboard-page .dashboard-header {
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--space-3);
+  min-width: 0;
 }
 
 .external-log-fields {
@@ -1496,6 +1519,7 @@ body.dashboard-page .dashboard-header {
   flex-wrap: wrap;
   gap: var(--space-3);
   flex: 1;
+  min-width: 0;
 }
 
 .external-log-fields .field {
@@ -1542,6 +1566,7 @@ body.dashboard-page .dashboard-header {
 }
 
 .ext-entry-memo {
+  min-width: 0;
   color: var(--text-1);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1669,6 +1694,15 @@ body.dashboard-page .dashboard-header {
   .dashboard-panel {
     margin: 0 8px 10px;
     padding: 10px;
+  }
+
+  .dashboard-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .dashboard-settings-link {
+    margin-left: auto;
   }
 
   .settings-modal .settings-grid {
