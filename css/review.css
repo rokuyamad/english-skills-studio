@@ -83,13 +83,18 @@
 
 .review-meta-row span {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--line-soft);
   border-radius: 999px;
   color: var(--text-1);
   background: rgba(255, 255, 255, 0.05);
-  padding: 6px 10px;
+  min-height: 28px;
+  padding: 4px 10px;
   font-size: 12px;
   font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .review-filter-row {
