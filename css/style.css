@@ -1564,6 +1564,22 @@ body.dashboard-page .dashboard-header {
   .dashboard-charts {
     gap: 10px;
   }
+
+  .chart-card {
+    height: 60px;
+  }
+
+  .chart-card-cumulative {
+    height: 70px;
+  }
+
+  .chart-canvas-wrap {
+    height: 38px;
+  }
+
+  .chart-card-cumulative .chart-canvas-wrap {
+    height: 46px;
+  }
 }
 
 .achievement-list {
