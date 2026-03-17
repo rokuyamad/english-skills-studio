@@ -1559,6 +1559,44 @@ body.dashboard-page .dashboard-header {
   max-width: 100%;
 }
 
+@media (min-width: 961px) {
+  .dashboard-charts {
+    gap: 10px;
+  }
+
+  .chart-card {
+    min-height: 118px;
+    padding: 8px 9px 8px;
+    gap: 6px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 9px 20px rgba(6, 10, 19, 0.14);
+  }
+
+  .chart-card::after {
+    width: 88px;
+    height: 88px;
+    top: -34px;
+    right: -28px;
+    opacity: 0.6;
+  }
+
+  .chart-card-cumulative {
+    min-height: 138px;
+  }
+
+  .chart-card h3 {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .chart-canvas-wrap {
+    min-height: 76px;
+  }
+
+  .chart-card-cumulative .chart-canvas-wrap {
+    min-height: 92px;
+  }
+}
+
 .achievement-list {
   display: flex;
   flex-wrap: wrap;

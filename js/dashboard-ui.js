@@ -31,6 +31,10 @@ let cumulativeChart = null;
 let didPrimeDashboard = false;
 const animatedNumbers = new Map();
 
+function isDesktopDashboardViewport() {
+  return window.matchMedia('(min-width: 961px)').matches;
+}
+
 function hoursLabel(hours) {
   return `${hours.toFixed(1)}h`;
 }
@@ -179,12 +183,22 @@ function renderLineChart(series = []) {
       responsive: true,
       maintainAspectRatio: false,
       animation: makeAnimationOption(),
+      layout: {
+        padding: isDesktopDashboardViewport() ? { top: 2, right: 4, bottom: 0, left: 0 } : { top: 6, right: 8, bottom: 0, left: 0 }
+      },
       plugins: {
         legend: { display: false }
       },
       scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#cfd8ea' } },
-        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.08)' }, ticks: { color: '#cfd8ea' } }
+        x: {
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#cfd8ea', maxTicksLimit: isDesktopDashboardViewport() ? 7 : 10, font: { size: isDesktopDashboardViewport() ? 10 : 11 } }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          ticks: { color: '#cfd8ea', maxTicksLimit: isDesktopDashboardViewport() ? 4 : 6, font: { size: isDesktopDashboardViewport() ? 10 : 11 } }
+        }
       }
     }
   });
@@ -210,9 +224,19 @@ function renderDonutChart(perPageHours) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      cutout: isDesktopDashboardViewport() ? '68%' : '62%',
       animation: makeAnimationOption(),
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#e0e8f8' } }
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#e0e8f8',
+            boxWidth: isDesktopDashboardViewport() ? 9 : 12,
+            boxHeight: isDesktopDashboardViewport() ? 9 : 12,
+            padding: isDesktopDashboardViewport() ? 10 : 16,
+            font: { size: isDesktopDashboardViewport() ? 10 : 12 }
+          }
+        }
       }
     }
   });
@@ -296,16 +320,30 @@ function renderCumulativeChart(series = []) {
       responsive: true,
       maintainAspectRatio: false,
       animation: makeAnimationOption(),
+      layout: {
+        padding: isDesktopDashboardViewport() ? { top: 2, right: 4, bottom: 0, left: 0 } : { top: 6, right: 8, bottom: 0, left: 0 }
+      },
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { color: '#e0e8f8' }
+          labels: {
+            color: '#e0e8f8',
+            boxWidth: isDesktopDashboardViewport() ? 9 : 12,
+            boxHeight: isDesktopDashboardViewport() ? 9 : 12,
+            padding: isDesktopDashboardViewport() ? 10 : 16,
+            font: { size: isDesktopDashboardViewport() ? 10 : 12 }
+          }
         }
       },
       scales: {
         x: {
           grid: { color: 'rgba(255,255,255,0.06)' },
-          ticks: { color: '#cfd8ea', autoSkip: true, maxTicksLimit: 10 },
+          ticks: {
+            color: '#cfd8ea',
+            autoSkip: true,
+            maxTicksLimit: isDesktopDashboardViewport() ? 7 : 10,
+            font: { size: isDesktopDashboardViewport() ? 10 : 11 }
+          },
           stacked: true
         },
         y: {
@@ -314,6 +352,8 @@ function renderCumulativeChart(series = []) {
           grid: { color: 'rgba(255,255,255,0.08)' },
           ticks: {
             color: '#cfd8ea',
+            maxTicksLimit: isDesktopDashboardViewport() ? 4 : 6,
+            font: { size: isDesktopDashboardViewport() ? 10 : 11 },
             callback: (value) => `${value}h`
           }
         }
