@@ -6,6 +6,8 @@ import {
 } from './auth.js';
 import { fetchDueCount } from './srs-api.js';
 
+const TOPBAR_DUE_BADGE_MAX = 20;
+
 function renderLoggedOut(slot) {
   const { userEl, linkEl, logoutBtn } = slot;
   userEl.textContent = '未ログイン';
@@ -51,9 +53,10 @@ export async function refreshDueBadge() {
 
   try {
     const count = await fetchDueCount({ cardType: 'all' });
+    const displayCount = Math.min(count, TOPBAR_DUE_BADGE_MAX);
     slots.forEach((el) => {
-      if (count > 0) {
-        el.textContent = `復習 ${count}件`;
+      if (displayCount > 0) {
+        el.textContent = `復習 ${displayCount}件`;
         el.classList.remove('hidden');
       } else {
         el.textContent = '復習 0件';

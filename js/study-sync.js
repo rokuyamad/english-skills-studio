@@ -1,5 +1,6 @@
 import { getSessionUser, getSupabaseClient } from './auth.js';
 import {
+  deleteStudyEvent,
   listPendingStudyEvents,
   markStudyEventsSynced,
   recordStudyEvent
@@ -67,4 +68,50 @@ export async function flushStudyEvents() {
   } finally {
     flushInFlight = null;
   }
+}
+
+export async function updateStudyEvent(event) {
+  if (!event?.id) throw new Error('Event id is required.');
+
+  const user = await getSessionUser();
+  const supabase = await getSupabaseClient();
+  if (!user || !supabase) throw new Error('Authentication required.');
+
+  const row = {
+    id: event.id,
+    user_id: user.id,
+    occurred_at: event.occurredAt,
+    page_key: event.pageKey,
+    content_key: event.contentKey ?? '',
+    unit_count: event.unitCount,
+    estimated_seconds: event.estimatedSeconds,
+    source: event.source || 'manual'
+  };
+
+  const { error } = await supabase.from('study_events').upsert(row, { onConflict: 'id' });
+  if (error) throw error;
+
+  await recordStudyEvent({
+    ...event,
+    syncStatus: 'synced',
+    syncedAt: new Date().toISOString()
+  });
+}
+
+export async function removeStudyEvent(id) {
+  if (!id) throw new Error('Event id is required.');
+
+  const user = await getSessionUser();
+  const supabase = await getSupabaseClient();
+  if (!user || !supabase) throw new Error('Authentication required.');
+
+  const { error } = await supabase
+    .from('study_events')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+
+  await deleteStudyEvent(id);
 }

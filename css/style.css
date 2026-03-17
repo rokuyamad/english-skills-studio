@@ -1565,7 +1565,7 @@ body.dashboard-page .dashboard-header {
   }
 
   .chart-card {
-    min-height: 118px;
+    min-height: 60px;
     padding: 8px 9px 8px;
     gap: 6px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 9px 20px rgba(6, 10, 19, 0.14);
@@ -1580,7 +1580,7 @@ body.dashboard-page .dashboard-header {
   }
 
   .chart-card-cumulative {
-    min-height: 138px;
+    min-height: 70px;
   }
 
   .chart-card h3 {
@@ -1589,11 +1589,11 @@ body.dashboard-page .dashboard-header {
   }
 
   .chart-canvas-wrap {
-    min-height: 76px;
+    min-height: 38px;
   }
 
   .chart-card-cumulative .chart-canvas-wrap {
-    min-height: 92px;
+    min-height: 46px;
   }
 }
 
@@ -1751,6 +1751,11 @@ body.dashboard-page .dashboard-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.external-log-entry.is-editing {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
 .ext-entry-date {
   color: var(--text-2);
   flex-shrink: 0;
@@ -1768,6 +1773,57 @@ body.dashboard-page .dashboard-header {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ext-entry-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ext-entry-btn,
+.ext-inline-date,
+.ext-inline-select,
+.ext-inline-memo {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-1);
+  font: inherit;
+}
+
+.ext-entry-btn {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.ext-entry-btn.primary {
+  color: #102032;
+  border-color: rgba(108, 229, 255, 0.4);
+  background: linear-gradient(135deg, rgba(108, 229, 255, 0.95), rgba(137, 255, 221, 0.92));
+}
+
+.ext-entry-btn.danger {
+  border-color: rgba(255, 143, 143, 0.28);
+  color: #ffc7c7;
+}
+
+.ext-inline-date,
+.ext-inline-select,
+.ext-inline-memo {
+  padding: 7px 10px;
+}
+
+.ext-inline-date,
+.ext-inline-select {
+  flex: 0 0 auto;
+}
+
+.ext-inline-memo {
+  min-width: 220px;
+  flex: 1 1 220px;
 }
 
 .external-log-empty {

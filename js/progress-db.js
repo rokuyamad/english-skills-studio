@@ -215,6 +215,19 @@ export async function recordStudyEvent(event) {
   }
 }
 
+export async function deleteStudyEvent(id) {
+  if (!id) return;
+  try {
+    await runTransaction(EVENTS_STORE, 'readwrite', (store, resolve, reject) => {
+      const req = store.delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error || new Error('Failed to delete study event.'));
+    });
+  } catch (error) {
+    warn('deleteStudyEvent failed', error);
+  }
+}
+
 export async function listStudyEvents() {
   const result = [];
   try {
