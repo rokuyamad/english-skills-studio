@@ -31,6 +31,52 @@ let cumulativeChart = null;
 let didPrimeDashboard = false;
 const animatedNumbers = new Map();
 
+const doughnutInlineLabelsPlugin = {
+  id: 'doughnutInlineLabels',
+  afterDatasetsDraw(chart) {
+    if (chart.config.type !== 'doughnut') return;
+
+    const meta = chart.getDatasetMeta(0);
+    const dataset = chart.data.datasets?.[0];
+    const labels = chart.data.labels || [];
+    if (!meta?.data?.length || !dataset?.data?.length) return;
+
+    const ctx = chart.ctx;
+    const isDesktop = isDesktopDashboardViewport();
+    ctx.save();
+
+    meta.data.forEach((arc, index) => {
+      const value = Number(dataset.data[index] || 0);
+      const label = String(labels[index] || '');
+      if (!value || !label) return;
+
+      const angle = (arc.startAngle + arc.endAngle) / 2;
+      const radius = arc.innerRadius + ((arc.outerRadius - arc.innerRadius) * (isDesktop ? 0.72 : 0.78));
+      const x = arc.x + (Math.cos(angle) * radius);
+      const y = arc.y + (Math.sin(angle) * radius);
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const labelFontSize = isDesktop ? 11 : 10;
+      const valueFontSize = isDesktop ? 10 : 9;
+      const lineGap = isDesktop ? 12 : 10;
+
+      ctx.fillStyle = '#f5f7ff';
+      ctx.font = `700 ${labelFontSize}px "JetBrains Mono", monospace`;
+      ctx.fillText(label, x, y - (lineGap / 2));
+
+      ctx.fillStyle = 'rgba(232, 240, 255, 0.92)';
+      ctx.font = `500 ${valueFontSize}px "JetBrains Mono", monospace`;
+      ctx.fillText(hoursLabel(value), x, y + (lineGap / 2));
+    });
+
+    ctx.restore();
+  }
+};
+
+Chart.register(doughnutInlineLabelsPlugin);
+
 function isDesktopDashboardViewport() {
   return window.matchMedia('(min-width: 961px)').matches;
 }
@@ -227,16 +273,7 @@ function renderDonutChart(perPageHours) {
       cutout: isDesktopDashboardViewport() ? '68%' : '62%',
       animation: makeAnimationOption(),
       plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: '#e0e8f8',
-            boxWidth: isDesktopDashboardViewport() ? 9 : 12,
-            boxHeight: isDesktopDashboardViewport() ? 9 : 12,
-            padding: isDesktopDashboardViewport() ? 10 : 16,
-            font: { size: isDesktopDashboardViewport() ? 10 : 12 }
-          }
-        }
+        legend: { display: false }
       }
     }
   });
