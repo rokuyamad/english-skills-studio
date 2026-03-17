@@ -1,6 +1,6 @@
 [
   {
-    "label": "ビジネス 形容詞",
+    "label": "ビジネス-形容詞",
     "key": "adj",
     "segments": [
       {
@@ -156,7 +156,7 @@
     ]
   },
   {
-    "label": "未来 ビジネスシーン",
+    "label": "ビジネス-未来",
     "key": "future",
     "segments": [
       {
@@ -461,6 +461,90 @@
       },
       {
         "transcript": "He had a cat when he was young."
+      }
+    ]
+  },
+  {
+    "label": "ビジネス-おまけ",
+    "key": "bonus",
+    "segments": [
+      {
+        "transcript": "Could you make the screen bigger?"
+      },
+      {
+        "transcript": "Could you zoom in a little?"
+      },
+      {
+        "transcript": "Could you go back to the previous slide?"
+      },
+      {
+        "transcript": "Could you scroll down a bit?"
+      },
+      {
+        "transcript": "Could you share your screen?"
+      },
+      {
+        "transcript": "Could you show that page again?"
+      },
+      {
+        "transcript": "Could you explain this part in more detail?"
+      },
+      {
+        "transcript": "Could you clarify what you mean by that?"
+      },
+      {
+        "transcript": "Could you give me an example?"
+      },
+      {
+        "transcript": "Just to make sure I understand."
+      },
+      {
+        "transcript": "So, just to confirm, does this mean..."
+      },
+      {
+        "transcript": "Sorry, could you say that again?"
+      },
+      {
+        "transcript": "Could you speak a little more slowly?"
+      },
+      {
+        "transcript": "That makes sense."
+      },
+      {
+        "transcript": "I see what you mean."
+      },
+      {
+        "transcript": "That's interesting."
+      },
+      {
+        "transcript": "That's a great question."
+      },
+      {
+        "transcript": "Let me check on that."
+      },
+      {
+        "transcript": "I'll get back to you on that."
+      },
+      {
+        "transcript": "I agree with that point."
+      },
+      {
+        "transcript": "That's a good insight."
+      },
+      {
+        "transcript": "I hadn't thought of it that way."
+      },
+      {
+        "transcript": "Let me think about that for a moment."
+      },
+      {
+        "transcript": "We may need to discuss this internally."
+      },
+      {
+        "transcript": "That sounds promising."
+      },
+      {
+        "transcript": "I appreciate your input."
       }
     ]
   }

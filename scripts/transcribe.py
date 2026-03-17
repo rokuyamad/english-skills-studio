@@ -14,8 +14,9 @@ from openai import OpenAI
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 FILES = [
-    ("audio/business-adjectives.mp3", "adj",    "ビジネス 形容詞"),
-    ("audio/business-future.m4a",     "future", "未来 ビジネスシーン"),
+    ("audio/business-adjectives.mp3", "adj",    "ビジネス-形容詞"),
+    ("audio/business-bonus.m4a",      "bonus",  "ビジネス-おまけ"),
+    ("audio/business-future.m4a",     "future", "ビジネス-未来"),
     ("audio/business-past.m4a",       "past",   "過去 ビジネス"),
 ]
 
