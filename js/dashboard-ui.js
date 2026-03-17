@@ -28,6 +28,8 @@ Chart.register(
 let lineChart = null;
 let donutChart = null;
 let cumulativeChart = null;
+let didPrimeDashboard = false;
+const animatedNumbers = new Map();
 
 function hoursLabel(hours) {
   return `${hours.toFixed(1)}h`;
@@ -40,6 +42,10 @@ function percentLabel(v) {
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 function renderAchievements(items = []) {
@@ -70,9 +76,76 @@ function destroyCharts() {
 }
 
 function makeAnimationOption() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return prefersReducedMotion()
     ? { duration: 0 }
-    : { duration: 500 };
+    : {
+        duration: 820,
+        easing: 'easeOutQuart'
+      };
+}
+
+function animateTextNumber(id, nextValue, formatter, options = {}) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const duration = options.duration ?? 700;
+  const decimals = options.decimals ?? 0;
+  const currentValue = animatedNumbers.has(id) ? animatedNumbers.get(id) : nextValue;
+
+  if (prefersReducedMotion()) {
+    animatedNumbers.set(id, nextValue);
+    el.textContent = formatter(nextValue);
+    return;
+  }
+
+  if (Math.abs(currentValue - nextValue) < 0.001) {
+    el.textContent = formatter(nextValue);
+    return;
+  }
+
+  const start = performance.now();
+  const from = currentValue;
+  const delta = nextValue - from;
+
+  const step = (now) => {
+    const progress = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = from + (delta * eased);
+    const rounded = Number(value.toFixed(decimals));
+    el.textContent = formatter(rounded);
+    if (progress < 1) {
+      requestAnimationFrame(step);
+      return;
+    }
+    animatedNumbers.set(id, nextValue);
+    el.textContent = formatter(nextValue);
+  };
+
+  requestAnimationFrame(step);
+}
+
+function primeDashboardMotion() {
+  const panel = document.querySelector('.dashboard-panel');
+  if (!panel) return;
+
+  const animatedEls = panel.querySelectorAll('.dashboard-head, .dashboard-kpis > *, .goal-progress-shell, .dashboard-charts > *, .achievement-list');
+  animatedEls.forEach((el, index) => {
+    el.classList.add('dashboard-animate');
+    el.style.setProperty('--enter-delay', `${Math.min(index * 70, 420)}ms`);
+  });
+
+  if (didPrimeDashboard || prefersReducedMotion()) {
+    panel.classList.add('is-ready');
+    didPrimeDashboard = true;
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      panel.classList.add('is-ready');
+      didPrimeDashboard = true;
+    });
+  });
 }
 
 function renderLineChart(series = []) {
@@ -252,17 +325,19 @@ function renderCumulativeChart(series = []) {
 export function renderDashboard(snapshot) {
   if (!snapshot) return;
 
-  setText('kpiTotalHours', hoursLabel(snapshot.totalHours));
+  primeDashboardMotion();
+
+  animateTextNumber('kpiTotalHours', snapshot.totalHours, hoursLabel, { decimals: 1, duration: 900 });
   const breakdownParts = [`In-app ${hoursLabel(snapshot.inAppHours)}`];
   if ((snapshot.externalEventHours || 0) > 0) breakdownParts.push(`Logged ${hoursLabel(snapshot.externalEventHours)}`);
   if ((snapshot.externalCarryoverHours || 0) > 0) breakdownParts.push(`Carryover ${hoursLabel(snapshot.externalCarryoverHours)}`);
   setText('kpiTotalBreakdown', breakdownParts.join(' + '));
-  setText('kpiRemaining', hoursLabel(snapshot.remainingHours));
-  setText('kpiGoalProgress', percentLabel(snapshot.goalProgress));
-  setText('kpiImitation', hoursLabel(snapshot.perPageHours.imitation));
-  setText('kpiSlash', hoursLabel(snapshot.perPageHours.slash));
-  setText('kpiShadowing', hoursLabel(snapshot.perPageHours.shadowing));
-  setText('kpiSrs', hoursLabel(snapshot.perPageHours.srs));
+  animateTextNumber('kpiRemaining', snapshot.remainingHours, hoursLabel, { decimals: 1, duration: 820 });
+  animateTextNumber('kpiGoalProgress', snapshot.goalProgress * 100, (value) => `${Math.round(value)}%`, { duration: 840 });
+  animateTextNumber('kpiImitation', snapshot.perPageHours.imitation, hoursLabel, { decimals: 1, duration: 760 });
+  animateTextNumber('kpiSlash', snapshot.perPageHours.slash, hoursLabel, { decimals: 1, duration: 760 });
+  animateTextNumber('kpiShadowing', snapshot.perPageHours.shadowing, hoursLabel, { decimals: 1, duration: 760 });
+  animateTextNumber('kpiSrs', snapshot.perPageHours.srs, hoursLabel, { decimals: 1, duration: 760 });
   setText('kpiNextMilestone', snapshot.nextMilestone ? `${snapshot.nextMilestone}h` : 'Complete');
 
   const fill = document.getElementById('goalProgressFill');

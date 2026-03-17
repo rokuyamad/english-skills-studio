@@ -1214,6 +1214,7 @@ body.dashboard-page .dashboard-header {
   padding: 14px;
   display: grid;
   gap: 12px;
+  overflow: clip;
 }
 
 .dashboard-panel > * {
@@ -1249,6 +1250,14 @@ body.dashboard-page .dashboard-header {
   border-color: rgba(255, 214, 153, 0.54);
   color: var(--text-0);
   background: rgba(255, 214, 153, 0.12);
+}
+
+.dashboard-head::after {
+  content: '';
+  flex: 1;
+  min-width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(108, 229, 255, 0.24), rgba(255, 207, 122, 0));
 }
 
 .settings-modal {
@@ -1367,10 +1376,44 @@ body.dashboard-page .dashboard-header {
 }
 
 .kpi-card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(108, 229, 255, 0.22);
-  border-radius: 14px;
-  padding: 11px;
-  background: linear-gradient(160deg, rgba(10, 20, 38, 0.58), rgba(20, 34, 57, 0.48));
+  border-radius: 16px;
+  padding: 12px 12px 11px;
+  background:
+    linear-gradient(160deg, rgba(10, 20, 38, 0.76), rgba(20, 34, 57, 0.56)),
+    radial-gradient(80% 120% at 10% 10%, rgba(108, 229, 255, 0.1), transparent 60%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 28px rgba(7, 10, 20, 0.18);
+  transition: transform var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(108, 229, 255, 0.9), rgba(255, 207, 122, 0.75), rgba(255, 159, 139, 0));
+  opacity: 0.9;
+}
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -8%;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(108, 229, 255, 0.22), rgba(108, 229, 255, 0));
+  pointer-events: none;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 214, 153, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 34px rgba(7, 10, 20, 0.24);
 }
 
 .kpi-label {
@@ -1380,9 +1423,11 @@ body.dashboard-page .dashboard-header {
 }
 
 .kpi-value {
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 700;
-  margin-top: 4px;
+  margin-top: 6px;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 18px rgba(108, 229, 255, 0.14);
 }
 
 .kpi-sub {
@@ -1393,12 +1438,19 @@ body.dashboard-page .dashboard-header {
 
 .goal-progress-shell {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
+  padding: 11px 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(108, 229, 255, 0.16);
+  background:
+    linear-gradient(180deg, rgba(11, 18, 33, 0.72), rgba(16, 24, 42, 0.5)),
+    radial-gradient(120% 180% at 0% 0%, rgba(108, 229, 255, 0.1), transparent 44%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .goal-progress-rail {
-  height: 8px;
+  height: 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
@@ -1409,6 +1461,8 @@ body.dashboard-page .dashboard-header {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #6ce5ff, #ffcf7a);
+  box-shadow: 0 0 18px rgba(108, 229, 255, 0.32);
+  transition: width 720ms cubic-bezier(.22,1,.36,1);
 }
 
 .goal-progress-meta {
@@ -1423,7 +1477,7 @@ body.dashboard-page .dashboard-header {
 .dashboard-charts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -1432,30 +1486,71 @@ body.dashboard-page .dashboard-header {
 }
 
 .chart-card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(108, 229, 255, 0.2);
-  border-radius: 14px;
-  padding: 10px;
-  min-height: 220px;
+  border-radius: 16px;
+  padding: 10px 10px 9px;
+  min-height: 188px;
   display: grid;
-  gap: 10px;
-  background: rgba(10, 18, 34, 0.42);
+  gap: 8px;
+  background:
+    linear-gradient(180deg, rgba(11, 19, 35, 0.82), rgba(13, 22, 38, 0.64)),
+    radial-gradient(120% 160% at 0% 0%, rgba(108, 229, 255, 0.1), transparent 48%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 28px rgba(6, 10, 19, 0.18);
   min-width: 0;
+  transition: transform var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast);
+}
+
+.chart-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 28%);
+  pointer-events: none;
+}
+
+.chart-card::after {
+  content: '';
+  position: absolute;
+  top: -42px;
+  right: -34px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 207, 122, 0.16), rgba(255, 207, 122, 0));
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 214, 153, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 34px rgba(6, 10, 19, 0.24);
 }
 
 .chart-card-cumulative {
   grid-column: 1 / -1;
+  min-height: 210px;
 }
 
 .chart-card h3 {
   font-size: 13px;
   color: #d4e2fa;
   letter-spacing: 0.03em;
+  position: relative;
+  z-index: 1;
 }
 
 .chart-canvas-wrap {
   position: relative;
-  min-height: 168px;
+  min-height: 138px;
   min-width: 0;
+  z-index: 1;
+}
+
+.chart-card-cumulative .chart-canvas-wrap {
+  min-height: 154px;
 }
 
 .chart-canvas-wrap canvas {
@@ -1471,17 +1566,81 @@ body.dashboard-page .dashboard-header {
 }
 
 .achievement-chip {
+  position: relative;
+  overflow: hidden;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: var(--text-2);
   padding: 6px 10px;
   font-size: 11px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .achievement-chip.unlocked {
   color: #1f2435;
   border-color: rgba(255, 214, 153, 0.6);
   background: linear-gradient(130deg, #ffd699, #ffa38a);
+  box-shadow: 0 8px 18px rgba(255, 166, 138, 0.18);
+}
+
+.dashboard-panel .dashboard-animate {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+}
+
+.dashboard-panel.is-ready .dashboard-animate {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 560ms cubic-bezier(.22,1,.36,1) var(--enter-delay, 0ms),
+    transform 560ms cubic-bezier(.22,1,.36,1) var(--enter-delay, 0ms);
+}
+
+.dashboard-panel.is-ready .kpi-card {
+  animation: dashboardPulse 2.8s ease-in-out 0.7s 1;
+}
+
+.dashboard-panel.is-ready .goal-progress-shell {
+  animation: dashboardGlow 2.2s ease-out 0.35s 1;
+}
+
+@keyframes dashboardGlow {
+  0% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 rgba(108, 229, 255, 0);
+  }
+  45% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 28px rgba(108, 229, 255, 0.16);
+  }
+  100% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 rgba(108, 229, 255, 0);
+  }
+}
+
+@keyframes dashboardPulse {
+  0%, 100% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 28px rgba(7, 10, 20, 0.18);
+  }
+  50% {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 36px rgba(7, 10, 20, 0.24);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-panel .dashboard-animate,
+  .dashboard-panel.is-ready .dashboard-animate,
+  .dashboard-panel.is-ready .kpi-card,
+  .dashboard-panel.is-ready .goal-progress-shell {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .goal-progress-rail span,
+  .kpi-card,
+  .chart-card {
+    transition: none !important;
+  }
 }
 
 /* ── External Learning Log ────────────────────────────────── */
@@ -1715,6 +1874,22 @@ body.dashboard-page .dashboard-header {
 
   .dashboard-charts {
     grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    min-height: 174px;
+  }
+
+  .chart-card-cumulative {
+    min-height: 192px;
+  }
+
+  .chart-canvas-wrap {
+    min-height: 126px;
+  }
+
+  .chart-card-cumulative .chart-canvas-wrap {
+    min-height: 142px;
   }
 
   .sentence-list {
