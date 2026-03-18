@@ -4,9 +4,11 @@ import {
   isSupabaseConfigured,
   signOut
 } from './auth.js';
-import { fetchDueCount } from './srs-api.js';
+import { fetchDueCount, fetchTodayReviewCount } from './srs-api.js';
+import { getEffectiveStudySettings } from './study-settings.js';
 
 const TOPBAR_DUE_BADGE_MAX = 20;
+const DAILY_REVIEW_LIMIT = 20;
 let dueBadgeCount = 0;
 
 function renderLoggedOut(slot) {
@@ -73,6 +75,13 @@ export function decrementDueBadgeCount(step = 1) {
   setDueBadgeCount(Math.max(0, dueBadgeCount - safeStep));
 }
 
+function getAvailableDueCount(totalDue, todayReviewed) {
+  const safeDue = Math.max(0, Number(totalDue || 0));
+  const safeReviewed = Math.max(0, Number(todayReviewed || 0));
+  const remainingDailyCapacity = Math.max(0, DAILY_REVIEW_LIMIT - safeReviewed);
+  return Math.min(safeDue, remainingDailyCapacity);
+}
+
 export async function refreshDueBadge() {
   const slots = getDueSlots();
   if (!slots.length) return;
@@ -82,8 +91,12 @@ export async function refreshDueBadge() {
   }
 
   try {
-    const count = await fetchDueCount({ cardType: 'all' });
-    setDueBadgeCount(count);
+    const settings = await getEffectiveStudySettings();
+    const [count, todayReviewed] = await Promise.all([
+      fetchDueCount({ cardType: 'all' }),
+      fetchTodayReviewCount({ timeZone: settings.timezone })
+    ]);
+    setDueBadgeCount(getAvailableDueCount(count, todayReviewed));
   } catch (error) {
     console.warn('[auth-ui] due badge skipped', error);
     hideDueSlots();

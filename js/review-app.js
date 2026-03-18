@@ -67,6 +67,13 @@ function hasReachedDailyLimit() {
   return state.todayReviewed >= DAILY_REVIEW_LIMIT;
 }
 
+function getAvailableDueCount(totalDue, todayReviewed) {
+  const safeDue = Math.max(0, Number(totalDue || 0));
+  const safeReviewed = Math.max(0, Number(todayReviewed || 0));
+  const remainingDailyCapacity = Math.max(0, DAILY_REVIEW_LIMIT - safeReviewed);
+  return Math.min(safeDue, remainingDailyCapacity);
+}
+
 function renderCard() {
   const cardEl = document.querySelector('.review-card');
   const categoryEl = getEl('cardCategory');
@@ -165,7 +172,7 @@ async function loadQueue() {
 
     renderQueueMeta();
     renderCard();
-    setDueBadgeCount(totalDue);
+    setDueBadgeCount(getAvailableDueCount(totalDue, todayReviewed));
 
     if (hasReachedDailyLimit()) {
       setStatus(`本日のSRSは上限 ${DAILY_REVIEW_LIMIT} 件に達しました。`);
