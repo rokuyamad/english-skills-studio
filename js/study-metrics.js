@@ -33,6 +33,34 @@ function dateLabel(date, timezone) {
   return fmt.format(date);
 }
 
+function buildTodayBreakdown(events, timezone) {
+  const todayLabel = dateLabel(new Date(), timezone);
+  const perPageSeconds = {
+    imitation: 0,
+    slash: 0,
+    shadowing: 0,
+    srs: 0,
+    external: 0
+  };
+
+  events.forEach((ev) => {
+    const occurred = new Date(ev.occurredAt || ev.occurred_at);
+    if (Number.isNaN(occurred.getTime())) return;
+    if (dateLabel(occurred, timezone) !== todayLabel) return;
+
+    const pageKey = ev.pageKey || ev.page_key;
+    if (!Object.prototype.hasOwnProperty.call(perPageSeconds, pageKey)) return;
+    perPageSeconds[pageKey] += toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
+  });
+
+  const totalSeconds = Object.values(perPageSeconds).reduce((sum, value) => sum + value, 0);
+
+  return {
+    totalSeconds,
+    perPageSeconds
+  };
+}
+
 export function buildDailySeries(events, timezone) {
   const map = new Map();
   events.forEach((ev) => {
@@ -278,6 +306,7 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   }));
   const momentum = computeMomentum(dailySeries);
   const goalProgress = Math.max(0, Math.min(1, totalHours / goalHours));
+  const todayBreakdown = buildTodayBreakdown(events, settings.timezone);
 
   const perPageHours = {
     imitation: perPageSeconds.imitation / 3600,
@@ -295,6 +324,7 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
     externalEventHours: round1(externalEventSeconds / 3600),
     externalCarryoverHours: round1(externalCarryoverSeconds / 3600),
     totalMinutes,
+    todayBreakdown,
     goalHours,
     remainingHours: round1(Math.max(0, goalHours - totalHours)),
     goalProgress,

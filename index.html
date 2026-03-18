@@ -95,6 +95,57 @@
           </div>
         </div>
 
+        <section class="today-focus-card" aria-label="本日の学習時間">
+          <div class="today-focus-head">
+            <div>
+              <p class="today-focus-eyebrow">TODAY</p>
+              <h3>Today by Content</h3>
+            </div>
+            <div class="today-focus-total">
+              <span class="today-focus-total-label">Total</span>
+              <strong id="todayStudyTotal">0分</strong>
+            </div>
+          </div>
+          <p class="today-focus-copy">各ゲージは今日の総学習時間に占める比率です。</p>
+          <div class="today-gauge-list">
+            <div class="today-gauge-row">
+              <div class="today-gauge-meta">
+                <span class="today-gauge-label">Imitation</span>
+                <strong class="today-gauge-value" id="todayImitationValue">0分</strong>
+              </div>
+              <div class="today-gauge-rail"><span class="today-gauge-fill imitation" id="todayImitationFill"></span></div>
+            </div>
+            <div class="today-gauge-row">
+              <div class="today-gauge-meta">
+                <span class="today-gauge-label">Slash</span>
+                <strong class="today-gauge-value" id="todaySlashValue">0分</strong>
+              </div>
+              <div class="today-gauge-rail"><span class="today-gauge-fill slash" id="todaySlashFill"></span></div>
+            </div>
+            <div class="today-gauge-row">
+              <div class="today-gauge-meta">
+                <span class="today-gauge-label">Shadowing</span>
+                <strong class="today-gauge-value" id="todayShadowingValue">0分</strong>
+              </div>
+              <div class="today-gauge-rail"><span class="today-gauge-fill shadowing" id="todayShadowingFill"></span></div>
+            </div>
+            <div class="today-gauge-row">
+              <div class="today-gauge-meta">
+                <span class="today-gauge-label">SRS</span>
+                <strong class="today-gauge-value" id="todaySrsValue">0分</strong>
+              </div>
+              <div class="today-gauge-rail"><span class="today-gauge-fill srs" id="todaySrsFill"></span></div>
+            </div>
+            <div class="today-gauge-row">
+              <div class="today-gauge-meta">
+                <span class="today-gauge-label">External</span>
+                <strong class="today-gauge-value" id="todayExternalValue">0分</strong>
+              </div>
+              <div class="today-gauge-rail"><span class="today-gauge-fill external" id="todayExternalFill"></span></div>
+            </div>
+          </div>
+        </section>
+
         <div class="dashboard-charts">
           <article class="chart-card">
             <h3>Daily Minutes (30d · In-app)</h3>

@@ -85,6 +85,16 @@ function hoursLabel(hours) {
   return `${hours.toFixed(1)}h`;
 }
 
+function minutesLabelFromSeconds(seconds) {
+  const totalMinutes = Math.round(Math.max(0, Number(seconds || 0)) / 60);
+  if (totalMinutes >= 60) {
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return m > 0 ? `${h}時間${m}分` : `${h}時間`;
+  }
+  return `${totalMinutes}分`;
+}
+
 function percentLabel(v) {
   return `${Math.round(v * 100)}%`;
 }
@@ -107,6 +117,30 @@ function renderAchievements(items = []) {
     card.className = `achievement-chip${item.unlocked ? ' unlocked' : ''}`;
     card.textContent = item.label;
     wrap.appendChild(card);
+  });
+}
+
+function renderTodayGauges(todayBreakdown = {}) {
+  const perPageSeconds = todayBreakdown.perPageSeconds || {};
+  const totalSeconds = Math.max(0, Number(todayBreakdown.totalSeconds || 0));
+  const totalShareBase = totalSeconds > 0 ? totalSeconds : 0;
+
+  setText('todayStudyTotal', minutesLabelFromSeconds(totalSeconds));
+
+  [
+    ['Imitation', 'imitation'],
+    ['Slash', 'slash'],
+    ['Shadowing', 'shadowing'],
+    ['Srs', 'srs'],
+    ['External', 'external']
+  ].forEach(([prefix, key]) => {
+    const seconds = Math.max(0, Number(perPageSeconds[key] || 0));
+    setText(`today${prefix}Value`, minutesLabelFromSeconds(seconds));
+    const fill = document.getElementById(`today${prefix}Fill`);
+    if (fill) {
+      const ratio = totalShareBase > 0 ? seconds / totalShareBase : 0;
+      fill.style.width = `${Math.round(ratio * 100)}%`;
+    }
   });
 }
 
@@ -178,7 +212,7 @@ function primeDashboardMotion() {
   const panel = document.querySelector('.dashboard-panel');
   if (!panel) return;
 
-  const animatedEls = panel.querySelectorAll('.dashboard-head, .dashboard-kpis > *, .goal-progress-shell, .dashboard-charts > *, .achievement-list');
+  const animatedEls = panel.querySelectorAll('.dashboard-head, .dashboard-kpis > *, .goal-progress-shell, .today-focus-card, .dashboard-charts > *, .achievement-list');
   animatedEls.forEach((el, index) => {
     el.classList.add('dashboard-animate');
     el.style.setProperty('--enter-delay', `${Math.min(index * 70, 420)}ms`);
@@ -420,6 +454,7 @@ export function renderDashboard(snapshot) {
   const fill = document.getElementById('goalProgressFill');
   if (fill) fill.style.width = `${Math.round(snapshot.goalProgress * 100)}%`;
 
+  renderTodayGauges(snapshot.todayBreakdown);
   renderAchievements(snapshot.achievements);
   renderLineChart(snapshot.dailySeries);
   renderDonutChart(snapshot.perPageHours);
