@@ -1,4 +1,9 @@
-import { requireAuthOrRedirect, setupTopbarAuth, refreshDueBadge } from './auth-ui.js';
+import {
+  decrementDueBadgeCount,
+  requireAuthOrRedirect,
+  setDueBadgeCount,
+  setupTopbarAuth
+} from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { fetchDueCards, fetchDueCount, fetchTodayReviewCount, submitReview } from './srs-api.js';
 import { openSrsDraftModal } from './srs-draft-modal.js';
@@ -14,7 +19,8 @@ const state = {
   showingHint: false,
   showingAnswer: false,
   busy: false,
-  todayReviewed: 0
+  todayReviewed: 0,
+  totalDue: 0
 };
 
 function getEl(id) {
@@ -48,11 +54,11 @@ function updateFilterUI() {
   });
 }
 
-function renderQueueMeta(totalDue) {
+function renderQueueMeta() {
   const dueEl = getEl('dueCountLabel');
   const queueEl = getEl('queueCountLabel');
   const todayEl = getEl('todayCountLabel');
-  if (dueEl) dueEl.textContent = `Due ${totalDue}`;
+  if (dueEl) dueEl.textContent = `Due ${state.totalDue}`;
   if (queueEl) queueEl.textContent = `Queue ${state.queue.length}`;
   if (todayEl) todayEl.textContent = `Today ${Math.min(state.todayReviewed, DAILY_REVIEW_LIMIT)}/${DAILY_REVIEW_LIMIT}`;
 }
@@ -146,6 +152,7 @@ async function loadQueue() {
     ]);
 
     state.todayReviewed = todayReviewed;
+    state.totalDue = totalDue;
     const remaining = Math.max(0, DAILY_REVIEW_LIMIT - state.todayReviewed);
     const queue = remaining > 0
       ? await fetchDueCards({ cardType: state.cardTypeFilter, limit: Math.min(60, remaining) })
@@ -156,9 +163,9 @@ async function loadQueue() {
     state.showingHint = false;
     state.showingAnswer = false;
 
-    renderQueueMeta(totalDue);
+    renderQueueMeta();
     renderCard();
-    await refreshDueBadge();
+    setDueBadgeCount(totalDue);
 
     if (hasReachedDailyLimit()) {
       setStatus(`本日のSRSは上限 ${DAILY_REVIEW_LIMIT} 件に達しました。`);
@@ -241,6 +248,9 @@ function bindGradeButtons() {
           settings
         });
         await recordAndMaybeFlush(event);
+        state.totalDue = Math.max(0, state.totalDue - 1);
+        renderQueueMeta();
+        decrementDueBadgeCount();
         await loadQueue();
         if (hasReachedDailyLimit()) {
           setStatus(`本日のSRSは上限 ${DAILY_REVIEW_LIMIT} 件に達しました。`);
@@ -265,7 +275,6 @@ function bindNewCardModal() {
     openSrsDraftModal({
       onSaved: async (result) => {
         await loadQueue();
-        await refreshDueBadge();
         if (result.result === 'duplicate') {
           setStatus(`「${result.termEn}」は既に登録済みです。`);
           return;

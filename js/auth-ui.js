@@ -7,6 +7,7 @@ import {
 import { fetchDueCount } from './srs-api.js';
 
 const TOPBAR_DUE_BADGE_MAX = 20;
+let dueBadgeCount = 0;
 
 function renderLoggedOut(slot) {
   const { userEl, linkEl, logoutBtn } = slot;
@@ -37,10 +38,39 @@ function getDueSlots() {
 }
 
 function hideDueSlots() {
+  dueBadgeCount = 0;
   getDueSlots().forEach((el) => {
     el.classList.add('hidden');
     el.textContent = '復習 0件';
   });
+}
+
+function renderDueSlots(count) {
+  const slots = getDueSlots();
+  if (!slots.length) return;
+
+  const safeCount = Math.max(0, Number(count || 0));
+  const displayCount = Math.min(safeCount, TOPBAR_DUE_BADGE_MAX);
+
+  slots.forEach((el) => {
+    if (displayCount > 0) {
+      el.textContent = `復習 ${displayCount}件`;
+      el.classList.remove('hidden');
+    } else {
+      el.textContent = '復習 0件';
+      el.classList.add('hidden');
+    }
+  });
+}
+
+export function setDueBadgeCount(count) {
+  dueBadgeCount = Math.max(0, Number(count || 0));
+  renderDueSlots(dueBadgeCount);
+}
+
+export function decrementDueBadgeCount(step = 1) {
+  const safeStep = Math.max(0, Number(step || 0));
+  setDueBadgeCount(Math.max(0, dueBadgeCount - safeStep));
 }
 
 export async function refreshDueBadge() {
@@ -53,16 +83,7 @@ export async function refreshDueBadge() {
 
   try {
     const count = await fetchDueCount({ cardType: 'all' });
-    const displayCount = Math.min(count, TOPBAR_DUE_BADGE_MAX);
-    slots.forEach((el) => {
-      if (displayCount > 0) {
-        el.textContent = `復習 ${displayCount}件`;
-        el.classList.remove('hidden');
-      } else {
-        el.textContent = '復習 0件';
-        el.classList.add('hidden');
-      }
-    });
+    setDueBadgeCount(count);
   } catch (error) {
     console.warn('[auth-ui] due badge skipped', error);
     hideDueSlots();
