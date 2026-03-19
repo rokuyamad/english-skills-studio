@@ -1,6 +1,7 @@
 import { state } from './state.js';
 
 let _setWave, _updateUI;
+const SEGMENT_GAP_MS = 500;
 
 export function init({ setWave, updateUI }) {
   _setWave = setWave;
@@ -21,8 +22,8 @@ export function loadAndPlay(idx) {
     playBtn.textContent = '▶';
     playBtn.classList.remove('playing');
     const n = state.DATA[state.trackIdx].segments.length;
-    if(state.repeat) setTimeout(() => loadAndPlay(state.current), 0);
-    else if(state.current < n-1) setTimeout(() => loadAndPlay(state.current+1), 0);
+    if(state.repeat) setTimeout(() => loadAndPlay(state.current), SEGMENT_GAP_MS);
+    else if(state.current < n-1) setTimeout(() => loadAndPlay(state.current+1), SEGMENT_GAP_MS);
   };
   state.audio.play().catch(e => console.log(e));
   state.playing = true;
