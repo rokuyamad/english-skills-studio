@@ -1,7 +1,7 @@
 import { getSessionUser, getSupabaseClient } from './auth.js';
 import { computeNextState } from './srs-scheduler.js';
 
-const QA_DIRECTION = 'qa';
+const QA_DIRECTION = 'en_to_ja';
 
 function normalizeQuestion(raw) {
   return String(raw || '').replace(/\s+/g, ' ').trim();
@@ -33,10 +33,52 @@ function shuffleInPlace(items) {
   return items;
 }
 
+async function ensureQaState({ supabase, userId, cardId, nowIso = new Date().toISOString() }) {
+  const { data: existing, error: existingError } = await supabase
+    .from('srs_card_states')
+    .select('card_id')
+    .eq('user_id', userId)
+    .eq('card_id', cardId)
+    .eq('direction', QA_DIRECTION)
+    .maybeSingle();
+
+  if (existingError) throw existingError;
+  if (existing?.card_id) return;
+
+  const { error: insertError } = await supabase
+    .from('srs_card_states')
+    .insert({
+      card_id: cardId,
+      direction: QA_DIRECTION,
+      user_id: userId,
+      due_at: nowIso,
+      reps: 0,
+      lapses: 0,
+      stability_days: 0,
+      difficulty: 5,
+      last_reviewed_at: null,
+      updated_at: nowIso
+    });
+
+  if (insertError && insertError.code !== '23505') throw insertError;
+}
+
 export async function fetchDueQaCount() {
   const user = await getSessionUser();
   const supabase = await getSupabaseClient();
   if (!user || !supabase) return 0;
+
+  const { data: cards, error: cardsError } = await supabase
+    .from('srs_cards')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('card_type', 'qa')
+    .eq('is_active', true);
+
+  if (cardsError) throw cardsError;
+  await Promise.all(
+    (Array.isArray(cards) ? cards : []).map((card) => ensureQaState({ supabase, userId: user.id, cardId: card.id }))
+  );
 
   const nowIso = new Date().toISOString();
   const { count, error } = await supabase
@@ -57,6 +99,18 @@ export async function fetchDueQaCards({ limit = 30 } = {}) {
   const user = await getSessionUser();
   const supabase = await getSupabaseClient();
   if (!user || !supabase) return [];
+
+  const { data: cards, error: cardsError } = await supabase
+    .from('srs_cards')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('card_type', 'qa')
+    .eq('is_active', true);
+
+  if (cardsError) throw cardsError;
+  await Promise.all(
+    (Array.isArray(cards) ? cards : []).map((card) => ensureQaState({ supabase, userId: user.id, cardId: card.id }))
+  );
 
   const nowIso = new Date().toISOString();
   const { data, error } = await supabase
