@@ -126,9 +126,9 @@ export async function fetchDueQaCards({ limit = 30 } = {}) {
     .limit(Math.max(1, Math.min(200, Number(limit || 30))));
 
   if (error) throw error;
-  const cards = Array.isArray(data) ? data.map(toDisplayQaCard) : [];
-  shuffleInPlace(cards);
-  return cards;
+  const displayCards = Array.isArray(data) ? data.map(toDisplayQaCard) : [];
+  shuffleInPlace(displayCards);
+  return displayCards;
 }
 
 export async function submitQaReview({ cardId, grade }) {
