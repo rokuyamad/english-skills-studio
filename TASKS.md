@@ -12,6 +12,7 @@
 - [ ] T-20260302-005 | offline時の同期リトライ表示を追加する | p3 | owner:me | issue:none | created:2026-03-02
 
 ## Done
+- [x] T-20260331-001 | 学習メトリクス設定の秒換算が過去イベントに反映されないバグを修正 | p1 | owner:me | issue:none | created:2026-03-31 | done:2026-03-31
 - [x] T-20260301-001 | AGENTS.md の symlink check を導入 | p2 | owner:me | issue:none | created:2026-03-01 | done:2026-03-01
 - [x] T-20260302-006 | 全ページ左上のEnglish Skills Hubをトップページリンクにする | p1 | owner:me | issue:none | created:2026-03-02 | done:2026-03-02
 - [x] T-20260302-007 | imitation/slash/shadowingでレイアウト寸法とフォントを統一する | p1 | owner:me | issue:none | created:2026-03-02 | done:2026-03-02
