@@ -1,9 +1,34 @@
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './supabase-config.js';
 
 let _clientPromise;
+const DEV_AUTH_QUERY_KEY = 'devAuth';
+const DEV_AUTH_QUERY_VALUE = '1';
+const DEV_AUTH_USER = Object.freeze({
+  id: 'dev-user',
+  email: 'dev@example.local'
+});
 
 export function isSupabaseConfigured() {
   return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+}
+
+function isLocalDevHost() {
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+}
+
+function currentUrl() {
+  return new URL(window.location.href);
+}
+
+export function isDevAuthEnabled() {
+  if (!isLocalDevHost()) return false;
+  const url = currentUrl();
+  return url.searchParams.get(DEV_AUTH_QUERY_KEY) === DEV_AUTH_QUERY_VALUE;
+}
+
+export function getDevAuthUser() {
+  return isDevAuthEnabled() ? DEV_AUTH_USER : null;
 }
 
 function getAuthRedirectUrl() {
@@ -34,6 +59,8 @@ export async function getSupabaseClient() {
 }
 
 export async function getSessionUser() {
+  const devUser = getDevAuthUser();
+  if (devUser) return devUser;
   const supabase = await getSupabaseClient();
   if (!supabase) return null;
   const { data, error } = await supabase.auth.getSession();
@@ -69,6 +96,7 @@ export async function verifyEmailOtp(email, token) {
 }
 
 export async function signOut() {
+  if (isDevAuthEnabled()) return;
   const supabase = await getSupabaseClient();
   if (!supabase) return;
   const { error } = await supabase.auth.signOut();
@@ -92,5 +120,8 @@ export function getReturnToParam() {
 export function buildAuthUrl(returnToPath = '') {
   const url = new URL('auth.html', window.location.href);
   if (returnToPath) url.searchParams.set('returnTo', returnToPath);
+  if (isDevAuthEnabled()) {
+    url.searchParams.set(DEV_AUTH_QUERY_KEY, DEV_AUTH_QUERY_VALUE);
+  }
   return url.toString();
 }

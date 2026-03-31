@@ -1,6 +1,7 @@
 import {
   buildAuthUrl,
   getSessionUser,
+  isDevAuthEnabled,
   isSupabaseConfigured,
   signOut
 } from './auth.js';
@@ -85,6 +86,10 @@ function getAvailableDueCount(totalDue, todayReviewed) {
 export async function refreshDueBadge() {
   const slots = getDueSlots();
   if (!slots.length) return;
+  if (isDevAuthEnabled() && !isSupabaseConfigured()) {
+    hideDueSlots();
+    return;
+  }
   if (!isSupabaseConfigured()) {
     hideDueSlots();
     return;
@@ -125,6 +130,12 @@ export async function setupTopbarAuth() {
     slot.linkEl.href = authUrl;
   });
 
+  if (isDevAuthEnabled()) {
+    slots.forEach((slot) => renderLoggedIn(slot, 'dev@example.local'));
+    hideDueSlots();
+    return;
+  }
+
   if (!isSupabaseConfigured()) {
     hideDueSlots();
     slots.forEach((slot) => {
@@ -160,7 +171,7 @@ export async function setupTopbarAuth() {
       await signOut();
       slots.forEach((slot) => renderLoggedOut(slot));
       hideDueSlots();
-      window.location.href = 'auth.html';
+      window.location.href = buildAuthUrl();
     } catch (e) {
       console.error(e);
       slots.forEach((slot) => {
@@ -173,6 +184,10 @@ export async function setupTopbarAuth() {
 }
 
 export async function requireAuthOrRedirect() {
+  if (isDevAuthEnabled()) {
+    return true;
+  }
+
   if (!isSupabaseConfigured()) {
     window.location.href = buildAuthUrl(
       `${window.location.pathname}${window.location.search}${window.location.hash}`

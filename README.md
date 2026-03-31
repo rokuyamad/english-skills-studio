@@ -200,6 +200,27 @@ uv run python3 -m http.server 8080
 - `http://localhost:8080/slash.html`
 - `http://localhost:8080/shadowing.html`
 
+### Dev Auth Bypass
+
+認証前提ページをローカルで素早く検証したい場合は、`localhost` または `127.0.0.1` 上で `?devAuth=1` を付けます。
+
+- `http://localhost:8080/index.html?devAuth=1`
+- `http://localhost:8080/review.html?devAuth=1`
+
+このバイパスはローカルホストでのみ有効です。Supabase未設定でも擬似ユーザーで画面を開けますが、Due件数などSupabase依存データは取得しません。
+
+### E2E Test
+
+Dashboard の設定保存導線は Playwright で検証できます。
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:e2e
+```
+
+テストは `index.html?devAuth=1` を使い、設定モーダル保存後にダッシュボードのKPIが更新されることを確認します。
+
 ## Add a Shadowing Set
 
 新しい公開 Notion ページから Shadowing セットを追加する場合は、以下を実行します。
