@@ -40,33 +40,23 @@ test('dashboard settings save reflects immediately with dev auth', async ({ page
   await expect(page.locator('#kpiRemaining')).toHaveText('1234.0h');
 });
 
-test('shadowing seconds setting persists after save and reopen', async ({ page }) => {
+test('shadowing seconds setting above 900 persists after save and reopen', async ({ page }) => {
   await page.goto('/index.html?devAuth=1');
 
   await expect(page.locator('#authUser')).toHaveText('ログイン済み');
-  await page.evaluate(() => {
-    const dialog = document.getElementById('settingsModal');
-    if (!(dialog instanceof HTMLDialogElement)) throw new Error('settings modal not found');
-    if (!dialog.open) dialog.showModal();
-  });
+  await expect(page.locator('#kpiRemaining')).toBeVisible();
+  await page.locator('#openSettingsModalBtn').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
 
-  await page.locator('#modalSecShadowing').fill('180');
+  await page.locator('#modalSecShadowing').fill('1200');
   await page.getByRole('button', { name: '保存して反映' }).click();
   await expect(page.locator('#modalSaveBtn')).toHaveText('反映済み');
-  await expect(page.locator('#modalSecShadowing')).toHaveValue('180');
+  await expect(page.locator('#modalSecShadowing')).toHaveValue('1200');
 
-  await page.evaluate(() => {
-    const dialog = document.getElementById('settingsModal');
-    if (dialog instanceof HTMLDialogElement && dialog.open) dialog.close();
-  });
-  await page.evaluate(() => {
-    const dialog = document.getElementById('settingsModal');
-    if (!(dialog instanceof HTMLDialogElement)) throw new Error('settings modal not found');
-    if (!dialog.open) dialog.showModal();
-  });
+  await page.locator('#closeSettingsModalBtn').click();
+  await page.locator('#openSettingsModalBtn').click();
 
-  await expect(page.locator('#modalSecShadowing')).toHaveValue('180');
+  await expect(page.locator('#modalSecShadowing')).toHaveValue('1200');
 });
 
 test('settings modal body scrolls to reveal the footer actions', async ({ page }) => {

@@ -53,10 +53,10 @@ export function validateStudySettings(raw = {}) {
     external_carryover_hours: clampNumber(raw.external_carryover_hours, 0, 20000, DEFAULT_STUDY_SETTINGS.external_carryover_hours),
     external_carryover_note: externalCarryoverNote,
     seconds_per_count: {
-      imitation: clampNumber(secondsPerCount.imitation, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.imitation),
-      slash: clampNumber(secondsPerCount.slash, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.slash),
-      shadowing: clampNumber(secondsPerCount.shadowing, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.shadowing),
-      srs: clampNumber(secondsPerCount.srs, 10, 900, DEFAULT_STUDY_SETTINGS.seconds_per_count.srs)
+      imitation: clampNumber(secondsPerCount.imitation, 10, Number.POSITIVE_INFINITY, DEFAULT_STUDY_SETTINGS.seconds_per_count.imitation),
+      slash: clampNumber(secondsPerCount.slash, 10, Number.POSITIVE_INFINITY, DEFAULT_STUDY_SETTINGS.seconds_per_count.slash),
+      shadowing: clampNumber(secondsPerCount.shadowing, 10, Number.POSITIVE_INFINITY, DEFAULT_STUDY_SETTINGS.seconds_per_count.shadowing),
+      srs: clampNumber(secondsPerCount.srs, 10, Number.POSITIVE_INFINITY, DEFAULT_STUDY_SETTINGS.seconds_per_count.srs)
     },
     streak_min_minutes_per_day: clampNumber(
       raw.streak_min_minutes_per_day,
