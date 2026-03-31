@@ -1,13 +1,15 @@
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { getSessionUser, getSupabaseClient } from './auth.js';
 import { initMobileTopbar } from './mobile-topbar.js';
-import { initProgressDb, getCountsByPrefix, listStudyEvents } from './progress-db.js';
+import { getKv, initProgressDb, getCountsByPrefix, listStudyEvents, setKv } from './progress-db.js';
 import { getEffectiveStudySettings, subscribeSettingsChange } from './study-settings.js';
 import { flushStudyEvents } from './study-sync.js';
 import { computeDashboardSnapshot } from './study-metrics.js';
 import { renderDashboard } from './dashboard-ui.js';
 import { MODAL_SETTINGS_IDS, mountSettingsForm } from './settings-modal.js';
 import { mountExternalLogSection } from './external-log-ui.js';
+
+const BASELINE_SECONDS_KV_KEY = 'study-dashboard-baseline-seconds:v1';
 
 let settingsUnsubscribe = null;
 let settingsModalController = null;
@@ -67,16 +69,22 @@ function mergeEvents(localEvents, remoteEvents) {
   return [...map.values()];
 }
 
-async function renderDashboardFromData() {
-  const settings = await getEffectiveStudySettings();
-  const [localEvents, remoteEvents, countTotals] = await Promise.all([
-    listStudyEvents(),
-    fetchRemoteStudyEvents(),
-    getCountTotalsByPage()
-  ]);
-  lastRemoteEvents = remoteEvents;
+function normalizeBaselineSeconds(raw = {}) {
+  return {
+    imitation: Math.max(0, Number(raw.imitation || 0)),
+    slash: Math.max(0, Number(raw.slash || 0)),
+    shadowing: Math.max(0, Number(raw.shadowing || 0)),
+    srs: Math.max(0, Number(raw.srs || 0))
+  };
+}
 
-  const events = mergeEvents(localEvents, remoteEvents);
+async function getFrozenBaselineSeconds(settings, events) {
+  const savedRaw = await getKv(BASELINE_SECONDS_KV_KEY, null);
+  if (savedRaw && typeof savedRaw === 'object') {
+    return normalizeBaselineSeconds(savedRaw);
+  }
+
+  const countTotals = await getCountTotalsByPage();
   const eventUnits = events.reduce((acc, ev) => {
     const key = ev.pageKey || ev.page_key;
     if (!Object.prototype.hasOwnProperty.call(acc, key)) return acc;
@@ -84,12 +92,27 @@ async function renderDashboardFromData() {
     return acc;
   }, { imitation: 0, slash: 0, shadowing: 0, srs: 0 });
 
-  const baselineSecondsByPage = {
+  const next = normalizeBaselineSeconds({
     imitation: Math.max(0, countTotals.imitation - eventUnits.imitation) * Number(settings.seconds_per_count.imitation || 45),
     slash: Math.max(0, countTotals.slash - eventUnits.slash) * Number(settings.seconds_per_count.slash || 75),
     shadowing: Math.max(0, countTotals.shadowing - eventUnits.shadowing) * Number(settings.seconds_per_count.shadowing || 120),
-    srs: 0
-  };
+    srs: Math.max(0, countTotals.srs - eventUnits.srs) * Number(settings.seconds_per_count.srs || 60)
+  });
+
+  await setKv(BASELINE_SECONDS_KV_KEY, next);
+  return next;
+}
+
+async function renderDashboardFromData() {
+  const settings = await getEffectiveStudySettings();
+  const [localEvents, remoteEvents] = await Promise.all([
+    listStudyEvents(),
+    fetchRemoteStudyEvents()
+  ]);
+  lastRemoteEvents = remoteEvents;
+
+  const events = mergeEvents(localEvents, remoteEvents);
+  const baselineSecondsByPage = await getFrozenBaselineSeconds(settings, events);
 
   const snapshot = computeDashboardSnapshot({ events, baselineSecondsByPage }, settings);
   renderDashboard(snapshot, settings);

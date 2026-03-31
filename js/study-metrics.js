@@ -273,31 +273,9 @@ function resolveMissionStage(goalProgress) {
   return 'Launch';
 }
 
-const IN_APP_PAGE_KEYS = ['imitation', 'slash', 'shadowing', 'srs'];
-
-function resolveEventSeconds(ev, settings) {
-  const key = ev.pageKey || ev.page_key;
-  if (!IN_APP_PAGE_KEYS.includes(key)) {
-    return toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
-  }
-  const unitCount = toNumber(ev.unitCount ?? ev.unit_count, 1);
-  const secsPerCount = toNumber(settings?.seconds_per_count?.[key], 0);
-  if (secsPerCount > 0) return unitCount * secsPerCount;
-  return toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
-}
-
 export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = {} }, settings) {
-  // in-appイベントのestimated_secondsを現在のsettingsで再換算した正規化済み配列を作成する。
-  // これにより設定変更が過去のイベントを含む全ての集計に即座に反映される。
-  const normalizedEvents = events.map((ev) => {
-    const key = ev.pageKey || ev.page_key;
-    if (!IN_APP_PAGE_KEYS.includes(key)) return ev;
-    const resolvedSeconds = resolveEventSeconds(ev, settings);
-    return { ...ev, estimatedSeconds: resolvedSeconds, estimated_seconds: resolvedSeconds };
-  });
-
   const perPageSeconds = { imitation: 0, slash: 0, shadowing: 0, srs: 0, external: 0 };
-  normalizedEvents.forEach((ev) => {
+  events.forEach((ev) => {
     const key = ev.pageKey || ev.page_key;
     if (!Object.prototype.hasOwnProperty.call(perPageSeconds, key)) return;
     perPageSeconds[key] += toNumber(ev.estimatedSeconds ?? ev.estimated_seconds, 0);
@@ -317,18 +295,18 @@ export function computeDashboardSnapshot({ events = [], baselineSecondsByPage = 
   const totalHours = totalSeconds / 3600;
   const totalMinutes = totalSeconds / 60;
   const goalHours = Math.max(1, toNumber(settings.goal_hours, 1000));
-  const streak = computeStreak(normalizedEvents, settings.streak_min_minutes_per_day, settings.timezone);
+  const streak = computeStreak(events, settings.streak_min_minutes_per_day, settings.timezone);
   const xp = computeXp(totalMinutes, settings.xp_per_minute);
   const level = computeLevel(xp, settings.level_curve_factor);
-  const dailySeries = buildDailySeries(normalizedEvents, settings.timezone);
-  const cumulativeInAppPerPageSeries = buildCumulativeInAppPerPageSeries(normalizedEvents, settings.timezone, baselineSecondsByPage);
+  const dailySeries = buildDailySeries(events, settings.timezone);
+  const cumulativeInAppPerPageSeries = buildCumulativeInAppPerPageSeries(events, settings.timezone, baselineSecondsByPage);
   const cumulativeInAppSeries = cumulativeInAppPerPageSeries.map((d) => ({
     date: d.date,
     hours: d.totalHours
   }));
   const momentum = computeMomentum(dailySeries);
   const goalProgress = Math.max(0, Math.min(1, totalHours / goalHours));
-  const todayBreakdown = buildTodayBreakdown(normalizedEvents, settings.timezone);
+  const todayBreakdown = buildTodayBreakdown(events, settings.timezone);
 
   const perPageHours = {
     imitation: perPageSeconds.imitation / 3600,

@@ -97,7 +97,7 @@ function setFormState({
     if (busy) {
       stateCopyEl.textContent = '学習メトリクスを保存し、ダッシュボードを更新しています。';
     } else if (dirty) {
-      stateCopyEl.textContent = 'まだ反映されていません。保存すると背面のダッシュボードへ即時反映されます。';
+      stateCopyEl.textContent = 'まだ反映されていません。保存すると背面のダッシュボードへ反映され、換算ルールは次の学習から適用されます。';
     } else if (hasSaved) {
       const suffix = savedAtLabel ? ` 最終保存: ${savedAtLabel}` : '';
       stateCopyEl.textContent = syncMode === 'local'
@@ -315,7 +315,7 @@ export async function mountSettingsForm({
         statusEl,
         syncMode === 'local'
           ? 'この端末には保存しました。オンライン復帰後に同期されます。'
-          : '保存しました。ダッシュボードへ即時反映しています。',
+          : '保存しました。ダッシュボードへ反映し、新しい学習から適用します。',
         syncMode === 'local' ? 'warning' : 'success'
       );
     } catch (error) {
