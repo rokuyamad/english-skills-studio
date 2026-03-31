@@ -21,7 +21,7 @@ test('dashboard settings save reflects immediately with dev auth', async ({ page
   await expect(page.locator('#authUser')).toHaveText('ログイン済み');
   await expect(page.locator('#kpiRemaining')).toHaveText('1000.0h');
 
-  await page.getByRole('button', { name: '設定' }).click();
+  await page.locator('#openSettingsModalBtn').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
 
   await page.locator('#modalGoalHours').fill('1234');
@@ -38,4 +38,38 @@ test('dashboard settings save reflects immediately with dev auth', async ({ page
 
   await expect(page.locator('#authUser')).toHaveText('ログイン済み');
   await expect(page.locator('#kpiRemaining')).toHaveText('1234.0h');
+});
+
+test('settings modal body scrolls to reveal the footer actions', async ({ page }) => {
+  await page.goto('/index.html?devAuth=1');
+
+  await expect(page.locator('#authUser')).toHaveText('ログイン済み');
+  await expect(page.locator('#kpiRemaining')).toBeVisible();
+
+  await page.evaluate(() => {
+    const dialog = document.getElementById('settingsModal');
+    if (!(dialog instanceof HTMLDialogElement)) throw new Error('settings modal not found');
+    if (!dialog.open) dialog.showModal();
+  });
+  await expect(page.locator('#settingsModal')).toBeVisible();
+
+  await page.setViewportSize({ width: 960, height: 560 });
+
+  const body = page.locator('.settings-modal-body');
+
+  const metricsBefore = await body.evaluate((node) => ({
+    scrollHeight: node.scrollHeight,
+    clientHeight: node.clientHeight,
+    scrollTop: node.scrollTop
+  }));
+
+  expect(metricsBefore.scrollHeight).toBeGreaterThan(metricsBefore.clientHeight);
+
+  await body.evaluate((node) => {
+    node.scrollTop = node.scrollHeight;
+  });
+
+  await expect.poll(async () => body.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+  await expect(page.locator('#modalSaveBtn')).toBeInViewport();
+  await expect(page.locator('#modalSettingsStatus')).toBeInViewport();
 });
