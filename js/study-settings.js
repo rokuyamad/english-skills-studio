@@ -164,7 +164,9 @@ export function subscribeSettingsChange(listener) {
   return () => window.removeEventListener('study-settings-changed', handler);
 }
 
-export function emitSettingsChange() {
-  cachedSettings = null;
-  window.dispatchEvent(new CustomEvent('study-settings-changed'));
+export function emitSettingsChange(nextSettings = null) {
+  cachedSettings = nextSettings ? validateStudySettings(nextSettings) : null;
+  window.dispatchEvent(new CustomEvent('study-settings-changed', {
+    detail: cachedSettings
+  }));
 }

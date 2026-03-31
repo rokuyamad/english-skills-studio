@@ -305,7 +305,7 @@ export async function mountSettingsForm({
         syncMode = 'local';
       }
 
-      emitSettingsChange();
+      emitSettingsChange(savedSettings);
       await onSaved(savedSettings);
       lastSavedSettings = savedSettings;
       lastSyncMode = syncMode;
