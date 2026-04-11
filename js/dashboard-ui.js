@@ -1,81 +1,18 @@
-import {
-  Chart,
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Filler,
-  DoughnutController,
-  LineController
-} from 'https://esm.sh/chart.js@4';
+import ApexCharts from 'https://esm.sh/apexcharts@4.5.0';
 
-Chart.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Filler,
-  DoughnutController,
-  LineController
-);
-
-let lineChart = null;
-let donutChart = null;
+let dailyChart = null;
+let ratioChart = null;
 let cumulativeChart = null;
 let didPrimeDashboard = false;
 const animatedNumbers = new Map();
 
-const doughnutInlineLabelsPlugin = {
-  id: 'doughnutInlineLabels',
-  afterDatasetsDraw(chart) {
-    if (chart.config.type !== 'doughnut') return;
-
-    const meta = chart.getDatasetMeta(0);
-    const dataset = chart.data.datasets?.[0];
-    const labels = chart.data.labels || [];
-    if (!meta?.data?.length || !dataset?.data?.length) return;
-
-    const ctx = chart.ctx;
-    const isDesktop = isDesktopDashboardViewport();
-    ctx.save();
-
-    meta.data.forEach((arc, index) => {
-      const value = Number(dataset.data[index] || 0);
-      const label = String(labels[index] || '');
-      if (!value || !label) return;
-
-      const angle = (arc.startAngle + arc.endAngle) / 2;
-      const radius = arc.innerRadius + ((arc.outerRadius - arc.innerRadius) * (isDesktop ? 0.72 : 0.78));
-      const x = arc.x + (Math.cos(angle) * radius);
-      const y = arc.y + (Math.sin(angle) * radius);
-
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      const labelFontSize = isDesktop ? 11 : 10;
-      const valueFontSize = isDesktop ? 10 : 9;
-      const lineGap = isDesktop ? 12 : 10;
-
-      ctx.fillStyle = '#f5f7ff';
-      ctx.font = `700 ${labelFontSize}px "JetBrains Mono", monospace`;
-      ctx.fillText(label, x, y - (lineGap / 2));
-
-      ctx.fillStyle = 'rgba(232, 240, 255, 0.92)';
-      ctx.font = `500 ${valueFontSize}px "JetBrains Mono", monospace`;
-      ctx.fillText(hoursLabel(value), x, y + (lineGap / 2));
-    });
-
-    ctx.restore();
-  }
+const CONTENT_COLORS = {
+  imitation: '#57d7ff',
+  slash: '#ffc768',
+  shadowing: '#ff9d88',
+  srs: '#98f2ac',
+  external: '#bda2ff'
 };
-
-Chart.register(doughnutInlineLabelsPlugin);
 
 function isDesktopDashboardViewport() {
   return window.matchMedia('(min-width: 961px)').matches;
@@ -95,10 +32,6 @@ function minutesLabelFromSeconds(seconds) {
   return `${totalMinutes}分`;
 }
 
-function percentLabel(v) {
-  return `${Math.round(v * 100)}%`;
-}
-
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
@@ -106,6 +39,85 @@ function setText(id, value) {
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function getChartAnimation() {
+  if (prefersReducedMotion()) return { enabled: false };
+  return {
+    enabled: true,
+    easing: 'easeinout',
+    speed: 860,
+    animateGradually: {
+      enabled: true,
+      delay: 65
+    },
+    dynamicAnimation: {
+      enabled: true,
+      speed: 520
+    }
+  };
+}
+
+function getSharedChartOptions() {
+  const desktop = isDesktopDashboardViewport();
+  return {
+    chart: {
+      background: 'transparent',
+      toolbar: { show: false },
+      zoom: { enabled: false },
+      foreColor: '#dbe6ff',
+      animations: getChartAnimation(),
+      parentHeightOffset: 0,
+      sparkline: { enabled: false }
+    },
+    grid: {
+      borderColor: 'rgba(181, 209, 255, 0.12)',
+      strokeDashArray: 5,
+      padding: {
+        top: desktop ? 4 : 2,
+        right: desktop ? 10 : 4,
+        bottom: desktop ? 0 : 2,
+        left: desktop ? 6 : 2
+      }
+    },
+    legend: {
+      fontFamily: 'JetBrains Mono, monospace',
+      labels: { colors: '#d8e2f7' }
+    },
+    tooltip: {
+      theme: 'dark',
+      style: {
+        fontSize: desktop ? '12px' : '11px',
+        fontFamily: 'JetBrains Mono, monospace'
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth'
+    },
+    xaxis: {
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: {
+        style: {
+          colors: '#c9d7f0',
+          fontSize: desktop ? '10px' : '11px',
+          fontFamily: 'JetBrains Mono, monospace'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#c9d7f0',
+          fontSize: desktop ? '10px' : '11px',
+          fontFamily: 'JetBrains Mono, monospace'
+        }
+      }
+    }
+  };
 }
 
 function renderAchievements(items = []) {
@@ -145,27 +157,12 @@ function renderTodayGauges(todayBreakdown = {}) {
 }
 
 function destroyCharts() {
-  if (lineChart) {
-    lineChart.destroy();
-    lineChart = null;
-  }
-  if (donutChart) {
-    donutChart.destroy();
-    donutChart = null;
-  }
-  if (cumulativeChart) {
-    cumulativeChart.destroy();
-    cumulativeChart = null;
-  }
-}
-
-function makeAnimationOption() {
-  return prefersReducedMotion()
-    ? { duration: 0 }
-    : {
-        duration: 820,
-        easing: 'easeOutQuart'
-      };
+  [dailyChart, ratioChart, cumulativeChart].forEach((chart) => {
+    if (chart) chart.destroy();
+  });
+  dailyChart = null;
+  ratioChart = null;
+  cumulativeChart = null;
 }
 
 function animateTextNumber(id, nextValue, formatter, options = {}) {
@@ -193,7 +190,7 @@ function animateTextNumber(id, nextValue, formatter, options = {}) {
 
   const step = (now) => {
     const progress = Math.min(1, (now - start) / duration);
-    const eased = 1 - Math.pow(1 - progress, 3);
+    const eased = 1 - ((1 - progress) ** 3);
     const value = from + (delta * eased);
     const rounded = Number(value.toFixed(decimals));
     el.textContent = formatter(rounded);
@@ -215,7 +212,7 @@ function primeDashboardMotion() {
   const animatedEls = panel.querySelectorAll('.dashboard-head, .dashboard-kpis > *, .goal-progress-shell, .today-focus-card, .dashboard-charts > *, .achievement-list');
   animatedEls.forEach((el, index) => {
     el.classList.add('dashboard-animate');
-    el.style.setProperty('--enter-delay', `${Math.min(index * 70, 420)}ms`);
+    el.style.setProperty('--enter-delay', `${Math.min(index * 80, 520)}ms`);
   });
 
   if (didPrimeDashboard || prefersReducedMotion()) {
@@ -232,211 +229,313 @@ function primeDashboardMotion() {
   });
 }
 
-function renderLineChart(series = []) {
-  const canvas = document.getElementById('dailyMinutesChart');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  if (lineChart) lineChart.destroy();
-  const gradient = ctx.createLinearGradient(0, 0, 0, 180);
-  gradient.addColorStop(0, 'rgba(108, 229, 255, 0.42)');
-  gradient.addColorStop(1, 'rgba(108, 229, 255, 0.02)');
-
-  lineChart = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: series.map((d) => d.date.slice(5)),
-      datasets: [
-        {
-          label: 'Daily Minutes',
-          data: series.map((d) => d.minutes),
-          borderColor: '#6ce5ff',
-          backgroundColor: gradient,
-          fill: true,
-          tension: 0.35,
-          pointRadius: 2.5,
-          pointHoverRadius: 4
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: makeAnimationOption(),
-      layout: {
-        padding: isDesktopDashboardViewport() ? { top: 2, right: 4, bottom: 0, left: 0 } : { top: 6, right: 8, bottom: 0, left: 0 }
-      },
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        x: {
-          grid: { color: 'rgba(255,255,255,0.06)' },
-          ticks: { color: '#cfd8ea', maxTicksLimit: isDesktopDashboardViewport() ? 7 : 10, font: { size: isDesktopDashboardViewport() ? 10 : 11 } }
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: 'rgba(255,255,255,0.08)' },
-          ticks: { color: '#cfd8ea', maxTicksLimit: isDesktopDashboardViewport() ? 4 : 6, font: { size: isDesktopDashboardViewport() ? 10 : 11 } }
-        }
-      }
-    }
-  });
+function findPeakDay(series = []) {
+  return series.reduce((best, item) => {
+    if (!best || Number(item.minutes || 0) > Number(best.minutes || 0)) return item;
+    return best;
+  }, null);
 }
 
-function renderDonutChart(perPageHours) {
-  const canvas = document.getElementById('contentRatioChart');
-  if (!canvas) return;
-  if (donutChart) donutChart.destroy();
+function topContentEntries(perPageHours = {}) {
+  return [
+    ['Imitation', Number(perPageHours.imitation || 0)],
+    ['Slash', Number(perPageHours.slash || 0)],
+    ['Shadowing', Number(perPageHours.shadowing || 0)],
+    ['SRS', Number(perPageHours.srs || 0)]
+  ].sort((a, b) => b[1] - a[1]);
+}
 
-  donutChart = new Chart(canvas, {
-    type: 'doughnut',
-    data: {
-      labels: ['Imitation', 'Slash', 'Shadowing', 'SRS'],
-      datasets: [
-        {
-          data: [perPageHours.imitation, perPageHours.slash, perPageHours.shadowing, perPageHours.srs],
-          backgroundColor: ['#4ecbff', '#ffc46b', '#ff9f8b', '#91f2a2'],
-          borderWidth: 0
-        }
-      ]
+function renderChartMeta(snapshot) {
+  const peakDay = findPeakDay(snapshot.dailySeries || []);
+  const ordered = topContentEntries(snapshot.perPageHours || {});
+  const leader = ordered[0] || ['Imitation', 0];
+  const runner = ordered[1] || ['Slash', 0];
+  const latestCumulative = snapshot.cumulativeInAppPerPageSeries?.at?.(-1) || null;
+
+  setText(
+    'dailyMinutesMeta',
+    peakDay ? `Peak ${peakDay.date.slice(5)} · ${Math.round(Number(peakDay.minutes || 0))}m` : 'No activity yet'
+  );
+  setText('dailyMinutesGlow', snapshot.momentum?.trend === 'up' ? 'Momentum Up' : snapshot.momentum?.trend === 'down' ? 'Momentum Cooling' : 'Steady');
+
+  setText('contentRatioLead', `${leader[0]} leads`);
+  setText('contentRatioMix', `${hoursLabel(leader[1])} / ${hoursLabel(runner[1] || 0)}`);
+
+  if (latestCumulative) {
+    setText('cumulativeInAppMeta', `${hoursLabel(latestCumulative.totalHours || 0)} total`);
+    setText(
+      'cumulativeInAppBreakdown',
+      `I ${hoursLabel(latestCumulative.imitationHours || 0)} · S ${hoursLabel(latestCumulative.slashHours || 0)} · Sh ${hoursLabel(latestCumulative.shadowingHours || 0)} · R ${hoursLabel(latestCumulative.srsHours || 0)}`
+    );
+    return;
+  }
+
+  setText('cumulativeInAppMeta', '0.0h total');
+  setText('cumulativeInAppBreakdown', 'I 0.0h · S 0.0h · Sh 0.0h · R 0.0h');
+}
+
+function renderDailyChart(series = []) {
+  const mount = document.getElementById('dailyMinutesChart');
+  if (!mount) return;
+
+  const shared = getSharedChartOptions();
+  const labels = series.map((d) => d.date.slice(5));
+  const values = series.map((d) => Number(d.minutes || 0));
+
+  dailyChart = new ApexCharts(mount, {
+    ...shared,
+    chart: {
+      ...shared.chart,
+      type: 'area',
+      height: '100%',
+      dropShadow: prefersReducedMotion() ? { enabled: false } : {
+        enabled: true,
+        top: 16,
+        blur: 24,
+        color: CONTENT_COLORS.imitation,
+        opacity: 0.24
+      }
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: isDesktopDashboardViewport() ? '68%' : '62%',
-      animation: makeAnimationOption(),
-      plugins: {
-        legend: { display: false }
+    series: [
+      {
+        name: 'Daily Minutes',
+        data: values
+      }
+    ],
+    colors: [CONTENT_COLORS.imitation],
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 0.5,
+        opacityFrom: 0.62,
+        opacityTo: 0.04,
+        stops: [0, 68, 100]
+      }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    markers: {
+      size: 0,
+      hover: {
+        size: 6
+      }
+    },
+    xaxis: {
+      ...shared.xaxis,
+      categories: labels,
+      tickAmount: isDesktopDashboardViewport() ? 6 : 5
+    },
+    yaxis: {
+      ...shared.yaxis,
+      min: 0,
+      forceNiceScale: true,
+      decimalsInFloat: 0,
+      title: {
+        text: 'Minutes',
+        style: {
+          color: '#dbe6ff',
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: '11px'
+        }
+      }
+    },
+    tooltip: {
+      ...shared.tooltip,
+      y: {
+        formatter: (value) => `${Number(value || 0).toFixed(1)} min`
       }
     }
   });
+
+  dailyChart.render();
+}
+
+function renderRatioChart(perPageHours = {}) {
+  const mount = document.getElementById('contentRatioChart');
+  if (!mount) return;
+
+  const shared = getSharedChartOptions();
+  const values = [
+    Number(perPageHours.imitation || 0),
+    Number(perPageHours.slash || 0),
+    Number(perPageHours.shadowing || 0),
+    Number(perPageHours.srs || 0)
+  ];
+  const total = values.reduce((sum, value) => sum + value, 0);
+
+  ratioChart = new ApexCharts(mount, {
+    ...shared,
+    chart: {
+      ...shared.chart,
+      type: 'donut',
+      height: '100%'
+    },
+    labels: ['Imitation', 'Slash', 'Shadowing', 'SRS'],
+    series: values,
+    colors: [
+      CONTENT_COLORS.imitation,
+      CONTENT_COLORS.slash,
+      CONTENT_COLORS.shadowing,
+      CONTENT_COLORS.srs
+    ],
+    legend: {
+      ...shared.legend,
+      position: isDesktopDashboardViewport() ? 'bottom' : 'bottom',
+      horizontalAlign: 'center',
+      itemMargin: {
+        horizontal: 10,
+        vertical: 6
+      }
+    },
+    plotOptions: {
+      pie: {
+        expandOnClick: !prefersReducedMotion(),
+        donut: {
+          size: isDesktopDashboardViewport() ? '72%' : '68%',
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              offsetY: 18,
+              color: '#c6d6f4',
+              fontFamily: 'JetBrains Mono, monospace'
+            },
+            value: {
+              show: true,
+              offsetY: -18,
+              color: '#f5f7ff',
+              fontSize: isDesktopDashboardViewport() ? '22px' : '18px',
+              fontWeight: '700',
+              formatter: (value) => hoursLabel(Number(value || 0))
+            },
+            total: {
+              show: true,
+              label: 'In-app',
+              color: '#93a8cf',
+              fontFamily: 'JetBrains Mono, monospace',
+              formatter: () => hoursLabel(total)
+            }
+          }
+        }
+      }
+    },
+    dataLabels: {
+      enabled: isDesktopDashboardViewport(),
+      formatter: (_, opts) => opts.w.config.labels[opts.seriesIndex]
+    },
+    stroke: {
+      width: 0
+    },
+    tooltip: {
+      ...shared.tooltip,
+      y: {
+        formatter: (value) => hoursLabel(Number(value || 0))
+      }
+    }
+  });
+
+  ratioChart.render();
 }
 
 function renderCumulativeChart(series = []) {
-  const canvas = document.getElementById('cumulativeInAppChart');
-  if (!canvas) return;
-  if (cumulativeChart) cumulativeChart.destroy();
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  const mount = document.getElementById('cumulativeInAppChart');
+  if (!mount) return;
 
-  const imitationGradient = ctx.createLinearGradient(0, 0, 0, 220);
-  imitationGradient.addColorStop(0, 'rgba(78, 203, 255, 0.42)');
-  imitationGradient.addColorStop(1, 'rgba(78, 203, 255, 0.03)');
+  const shared = getSharedChartOptions();
 
-  const slashGradient = ctx.createLinearGradient(0, 0, 0, 220);
-  slashGradient.addColorStop(0, 'rgba(255, 196, 107, 0.38)');
-  slashGradient.addColorStop(1, 'rgba(255, 196, 107, 0.03)');
-
-  const shadowingGradient = ctx.createLinearGradient(0, 0, 0, 220);
-  shadowingGradient.addColorStop(0, 'rgba(255, 159, 139, 0.34)');
-  shadowingGradient.addColorStop(1, 'rgba(255, 159, 139, 0.03)');
-
-  const srsGradient = ctx.createLinearGradient(0, 0, 0, 220);
-  srsGradient.addColorStop(0, 'rgba(145, 242, 162, 0.34)');
-  srsGradient.addColorStop(1, 'rgba(145, 242, 162, 0.03)');
-
-  cumulativeChart = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: series.map((d) => d.date),
-      datasets: [
-        {
-          label: 'Imitation',
-          data: series.map((d) => d.imitationHours),
-          borderColor: '#4ecbff',
-          backgroundColor: imitationGradient,
-          stack: 'inAppHours',
-          fill: true,
-          tension: 0.24,
-          pointRadius: 0,
-          pointHoverRadius: 3
-        },
-        {
-          label: 'Slash',
-          data: series.map((d) => d.slashHours),
-          borderColor: '#ffc46b',
-          backgroundColor: slashGradient,
-          stack: 'inAppHours',
-          fill: true,
-          tension: 0.24,
-          pointRadius: 0,
-          pointHoverRadius: 3
-        },
-        {
-          label: 'Shadowing',
-          data: series.map((d) => d.shadowingHours),
-          borderColor: '#ff9f8b',
-          backgroundColor: shadowingGradient,
-          stack: 'inAppHours',
-          fill: true,
-          tension: 0.24,
-          pointRadius: 0,
-          pointHoverRadius: 3
-        },
-        {
-          label: 'SRS',
-          data: series.map((d) => d.srsHours),
-          borderColor: '#91f2a2',
-          backgroundColor: srsGradient,
-          stack: 'inAppHours',
-          fill: true,
-          tension: 0.24,
-          pointRadius: 0,
-          pointHoverRadius: 3
-        }
-      ]
+  cumulativeChart = new ApexCharts(mount, {
+    ...shared,
+    chart: {
+      ...shared.chart,
+      type: 'area',
+      stacked: true,
+      height: '100%',
+      dropShadow: prefersReducedMotion() ? { enabled: false } : {
+        enabled: true,
+        top: 22,
+        blur: 28,
+        color: '#4f8fff',
+        opacity: 0.16
+      }
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: makeAnimationOption(),
-      layout: {
-        padding: isDesktopDashboardViewport() ? { top: 2, right: 4, bottom: 0, left: 0 } : { top: 6, right: 8, bottom: 0, left: 0 }
-      },
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: '#e0e8f8',
-            boxWidth: isDesktopDashboardViewport() ? 9 : 12,
-            boxHeight: isDesktopDashboardViewport() ? 9 : 12,
-            padding: isDesktopDashboardViewport() ? 10 : 16,
-            font: { size: isDesktopDashboardViewport() ? 10 : 12 }
-          }
+    series: [
+      { name: 'Imitation', data: series.map((d) => Number(d.imitationHours || 0)) },
+      { name: 'Slash', data: series.map((d) => Number(d.slashHours || 0)) },
+      { name: 'Shadowing', data: series.map((d) => Number(d.shadowingHours || 0)) },
+      { name: 'SRS', data: series.map((d) => Number(d.srsHours || 0)) }
+    ],
+    colors: [
+      CONTENT_COLORS.imitation,
+      CONTENT_COLORS.slash,
+      CONTENT_COLORS.shadowing,
+      CONTENT_COLORS.srs
+    ],
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 0.5,
+        opacityFrom: 0.58,
+        opacityTo: 0.06,
+        stops: [0, 92, 100]
+      }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 2.6
+    },
+    markers: {
+      size: 0,
+      hover: {
+        size: 4
+      }
+    },
+    legend: {
+      ...shared.legend,
+      position: 'top',
+      horizontalAlign: 'left',
+      floating: false
+    },
+    xaxis: {
+      ...shared.xaxis,
+      categories: series.map((d) => d.date),
+      tickAmount: isDesktopDashboardViewport() ? 7 : 5
+    },
+    yaxis: {
+      ...shared.yaxis,
+      min: 0,
+      title: {
+        text: 'Hours',
+        style: {
+          color: '#dbe6ff',
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: '11px'
         }
       },
-      scales: {
-        x: {
-          grid: { color: 'rgba(255,255,255,0.06)' },
-          ticks: {
-            color: '#cfd8ea',
-            autoSkip: true,
-            maxTicksLimit: isDesktopDashboardViewport() ? 7 : 10,
-            font: { size: isDesktopDashboardViewport() ? 10 : 11 }
-          },
-          stacked: true
-        },
-        y: {
-          beginAtZero: true,
-          stacked: true,
-          grid: { color: 'rgba(255,255,255,0.08)' },
-          ticks: {
-            color: '#cfd8ea',
-            maxTicksLimit: isDesktopDashboardViewport() ? 4 : 6,
-            font: { size: isDesktopDashboardViewport() ? 10 : 11 },
-            callback: (value) => `${value}h`
-          }
-        }
+      labels: {
+        ...shared.yaxis.labels,
+        formatter: (value) => `${Number(value || 0).toFixed(0)}h`
+      }
+    },
+    tooltip: {
+      ...shared.tooltip,
+      shared: true,
+      intersect: false,
+      y: {
+        formatter: (value) => hoursLabel(Number(value || 0))
       }
     }
   });
+
+  cumulativeChart.render();
 }
 
 export function renderDashboard(snapshot) {
   if (!snapshot) return;
 
   primeDashboardMotion();
+  destroyCharts();
 
   animateTextNumber('kpiTotalHours', snapshot.totalHours, hoursLabel, { decimals: 1, duration: 900 });
   const breakdownParts = [`In-app ${hoursLabel(snapshot.inAppHours)}`];
@@ -456,8 +555,9 @@ export function renderDashboard(snapshot) {
 
   renderTodayGauges(snapshot.todayBreakdown);
   renderAchievements(snapshot.achievements);
-  renderLineChart(snapshot.dailySeries);
-  renderDonutChart(snapshot.perPageHours);
+  renderChartMeta(snapshot);
+  renderDailyChart(snapshot.dailySeries || []);
+  renderRatioChart(snapshot.perPageHours || {});
   renderCumulativeChart(snapshot.cumulativeInAppPerPageSeries || []);
 }
 

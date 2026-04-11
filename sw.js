@@ -1,5 +1,5 @@
 // App Shell を更新したら必ずバージョンを上げて、古いキャッシュを破棄する。
-const CACHE = 'english-skills-studio-v13';
+const CACHE = 'english-skills-studio-v14';
 
 const SHELL = [
   './',

@@ -149,17 +149,44 @@
         </section>
 
         <div class="dashboard-charts">
-          <article class="chart-card">
-            <h3>Daily Minutes (30d · In-app)</h3>
-            <div class="chart-canvas-wrap"><canvas id="dailyMinutesChart"></canvas></div>
+          <article class="chart-card chart-card-daily">
+            <div class="chart-card-head">
+              <div>
+                <p class="chart-eyebrow">30D FLOW</p>
+                <h3>Daily Minutes</h3>
+              </div>
+              <span class="chart-chip" id="dailyMinutesGlow">Steady</span>
+            </div>
+            <p class="chart-copy" id="dailyMinutesMeta">No activity yet</p>
+            <div class="chart-mount-wrap">
+              <div class="chart-mount" id="dailyMinutesChart"></div>
+            </div>
           </article>
-          <article class="chart-card">
-            <h3>Content Ratio (In-app)</h3>
-            <div class="chart-canvas-wrap"><canvas id="contentRatioChart"></canvas></div>
+          <article class="chart-card chart-card-ratio">
+            <div class="chart-card-head">
+              <div>
+                <p class="chart-eyebrow">BALANCE MIX</p>
+                <h3>Content Ratio</h3>
+              </div>
+              <span class="chart-chip chart-chip-warm" id="contentRatioLead">Imitation leads</span>
+            </div>
+            <p class="chart-copy" id="contentRatioMix">0.0h / 0.0h</p>
+            <div class="chart-mount-wrap">
+              <div class="chart-mount" id="contentRatioChart"></div>
+            </div>
           </article>
           <article class="chart-card chart-card-cumulative">
-            <h3>Cumulative In-app Hours (All time)</h3>
-            <div class="chart-canvas-wrap"><canvas id="cumulativeInAppChart"></canvas></div>
+            <div class="chart-card-head">
+              <div>
+                <p class="chart-eyebrow">ALL-TIME ASCENT</p>
+                <h3>Cumulative In-app Hours</h3>
+              </div>
+              <span class="chart-chip chart-chip-emerald" id="cumulativeInAppMeta">0.0h total</span>
+            </div>
+            <p class="chart-copy" id="cumulativeInAppBreakdown">I 0.0h · S 0.0h · Sh 0.0h · R 0.0h</p>
+            <div class="chart-mount-wrap chart-mount-wrap-cumulative">
+              <div class="chart-mount" id="cumulativeInAppChart"></div>
+            </div>
           </article>
         </div>
 

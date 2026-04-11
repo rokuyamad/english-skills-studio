@@ -1829,7 +1829,7 @@ body.dashboard-page .dashboard-header {
 .dashboard-charts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -1840,45 +1840,52 @@ body.dashboard-page .dashboard-header {
 .chart-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(108, 229, 255, 0.2);
-  border-radius: 16px;
-  padding: 8px 9px 8px;
+  border: 1px solid rgba(138, 188, 255, 0.22);
+  border-radius: 24px;
+  padding: 18px 18px 16px;
   min-height: 60px;
   display: grid;
-  gap: 6px;
+  gap: 12px;
   background:
-    linear-gradient(180deg, rgba(11, 19, 35, 0.82), rgba(13, 22, 38, 0.64)),
-    radial-gradient(120% 160% at 0% 0%, rgba(108, 229, 255, 0.1), transparent 48%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 9px 20px rgba(6, 10, 19, 0.14);
+    linear-gradient(180deg, rgba(9, 17, 34, 0.9), rgba(10, 20, 39, 0.78)),
+    radial-gradient(110% 140% at 0% 0%, rgba(87, 215, 255, 0.18), transparent 46%),
+    radial-gradient(90% 110% at 100% 0%, rgba(255, 199, 104, 0.12), transparent 44%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 22px 52px rgba(4, 10, 22, 0.34);
   min-width: 0;
-  transition: transform var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast);
+  transition: transform var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast), background var(--motion-fast);
 }
 
 .chart-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(130deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 28%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 36%);
   pointer-events: none;
 }
 
 .chart-card::after {
   content: '';
   position: absolute;
-  top: -34px;
-  right: -28px;
-  width: 88px;
-  height: 88px;
+  top: -40px;
+  right: -32px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 207, 122, 0.16), rgba(255, 207, 122, 0));
-  opacity: 0.6;
+  background: radial-gradient(circle, rgba(255, 214, 153, 0.24), rgba(255, 214, 153, 0));
+  opacity: 0.8;
   pointer-events: none;
 }
 
 .chart-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 214, 153, 0.34);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 34px rgba(6, 10, 19, 0.24);
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(255, 214, 153, 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 26px 62px rgba(4, 10, 22, 0.42);
 }
 
 .chart-card-cumulative {
@@ -1886,51 +1893,122 @@ body.dashboard-page .dashboard-header {
   min-height: 70px;
 }
 
+.chart-card-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.chart-eyebrow {
+  margin: 0 0 6px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.16em;
+  font-size: 10px;
+  color: rgba(186, 218, 255, 0.76);
+}
+
 .chart-card h3 {
-  font-size: 12px;
-  line-height: 1.2;
-  color: #d4e2fa;
-  letter-spacing: 0.03em;
+  margin: 0;
+  font-family: 'Fraunces', serif;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.04;
+  color: #f4f8ff;
   position: relative;
   z-index: 1;
 }
 
-.chart-canvas-wrap {
+.chart-copy {
+  margin: 0;
+  color: #bfcfea;
+  font-size: 13px;
+  line-height: 1.45;
+  position: relative;
+  z-index: 1;
+}
+
+.chart-chip {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 8px 11px;
+  border: 1px solid rgba(113, 227, 255, 0.32);
+  background: rgba(87, 215, 255, 0.12);
+  color: #d7f8ff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.chart-chip-warm {
+  border-color: rgba(255, 199, 104, 0.36);
+  background: rgba(255, 199, 104, 0.12);
+  color: #ffe8bb;
+}
+
+.chart-chip-emerald {
+  border-color: rgba(152, 242, 172, 0.32);
+  background: rgba(152, 242, 172, 0.12);
+  color: #dcffe5;
+}
+
+.chart-mount-wrap {
   position: relative;
   min-height: 38px;
   min-width: 0;
   z-index: 1;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 10px 10px 4px;
+  background:
+    linear-gradient(180deg, rgba(7, 14, 29, 0.68), rgba(8, 15, 28, 0.36)),
+    radial-gradient(140% 130% at 50% 0%, rgba(79, 143, 255, 0.12), transparent 52%);
+  border: 1px solid rgba(145, 183, 255, 0.12);
 }
 
-.chart-card-cumulative .chart-canvas-wrap {
+.chart-mount-wrap-cumulative {
   min-height: 46px;
 }
 
-.chart-canvas-wrap canvas {
-  display: block;
-  width: 100% !important;
-  max-width: 100%;
+.chart-mount {
+  min-height: inherit;
+  width: 100%;
+}
+
+.chart-card-daily::after {
+  background: radial-gradient(circle, rgba(87, 215, 255, 0.24), rgba(87, 215, 255, 0));
+}
+
+.chart-card-ratio::after {
+  background: radial-gradient(circle, rgba(255, 199, 104, 0.26), rgba(255, 199, 104, 0));
+}
+
+.chart-card-cumulative::after {
+  background: radial-gradient(circle, rgba(152, 242, 172, 0.22), rgba(152, 242, 172, 0));
 }
 
 @media (min-width: 961px) {
   .dashboard-charts {
-    gap: 10px;
+    gap: 14px;
   }
 
   .chart-card {
-    height: 300px;
+    height: 370px;
   }
 
   .chart-card-cumulative {
-    height: 350px;
+    height: 420px;
   }
 
-  .chart-canvas-wrap {
-    height: 190px;
+  .chart-mount-wrap {
+    height: 240px;
   }
 
-  .chart-card-cumulative .chart-canvas-wrap {
-    height: 230px;
+  .chart-mount-wrap-cumulative {
+    height: 282px;
   }
 }
 
@@ -1979,6 +2057,10 @@ body.dashboard-page .dashboard-header {
   animation: dashboardGlow 2.2s ease-out 0.35s 1;
 }
 
+.dashboard-panel.is-ready .chart-card {
+  animation: dashboardChartFloat 1.5s cubic-bezier(.2,1,.22,1) 1;
+}
+
 @keyframes dashboardGlow {
   0% {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 rgba(108, 229, 255, 0);
@@ -2000,11 +2082,30 @@ body.dashboard-page .dashboard-header {
   }
 }
 
+@keyframes dashboardChartFloat {
+  0% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 12px 30px rgba(4, 10, 22, 0.24);
+  }
+  45% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 34px 74px rgba(4, 10, 22, 0.46);
+  }
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 22px 52px rgba(4, 10, 22, 0.34);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dashboard-panel .dashboard-animate,
   .dashboard-panel.is-ready .dashboard-animate,
   .dashboard-panel.is-ready .kpi-card,
-  .dashboard-panel.is-ready .goal-progress-shell {
+  .dashboard-panel.is-ready .goal-progress-shell,
+  .dashboard-panel.is-ready .chart-card {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
@@ -2013,7 +2114,9 @@ body.dashboard-page .dashboard-header {
 
   .goal-progress-rail span,
   .kpi-card,
-  .chart-card {
+  .chart-card,
+  .chart-mount-wrap,
+  .today-gauge-fill {
     transition: none !important;
   }
 }
@@ -2346,17 +2449,28 @@ body.dashboard-page .dashboard-header {
 
   .chart-card {
     min-height: 174px;
+    padding: 16px 14px 14px;
   }
 
   .chart-card-cumulative {
     min-height: 192px;
   }
 
-  .chart-canvas-wrap {
-    min-height: 126px;
+  .chart-card-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .chart-card-cumulative .chart-canvas-wrap {
+  .chart-copy {
+    font-size: 12px;
+  }
+
+  .chart-mount-wrap {
+    min-height: 126px;
+    padding: 8px 8px 2px;
+  }
+
+  .chart-mount-wrap-cumulative {
     min-height: 142px;
   }
 
