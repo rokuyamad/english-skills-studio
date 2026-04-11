@@ -1,11 +1,15 @@
 import { state } from './state.js';
 
 let _setWave, _updateUI;
-const SEGMENT_GAP_MS = 500;
 
 export function init({ setWave, updateUI }) {
   _setWave = setWave;
   _updateUI = updateUI;
+}
+
+function getSegmentGapMs() {
+  const gapMs = Number(state.repeatGapMs);
+  return Number.isFinite(gapMs) && gapMs >= 0 ? gapMs : 1000;
 }
 
 export function loadAndPlay(idx) {
@@ -22,8 +26,9 @@ export function loadAndPlay(idx) {
     playBtn.textContent = '▶';
     playBtn.classList.remove('playing');
     const n = state.DATA[state.trackIdx].segments.length;
-    if(state.repeat) setTimeout(() => loadAndPlay(state.current), SEGMENT_GAP_MS);
-    else if(state.current < n-1) setTimeout(() => loadAndPlay(state.current+1), SEGMENT_GAP_MS);
+    const gapMs = getSegmentGapMs();
+    if(state.repeat) setTimeout(() => loadAndPlay(state.current), gapMs);
+    else if(state.current < n-1) setTimeout(() => loadAndPlay(state.current+1), gapMs);
   };
   state.audio.play().catch(e => console.log(e));
   state.playing = true;
@@ -81,4 +86,9 @@ export function setSpeed(s, el) {
   if(state.audio) state.audio.playbackRate = s;
   document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
+}
+
+export function setRepeatGapMs(ms) {
+  const next = Number(ms);
+  state.repeatGapMs = Number.isFinite(next) && next >= 0 ? next : 1000;
 }

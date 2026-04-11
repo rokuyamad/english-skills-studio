@@ -140,6 +140,7 @@ function formToSettings(scope, ids) {
     goal_hours: Number(getEl(scope, ids.goalHours)?.value),
     external_carryover_hours: Number(getEl(scope, ids.externalCarryoverHours)?.value),
     external_carryover_note: getEl(scope, ids.externalCarryoverNote)?.value,
+    imitation_repeat_gap_ms: Number(getEl(scope, ids.imitationRepeatGapMs)?.value),
     seconds_per_count: {
       imitation: Number(getEl(scope, ids.secImitation)?.value),
       slash: Number(getEl(scope, ids.secSlash)?.value),
@@ -158,6 +159,7 @@ function fillForm(scope, ids, settings) {
   getEl(scope, ids.goalHours).value = settings.goal_hours;
   getEl(scope, ids.externalCarryoverHours).value = settings.external_carryover_hours;
   getEl(scope, ids.externalCarryoverNote).value = settings.external_carryover_note || '';
+  getEl(scope, ids.imitationRepeatGapMs).value = settings.imitation_repeat_gap_ms;
   getEl(scope, ids.secImitation).value = settings.seconds_per_count.imitation;
   getEl(scope, ids.secSlash).value = settings.seconds_per_count.slash;
   getEl(scope, ids.secShadowing).value = settings.seconds_per_count.shadowing;
@@ -173,6 +175,7 @@ export const PAGE_SETTINGS_IDS = {
   goalHours: 'goalHours',
   externalCarryoverHours: 'externalCarryoverHours',
   externalCarryoverNote: 'externalCarryoverNote',
+  imitationRepeatGapMs: 'imitationRepeatGapMs',
   secImitation: 'secImitation',
   secSlash: 'secSlash',
   secShadowing: 'secShadowing',
@@ -191,6 +194,7 @@ export const MODAL_SETTINGS_IDS = {
   goalHours: 'modalGoalHours',
   externalCarryoverHours: 'modalExternalCarryoverHours',
   externalCarryoverNote: 'modalExternalCarryoverNote',
+  imitationRepeatGapMs: 'modalImitationRepeatGapMs',
   secImitation: 'modalSecImitation',
   secSlash: 'modalSecSlash',
   secShadowing: 'modalSecShadowing',

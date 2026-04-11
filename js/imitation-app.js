@@ -7,8 +7,14 @@ import { enableSidebarDnD } from './sidebar-sortable.js';
 import { getOrder, initProgressDb, saveOrder } from './progress-db.js';
 import { flushStudyEvents, loadCounterCounts } from './study-sync.js';
 import { initSelectionQuickAdd } from './srs-quick-add.js';
+import { getEffectiveStudySettings, subscribeSettingsChange } from './study-settings.js';
 
 let detachTrackDnD = null;
+
+async function syncPlaybackSettings() {
+  const settings = await getEffectiveStudySettings();
+  player.setRepeatGapMs(settings.imitation_repeat_gap_ms);
+}
 
 function initPlayerCompactToggle() {
   const playerBar = document.querySelector('.player-bar');
@@ -136,6 +142,10 @@ async function bootstrap() {
   initPlayerCompactToggle();
   setupTopbarAuth();
   initSelectionQuickAdd({ containerId: 'sentenceList' });
+  await syncPlaybackSettings();
+  subscribeSettingsChange(() => {
+    syncPlaybackSettings().catch((e) => console.error(e));
+  });
 
   const sidebarToggleBtn = document.getElementById('sidebarToggle');
   const layoutEl = document.querySelector('.layout');

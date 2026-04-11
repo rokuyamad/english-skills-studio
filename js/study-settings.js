@@ -9,6 +9,7 @@ export const DEFAULT_STUDY_SETTINGS = {
   goal_hours: 1000,
   external_carryover_hours: 0,
   external_carryover_note: '',
+  imitation_repeat_gap_ms: 1000,
   seconds_per_count: {
     imitation: 45,
     slash: 75,
@@ -52,6 +53,12 @@ export function validateStudySettings(raw = {}) {
     goal_hours: goalHours,
     external_carryover_hours: clampNumber(raw.external_carryover_hours, 0, 20000, DEFAULT_STUDY_SETTINGS.external_carryover_hours),
     external_carryover_note: externalCarryoverNote,
+    imitation_repeat_gap_ms: clampNumber(
+      raw.imitation_repeat_gap_ms,
+      0,
+      10000,
+      DEFAULT_STUDY_SETTINGS.imitation_repeat_gap_ms
+    ),
     seconds_per_count: {
       imitation: clampNumber(secondsPerCount.imitation, 10, Number.POSITIVE_INFINITY, DEFAULT_STUDY_SETTINGS.seconds_per_count.imitation),
       slash: clampNumber(secondsPerCount.slash, 10, Number.POSITIVE_INFINITY, DEFAULT_STUDY_SETTINGS.seconds_per_count.slash),

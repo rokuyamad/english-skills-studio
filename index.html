@@ -252,6 +252,12 @@
                   <input id="modalTimezone" type="text" placeholder="Asia/Tokyo">
                 </div>
 
+                <div class="field">
+                  <label for="modalImitationRepeatGapMs">Imitation: リピート間隔 (ms)</label>
+                  <input id="modalImitationRepeatGapMs" type="number" min="0" max="10000" step="50">
+                  <p class="field-hint">同じ音声や次の音声へ移るまでの待ち時間です。`500` で 0.5 秒です。</p>
+                </div>
+
                 <div class="field field-span">
                   <label for="modalMilestones">マイルストーン (hours, comma separated)</label>
                   <input id="modalMilestones" type="text" placeholder="100,300,600,1000">
