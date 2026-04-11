@@ -7,6 +7,7 @@ import {
 } from './progress-db.js';
 
 let flushInFlight = null;
+const COUNTER_SYNC_PAGE_SIZE = 1000;
 
 function buildEstimatedSeconds(pageKey, settings) {
   const map = settings?.seconds_per_count || {};
@@ -26,6 +27,69 @@ export function buildStudyEvent({ pageKey, contentKey, settings }) {
     source: 'counter',
     syncStatus: 'pending'
   };
+}
+
+function aggregateCounterRows(rows, pageKey) {
+  const counts = {};
+  (rows || []).forEach((row) => {
+    const rowPageKey = row.pageKey || row.page_key;
+    if (pageKey && rowPageKey !== pageKey) return;
+    if ((row.source || 'counter') !== 'counter') return;
+    const contentKey = String(row.contentKey || row.content_key || '').trim();
+    if (!contentKey) return;
+    const unitCount = Math.max(0, Number(row.unitCount || row.unit_count || 0));
+    if (!unitCount) return;
+    counts[contentKey] = (counts[contentKey] || 0) + unitCount;
+  });
+  return counts;
+}
+
+function mergeCounterMaps(base = {}, extra = {}) {
+  const merged = { ...base };
+  Object.entries(extra).forEach(([key, value]) => {
+    merged[key] = (merged[key] || 0) + Number(value || 0);
+  });
+  return merged;
+}
+
+async function fetchRemoteCounterCounts(pageKey) {
+  const user = await getSessionUser();
+  const supabase = await getSupabaseClient();
+  if (!user || !supabase) return {};
+
+  let from = 0;
+  let result = {};
+
+  while (true) {
+    const to = from + COUNTER_SYNC_PAGE_SIZE - 1;
+    const { data, error } = await supabase
+      .from('study_events')
+      .select('content_key, unit_count, page_key, source')
+      .eq('user_id', user.id)
+      .eq('page_key', pageKey)
+      .eq('source', 'counter')
+      .range(from, to);
+
+    if (error) throw error;
+    result = mergeCounterMaps(result, aggregateCounterRows(data, pageKey));
+    if (!Array.isArray(data) || data.length < COUNTER_SYNC_PAGE_SIZE) break;
+    from += COUNTER_SYNC_PAGE_SIZE;
+  }
+
+  return result;
+}
+
+export async function loadCounterCounts(pageKey) {
+  const pending = await listPendingStudyEvents(5000);
+  const pendingCounts = aggregateCounterRows(pending, pageKey);
+
+  try {
+    const remoteCounts = await fetchRemoteCounterCounts(pageKey);
+    return mergeCounterMaps(remoteCounts, pendingCounts);
+  } catch (error) {
+    console.error('[study-sync] counter sync failed', error);
+    return pendingCounts;
+  }
 }
 
 export async function recordAndMaybeFlush(event) {

@@ -3,7 +3,7 @@ import { resolveSelectionContext, selectSet } from './slash-ui.js';
 import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { getOrder, initProgressDb } from './progress-db.js';
-import { flushStudyEvents } from './study-sync.js';
+import { flushStudyEvents, loadCounterCounts } from './study-sync.js';
 import { initSelectionQuickAdd } from './srs-quick-add.js';
 
 function splitEnglishSentences(text = '') {
@@ -179,6 +179,7 @@ async function bootstrap() {
   initSidebarToggle();
   await initProgressDb();
   await flushStudyEvents().catch((e) => console.error(e));
+  state.countMap = await loadCounterCounts('slash');
 
   const response = await fetch('data/slash-data.json');
   const data = await response.json();

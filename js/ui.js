@@ -1,5 +1,4 @@
 import { state } from './state.js';
-import { getCount, incrementCount } from './progress-db.js';
 import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 import { playCountFeedback } from './count-feedback.js';
@@ -21,12 +20,7 @@ function getSentenceCounterKey(trackKey, sentenceIdx) {
 
 async function hydrateSentenceCount(trackKey, sentenceIdx, countEl) {
   const key = getSentenceCounterKey(trackKey, sentenceIdx);
-  if (Object.prototype.hasOwnProperty.call(state.countMap, key)) {
-    countEl.textContent = `${state.countMap[key]}回`;
-    return;
-  }
-  const count = await getCount(key);
-  state.countMap[key] = count;
+  const count = Number(state.countMap[key] || 0);
   countEl.textContent = `${count}回`;
 }
 
@@ -74,7 +68,7 @@ function createSentenceItem(track, seg, i) {
   countBtn.onclick = async (e) => {
     e.stopPropagation();
     const key = getSentenceCounterKey(track.key, i);
-    const next = await incrementCount(key);
+    const next = Number(state.countMap[key] || 0) + 1;
     state.countMap[key] = next;
     countEl.textContent = `${next}回`;
     playCountFeedback({

@@ -1,5 +1,5 @@
 import { state } from './slash-state.js';
-import { getCount, incrementCount, saveOrder } from './progress-db.js';
+import { saveOrder } from './progress-db.js';
 import { enableSidebarDnD } from './sidebar-sortable.js';
 import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
@@ -237,12 +237,7 @@ function refreshCurrentSetBadge() {
 }
 
 async function hydrateEntryCount(counterKey, countEl) {
-  if (Object.prototype.hasOwnProperty.call(state.countMap, counterKey)) {
-    countEl.textContent = `${state.countMap[counterKey]}回`;
-    return;
-  }
-  const count = await getCount(counterKey);
-  state.countMap[counterKey] = count;
+  const count = Number(state.countMap[counterKey] || 0);
   countEl.textContent = `${count}回`;
   refreshCurrentSetBadge();
 }
@@ -284,7 +279,7 @@ export function renderList() {
     countBtn.textContent = '+1';
     countBtn.addEventListener('click', async () => {
       const key = buildEntryCounterKey(currentSet.id, entry.id, entryIdx);
-      const next = await incrementCount(key);
+      const next = Number(state.countMap[key] || 0) + 1;
       state.countMap[key] = next;
       countChip.textContent = `${next}回`;
       playCountFeedback({

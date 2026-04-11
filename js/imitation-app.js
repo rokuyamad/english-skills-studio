@@ -5,7 +5,7 @@ import { requireAuthOrRedirect, setupTopbarAuth } from './auth-ui.js';
 import { initMobileTopbar } from './mobile-topbar.js';
 import { enableSidebarDnD } from './sidebar-sortable.js';
 import { getOrder, initProgressDb, saveOrder } from './progress-db.js';
-import { flushStudyEvents } from './study-sync.js';
+import { flushStudyEvents, loadCounterCounts } from './study-sync.js';
 import { initSelectionQuickAdd } from './srs-quick-add.js';
 
 let detachTrackDnD = null;
@@ -169,6 +169,7 @@ async function bootstrap() {
 
   await initProgressDb();
   await flushStudyEvents().catch((e) => console.error(e));
+  state.countMap = await loadCounterCounts('imitation');
 
   const response = await fetch('data/data.json');
   const rawData = await response.json();
