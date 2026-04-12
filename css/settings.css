@@ -118,3 +118,60 @@ body {
     margin-top: 16px;
   }
 }
+
+/* Studio Playful refresh */
+.settings-main {
+  width: min(980px, calc(100% - 28px));
+  margin: 22px auto 34px;
+}
+
+.settings-card {
+  border-color: rgba(176, 139, 117, 0.14);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 243, 234, 0.92));
+  box-shadow: 0 18px 40px rgba(184, 134, 105, 0.14);
+}
+
+.settings-notice {
+  border-color: rgba(92, 169, 183, 0.24);
+  background: linear-gradient(180deg, rgba(223, 245, 249, 0.82), rgba(255, 255, 255, 0.92));
+}
+
+.settings-notice-title,
+.settings-notice a {
+  color: #3e6973;
+}
+
+.settings-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 3vw, 36px);
+  color: #4d372f;
+}
+
+.settings-copy,
+.field-hint,
+.settings-status {
+  color: #6d5a52;
+}
+
+.field label {
+  color: #8d7368;
+}
+
+.field input {
+  border-color: rgba(176, 139, 117, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+  color: #4e3a33;
+}
+
+.settings-btn {
+  border-color: rgba(176, 139, 117, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  color: #6a544c;
+}
+
+.settings-btn.primary {
+  border-color: rgba(239, 125, 108, 0.24);
+  background: linear-gradient(135deg, #ffd8bf, #ffc8b7 52%, #ffe8a6);
+  color: #4b3028;
+}

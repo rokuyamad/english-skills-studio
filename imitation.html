@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101323">
+<meta name="theme-color" content="#f8cdb9">
 <meta name="description" content="英語イミテーション練習プレイヤー">
 <title>Imitation Player | English Skills Studio</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon.svg">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="studio-page imitation-page">
 <div class="device">
   <header class="topbar">
-    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Hub</a>
+    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Studio</a>
     <nav class="topbar-nav" aria-label="Primary">
-      <a class="nav-link" href="index.html">Dashboard</a>
-      <a class="nav-link active" href="imitation.html">Imitation Player</a>
-      <a class="nav-link" href="slash.html">Slash Reading</a>
-      <a class="nav-link" href="shadowing.html">Shadowing</a>
-      <a class="nav-link" href="review.html">SRS Review</a>
-      <a class="nav-link" href="qa-drill.html">QA Drill</a>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link active" href="imitation.html">Listen</a>
+      <a class="nav-link" href="slash.html">Read</a>
+      <a class="nav-link" href="shadowing.html">Speak</a>
+      <a class="nav-link" href="review.html">Review</a>
+      <a class="nav-link" href="qa-drill.html">Respond</a>
     </nav>
     <div class="topbar-actions">
       <a class="due-link hidden" id="dueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -41,12 +41,12 @@
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
-      <a class="mobile-nav-link" href="index.html">Dashboard</a>
-      <a class="mobile-nav-link active" href="imitation.html">Imitation Player</a>
-      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
-      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
-      <a class="mobile-nav-link" href="review.html">SRS Review</a>
-      <a class="mobile-nav-link" href="qa-drill.html">QA Drill</a>
+      <a class="mobile-nav-link" href="index.html">Home</a>
+      <a class="mobile-nav-link active" href="imitation.html">Listen</a>
+      <a class="mobile-nav-link" href="slash.html">Read</a>
+      <a class="mobile-nav-link" href="shadowing.html">Speak</a>
+      <a class="mobile-nav-link" href="review.html">Review</a>
+      <a class="mobile-nav-link" href="qa-drill.html">Respond</a>
     </nav>
     <div class="mobile-auth-area">
       <a class="mobile-due-link hidden" id="mobileDueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -66,9 +66,14 @@
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="サイドバーを開閉">‹</button>
 
       <div class="content-header">
-        <p class="session-eyebrow">FOCUS SESSION</p>
+        <p class="session-eyebrow">LISTEN & MIRROR</p>
         <h1 class="track-name" id="trackName">—</h1>
-        <p class="session-copy">短い反復を積み上げて、耳と口の同期を育てる。</p>
+        <p class="session-copy">短くまねして、耳と口の距離を少しずつ縮める。今日はリズム重視で十分です。</p>
+        <div class="practice-chip-row" aria-label="練習のコツ">
+          <span class="practice-chip">1フレーズずつ</span>
+          <span class="practice-chip">息継ぎを合わせる</span>
+          <span class="practice-chip">うまくなくてOK</span>
+        </div>
         <div class="progress-shell" aria-label="学習進行">
           <div class="progress-rail"><span class="progress-fill" id="sessionProgress"></span></div>
           <div class="progress-meta">

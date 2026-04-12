@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101323">
+<meta name="theme-color" content="#f8cdb9">
 <meta name="description" content="学習ダッシュボード設定">
 <title>Settings | English Skills Studio</title>
 <link rel="manifest" href="manifest.json">
@@ -11,16 +11,16 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/settings.css">
 </head>
-<body>
+<body class="studio-page settings-page">
 <div class="device">
   <header class="topbar">
-    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Hub</a>
+    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Studio</a>
     <nav class="topbar-nav" aria-label="Primary">
-      <a class="nav-link" href="index.html">Dashboard</a>
-      <a class="nav-link" href="imitation.html">Imitation Player</a>
-      <a class="nav-link" href="slash.html">Slash Reading</a>
-      <a class="nav-link" href="shadowing.html">Shadowing</a>
-      <a class="nav-link" href="review.html">SRS Review</a>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="imitation.html">Listen</a>
+      <a class="nav-link" href="slash.html">Read</a>
+      <a class="nav-link" href="shadowing.html">Speak</a>
+      <a class="nav-link" href="review.html">Review</a>
     </nav>
     <div class="topbar-actions">
       <a class="due-link hidden" id="dueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -41,11 +41,11 @@
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
-      <a class="mobile-nav-link" href="index.html">Dashboard</a>
-      <a class="mobile-nav-link" href="imitation.html">Imitation Player</a>
-      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
-      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
-      <a class="mobile-nav-link" href="review.html">SRS Review</a>
+      <a class="mobile-nav-link" href="index.html">Home</a>
+      <a class="mobile-nav-link" href="imitation.html">Listen</a>
+      <a class="mobile-nav-link" href="slash.html">Read</a>
+      <a class="mobile-nav-link" href="shadowing.html">Speak</a>
+      <a class="mobile-nav-link" href="review.html">Review</a>
     </nav>
     <div class="mobile-auth-area">
       <a class="mobile-due-link hidden" id="mobileDueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -57,13 +57,13 @@
 
   <main class="settings-main">
     <section class="settings-card settings-notice">
-      <p class="settings-notice-title">おすすめ: Dashboard内の設定モーダル</p>
-      <p class="settings-copy">通常は <a href="index.html">Dashboard</a> の「設定」から編集してください。このページは互換導線として残しています。</p>
+      <p class="settings-notice-title">おすすめ: Home 内の設定モーダル</p>
+      <p class="settings-copy">ふだんは <a href="index.html">Home</a> の「学習ルールを調整」から編集してください。このページはじっくり見直すための互換導線です。</p>
     </section>
 
     <section class="settings-card">
-      <h1 class="settings-title">学習メトリクス設定</h1>
-      <p class="settings-copy">目標時間、換算秒、レベル計算を自分の学習スタイルに合わせて調整できます。</p>
+      <h1 class="settings-title">学習スタイルのチューニング</h1>
+      <p class="settings-copy">目標時間、連続記録の基準、換算ルールを自分が続けやすい強さに整えます。</p>
     </section>
 
     <section class="settings-card">

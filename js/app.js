@@ -13,6 +13,7 @@ const BASELINE_SECONDS_KV_KEY = 'study-dashboard-baseline-seconds:v1';
 
 let settingsUnsubscribe = null;
 let settingsModalController = null;
+let settingsModalMountPromise = null;
 let lastRemoteEvents = [];
 let externalLogController = null;
 
@@ -145,12 +146,22 @@ async function initSettingsModal() {
   const closeBtn = document.getElementById('closeSettingsModalBtn');
   if (!dialog || !openBtn || !closeBtn) return;
 
-  settingsModalController = await mountSettingsForm({
-    scope: dialog,
-    ids: MODAL_SETTINGS_IDS
-  });
+  const ensureSettingsModalController = async () => {
+    if (settingsModalController) return settingsModalController;
+    if (!settingsModalMountPromise) {
+      settingsModalMountPromise = mountSettingsForm({
+        scope: dialog,
+        ids: MODAL_SETTINGS_IDS
+      }).then((controller) => {
+        settingsModalController = controller;
+        return controller;
+      });
+    }
+    return settingsModalMountPromise;
+  };
 
   const openModal = async () => {
+    await ensureSettingsModalController();
     await settingsModalController.reload();
     if (typeof dialog.showModal === 'function') {
       dialog.showModal();
@@ -172,6 +183,8 @@ async function initSettingsModal() {
   dialog.addEventListener('click', (e) => {
     if (e.target === dialog) closeModal();
   });
+
+  await ensureSettingsModalController();
 }
 
 async function bootstrap() {

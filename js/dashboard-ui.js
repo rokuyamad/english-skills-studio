@@ -7,11 +7,11 @@ let didPrimeDashboard = false;
 const animatedNumbers = new Map();
 
 const CONTENT_COLORS = {
-  imitation: '#57d7ff',
-  slash: '#ffc768',
-  shadowing: '#ff9d88',
-  srs: '#98f2ac',
-  external: '#bda2ff'
+  imitation: '#4ea8b7',
+  slash: '#f1a85b',
+  shadowing: '#ef7d6c',
+  srs: '#77b26d',
+  external: '#a78ae8'
 };
 
 function isDesktopDashboardViewport() {
@@ -65,13 +65,13 @@ function getSharedChartOptions() {
       background: 'transparent',
       toolbar: { show: false },
       zoom: { enabled: false },
-      foreColor: '#dbe6ff',
+      foreColor: '#56463f',
       animations: getChartAnimation(),
       parentHeightOffset: 0,
       sparkline: { enabled: false }
     },
     grid: {
-      borderColor: 'rgba(181, 209, 255, 0.12)',
+      borderColor: 'rgba(127, 100, 86, 0.16)',
       strokeDashArray: 5,
       padding: {
         top: desktop ? 4 : 2,
@@ -82,7 +82,7 @@ function getSharedChartOptions() {
     },
     legend: {
       fontFamily: 'JetBrains Mono, monospace',
-      labels: { colors: '#d8e2f7' }
+      labels: { colors: '#6d5a52' }
     },
     tooltip: {
       theme: 'dark',
@@ -102,7 +102,7 @@ function getSharedChartOptions() {
       axisTicks: { show: false },
       labels: {
         style: {
-          colors: '#c9d7f0',
+          colors: '#7e6559',
           fontSize: desktop ? '10px' : '11px',
           fontFamily: 'JetBrains Mono, monospace'
         }
@@ -111,7 +111,7 @@ function getSharedChartOptions() {
     yaxis: {
       labels: {
         style: {
-          colors: '#c9d7f0',
+          colors: '#7e6559',
           fontSize: desktop ? '10px' : '11px',
           fontFamily: 'JetBrains Mono, monospace'
         }

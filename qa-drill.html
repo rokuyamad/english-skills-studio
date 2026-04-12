@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101323">
+<meta name="theme-color" content="#f8cdb9">
 <meta name="description" content="英語 QA ドリル — 日本語の質問を見て英語で瞬間英作文する反復練習">
 <title>QA Drill | English Skills Studio</title>
 <link rel="manifest" href="manifest.json">
@@ -11,17 +11,17 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/review.css">
 </head>
-<body>
+<body class="studio-page review-page qa-page">
 <div class="device">
   <header class="topbar">
-    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Hub</a>
+    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Studio</a>
     <nav class="topbar-nav" aria-label="Primary">
-      <a class="nav-link" href="index.html">Dashboard</a>
-      <a class="nav-link" href="imitation.html">Imitation Player</a>
-      <a class="nav-link" href="slash.html">Slash Reading</a>
-      <a class="nav-link" href="shadowing.html">Shadowing</a>
-      <a class="nav-link" href="review.html">SRS Review</a>
-      <a class="nav-link active" href="qa-drill.html">QA Drill</a>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="imitation.html">Listen</a>
+      <a class="nav-link" href="slash.html">Read</a>
+      <a class="nav-link" href="shadowing.html">Speak</a>
+      <a class="nav-link" href="review.html">Review</a>
+      <a class="nav-link active" href="qa-drill.html">Respond</a>
     </nav>
     <div class="topbar-actions">
       <a class="due-link hidden" id="dueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -42,12 +42,12 @@
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
-      <a class="mobile-nav-link" href="index.html">Dashboard</a>
-      <a class="mobile-nav-link" href="imitation.html">Imitation Player</a>
-      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
-      <a class="mobile-nav-link" href="shadowing.html">Shadowing</a>
-      <a class="mobile-nav-link" href="review.html">SRS Review</a>
-      <a class="mobile-nav-link active" href="qa-drill.html">QA Drill</a>
+      <a class="mobile-nav-link" href="index.html">Home</a>
+      <a class="mobile-nav-link" href="imitation.html">Listen</a>
+      <a class="mobile-nav-link" href="slash.html">Read</a>
+      <a class="mobile-nav-link" href="shadowing.html">Speak</a>
+      <a class="mobile-nav-link" href="review.html">Review</a>
+      <a class="mobile-nav-link active" href="qa-drill.html">Respond</a>
     </nav>
     <div class="mobile-auth-area">
       <a class="mobile-due-link hidden" id="mobileDueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -60,16 +60,21 @@
   <main class="review-main">
     <section class="review-head-card">
       <div class="review-head-top">
-        <p class="review-eyebrow">QA DRILL</p>
+        <p class="review-eyebrow">RESPOND OUT LOUD</p>
         <button class="review-new-btn" id="newCardBtn" type="button">+ New</button>
       </div>
-      <h1 class="review-title">Instant Response Drill</h1>
-      <p class="review-copy">日本語の質問を見て、英語で瞬間英作文する練習です。15秒以内は Easy、30秒以内は Good、30秒超は Again です。</p>
+      <h1 class="review-title">瞬発で返す会話ドリル</h1>
+      <p class="review-copy">考え込みすぎず、まず口に出す練習。速く出たときの気持ちよさを積み上げます。</p>
       <div class="review-meta-row">
         <span id="dueCountLabel">Due 0</span>
         <span id="queueCountLabel">Queue 0</span>
         <span id="todayCountLabel">Today 0/20</span>
         <span id="timeCountLabel">Time 0s</span>
+      </div>
+      <div class="review-mission-row" aria-label="ドリルの進め方">
+        <span class="review-mission-chip">15秒以内を狙う</span>
+        <span class="review-mission-chip">詰まっても声に出す</span>
+        <span class="review-mission-chip">1問ずつテンポよく</span>
       </div>
     </section>
 
@@ -97,7 +102,7 @@
       <div class="review-actions">
         <div class="review-action-row">
           <button class="review-hint-btn" id="hintBtn" type="button">Hint</button>
-          <button class="review-reveal-btn" id="revealBtn" type="button">答えを見る</button>
+          <button class="review-reveal-btn" id="revealBtn" type="button">モデル回答を見る</button>
         </div>
         <div class="review-grade-row">
           <button class="review-grade-btn again" type="button" data-grade="again">Again</button>

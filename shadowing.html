@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101323">
+<meta name="theme-color" content="#f8cdb9">
 <meta name="description" content="英語シャドーイング練習動画セット">
 <title>Shadowing</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon.svg">
 <link rel="stylesheet" href="css/shadowing.css">
 </head>
-<body>
+<body class="studio-page shadowing-page">
 <div class="device">
   <header class="topbar">
-    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Hub</a>
+    <a class="topbar-title topbar-home-link" href="index.html" aria-label="Dashboardへ戻る">English Skills Studio</a>
     <nav class="topbar-nav" aria-label="Primary">
-      <a class="nav-link" href="index.html">Dashboard</a>
-      <a class="nav-link" href="imitation.html">Imitation Player</a>
-      <a class="nav-link" href="slash.html">Slash Reading</a>
-      <a class="nav-link active" href="shadowing.html">Shadowing</a>
-      <a class="nav-link" href="review.html">SRS Review</a>
-      <a class="nav-link" href="qa-drill.html">QA Drill</a>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="imitation.html">Listen</a>
+      <a class="nav-link" href="slash.html">Read</a>
+      <a class="nav-link active" href="shadowing.html">Speak</a>
+      <a class="nav-link" href="review.html">Review</a>
+      <a class="nav-link" href="qa-drill.html">Respond</a>
     </nav>
     <div class="topbar-actions">
       <a class="due-link hidden" id="dueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -41,12 +41,12 @@
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="モバイルメニュー">
     <nav class="mobile-nav" aria-label="Mobile Primary">
-      <a class="mobile-nav-link" href="index.html">Dashboard</a>
-      <a class="mobile-nav-link" href="imitation.html">Imitation Player</a>
-      <a class="mobile-nav-link" href="slash.html">Slash Reading</a>
-      <a class="mobile-nav-link active" href="shadowing.html">Shadowing</a>
-      <a class="mobile-nav-link" href="review.html">SRS Review</a>
-      <a class="mobile-nav-link" href="qa-drill.html">QA Drill</a>
+      <a class="mobile-nav-link" href="index.html">Home</a>
+      <a class="mobile-nav-link" href="imitation.html">Listen</a>
+      <a class="mobile-nav-link" href="slash.html">Read</a>
+      <a class="mobile-nav-link active" href="shadowing.html">Speak</a>
+      <a class="mobile-nav-link" href="review.html">Review</a>
+      <a class="mobile-nav-link" href="qa-drill.html">Respond</a>
     </nav>
     <div class="mobile-auth-area">
       <a class="mobile-due-link hidden" id="mobileDueLink" href="review.html" aria-label="復習ページへ">復習 0件</a>
@@ -65,12 +65,17 @@
     <section class="content-panel">
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="サイドバーを開閉">‹</button>
       <div class="content-header">
-        <p class="session-eyebrow">VOICE SYNC</p>
+        <p class="session-eyebrow">SPEAK WITH THE VIDEO</p>
         <h1 class="track-name" id="setName">Shadowing</h1>
-        <p class="session-copy">速度ではなく同調を狙い、耳と口のラグを減らす。</p>
+        <p class="session-copy">速さよりも同調を優先。口がついてくる瞬間を少しずつ増やす練習ページ。</p>
+        <div class="practice-chip-row" aria-label="練習のコツ">
+          <span class="practice-chip">まず1本だけ</span>
+          <span class="practice-chip">うまく言えたら +1</span>
+          <span class="practice-chip">動画は必要な時だけ開く</span>
+        </div>
         <div class="meta-row">
           <span class="meta-count" id="metaCount">—</span>
-          <span class="meta-note">Video Practice</span>
+          <span class="meta-note">Practice Menu</span>
         </div>
       </div>
       <div class="shadowing-list" id="shadowingList"></div>
