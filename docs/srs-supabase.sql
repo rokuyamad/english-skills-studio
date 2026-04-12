@@ -4,9 +4,10 @@
 create table if not exists public.srs_cards (
   id uuid primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
-  card_type text not null check (card_type in ('word', 'idiom', 'phrase')),
+  card_type text not null check (card_type in ('word', 'idiom', 'phrase', 'qa')),
   term_en text not null,
   term_ja text not null,
+  qa_prompt_ja text not null default '',
   example_en text not null,
   example_ja text not null,
   normalized_term text not null,
@@ -18,6 +19,13 @@ create table if not exists public.srs_cards (
     check (
       status = 'draft'
       or (
+        card_type = 'qa'
+        and btrim(term_en) <> ''
+        and btrim(example_en) <> ''
+      )
+      or (
+        card_type in ('word', 'idiom', 'phrase')
+        and
         btrim(term_en) <> ''
         and btrim(term_ja) <> ''
         and btrim(example_en) <> ''

@@ -12,6 +12,7 @@ Usage:
     --question "What services does your company provide?" \
     --example-en "We offer three types of services. ..." \
     --example-ja "私どもは3種類のサービスを提供しています。..." \
+    --qa-prompt-ja "あなたの会社はどのようなサービスを提供していますか？" \
     --term-ja "あなたの会社はどのようなサービスを提供していますか？"
 
   # Skip confirmation prompt
@@ -59,7 +60,7 @@ def request_json(method: str, url: str, headers: dict[str, str], payload: dict |
 def fetch_qa_cards(base_url: str, headers: dict[str, str]) -> list[dict]:
     query = urllib.parse.urlencode(
         {
-            "select": "id,term_en,term_ja,example_en,example_ja,normalized_term,status,is_active",
+            "select": "id,term_en,term_ja,qa_prompt_ja,example_en,example_ja,normalized_term,status,is_active",
             "card_type": "eq.qa",
             "order": "created_at.asc",
         }
@@ -72,7 +73,7 @@ def fetch_qa_cards(base_url: str, headers: dict[str, str]) -> list[dict]:
 def find_card_by_question(base_url: str, headers: dict[str, str], normalized: str) -> dict | None:
     query = urllib.parse.urlencode(
         {
-            "select": "id,term_en,term_ja,example_en,example_ja,normalized_term",
+            "select": "id,term_en,term_ja,qa_prompt_ja,example_en,example_ja,normalized_term",
             "card_type": "eq.qa",
             "normalized_term": f"eq.{normalized}",
         }
@@ -103,6 +104,7 @@ def main() -> int:
     parser.add_argument("--example-en", type=str, dest="example_en", help="New English model answer.")
     parser.add_argument("--example-ja", type=str, dest="example_ja", help="New Japanese translation.")
     parser.add_argument("--term-ja", type=str, dest="term_ja", help="New Japanese question hint.")
+    parser.add_argument("--qa-prompt-ja", type=str, dest="qa_prompt_ja", help="New Japanese prompt shown on the card front.")
     parser.add_argument("--term-en", type=str, dest="term_en", help="New question text (also updates normalized_term).")
     parser.add_argument("--yes", action="store_true", help="Skip confirmation prompt.")
     args = parser.parse_args()
@@ -123,6 +125,7 @@ def main() -> int:
         for card in cards:
             print(f"[{card['id']}]")
             print(f"  Q:  {card['term_en']}")
+            print(f"  QJ: {card.get('qa_prompt_ja', '')}")
             print(f"  JA: {card.get('term_ja', '')}")
             print(f"  A:  {(card.get('example_en') or '')[:80]}")
             print()
@@ -146,13 +149,15 @@ def main() -> int:
         payload["example_ja"] = args.example_ja.strip()
     if args.term_ja is not None:
         payload["term_ja"] = args.term_ja.strip()
+    if args.qa_prompt_ja is not None:
+        payload["qa_prompt_ja"] = args.qa_prompt_ja.strip()
     if args.term_en is not None:
         new_term = args.term_en.strip()
         payload["term_en"] = new_term
         payload["normalized_term"] = normalize_question(new_term)
 
     if not payload:
-        print("Nothing to update. Specify at least one of: --example-en, --example-ja, --term-ja, --term-en")
+        print("Nothing to update. Specify at least one of: --example-en, --example-ja, --term-ja, --qa-prompt-ja, --term-en")
         return 0
 
     print("\nChanges to apply:")

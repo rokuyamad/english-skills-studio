@@ -3,6 +3,7 @@ import { saveQaCard } from './qa-api.js';
 const IDS = {
   backdrop: 'qaDraftModalBackdrop',
   question: 'qaDraftQuestion',
+  questionJa: 'qaDraftQuestionJa',
   hint: 'qaDraftHint',
   answerEn: 'qaDraftAnswerEn',
   answerJa: 'qaDraftAnswerJa',
@@ -30,10 +31,14 @@ function ensureModal() {
   backdrop.innerHTML = `
     <section class="review-modal review-modal-wide" role="dialog" aria-modal="true" aria-labelledby="qaDraftModalTitle">
       <h2 class="review-modal-title" id="qaDraftModalTitle">新しい QA カードを追加</h2>
-      <p class="review-modal-copy">英語の質問と模範回答を登録します。ヒントには使える構文パターンを書くと練習に役立ちます。</p>
+      <p class="review-modal-copy">日本語の質問を見て英語で答えるカードを登録します。Hint には使える構文パターンを書くと練習に役立ちます。</p>
       <div class="review-modal-grid" style="grid-template-columns: minmax(0, 1fr);">
         <div class="review-modal-field">
-          <label class="review-modal-label" for="${IDS.question}">Question (EN) *</label>
+          <label class="review-modal-label" for="${IDS.questionJa}">Question (JA) *</label>
+          <input class="review-modal-input" id="${IDS.questionJa}" type="text" autocomplete="off" placeholder="例: あなたの会社はどのようなサービスを提供していますか？">
+        </div>
+        <div class="review-modal-field">
+          <label class="review-modal-label" for="${IDS.question}">Question (EN / reference) *</label>
           <input class="review-modal-input" id="${IDS.question}" type="text" autocomplete="off" placeholder="e.g. What services does your company provide?">
         </div>
         <div class="review-modal-field">
@@ -92,6 +97,7 @@ function setBusy(isBusy) {
 function collectValues() {
   return {
     question: getEl(IDS.question)?.value || '',
+    questionJa: getEl(IDS.questionJa)?.value || '',
     hint: getEl(IDS.hint)?.value || '',
     answerEn: getEl(IDS.answerEn)?.value || '',
     answerJa: getEl(IDS.answerJa)?.value || ''
@@ -130,13 +136,15 @@ export function openQaDraftModal({ onSaved = null } = {}) {
 
   const backdrop = getEl(IDS.backdrop);
   const questionInput = getEl(IDS.question);
+  const questionJaInput = getEl(IDS.questionJa);
   const hintInput = getEl(IDS.hint);
   const answerEnInput = getEl(IDS.answerEn);
   const answerJaInput = getEl(IDS.answerJa);
 
-  if (!backdrop || !questionInput) return;
+  if (!backdrop || !questionInput || !questionJaInput) return;
 
   questionInput.value = '';
+  questionJaInput.value = '';
   if (hintInput) hintInput.value = '';
   if (answerEnInput) answerEnInput.value = '';
   if (answerJaInput) answerJaInput.value = '';
@@ -146,5 +154,5 @@ export function openQaDraftModal({ onSaved = null } = {}) {
   setBusy(false);
   setError('');
   backdrop.classList.remove('hidden');
-  questionInput.focus();
+  questionJaInput.focus();
 }

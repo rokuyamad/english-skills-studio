@@ -9,6 +9,8 @@ function normalizeQuestion(raw) {
 
 function toDisplayQaCard(row) {
   const card = row.srs_cards || {};
+  const questionJa = String(card.qa_prompt_ja || '').trim();
+  const hint = questionJa ? (card.term_ja || '') : '';
   return {
     cardId: row.card_id,
     direction: QA_DIRECTION,
@@ -18,8 +20,9 @@ function toDisplayQaCard(row) {
     stabilityDays: Number(row.stability_days || 0),
     difficulty: Number(row.difficulty || 5),
     lastReviewedAt: row.last_reviewed_at,
-    question: card.term_en || '',
-    hint: card.term_ja || '',
+    question: questionJa || card.term_ja || card.term_en || '',
+    questionEn: card.term_en || '',
+    hint,
     answerEn: card.example_en || '',
     answerJa: card.example_ja || ''
   };
@@ -115,7 +118,7 @@ export async function fetchDueQaCards({ limit = 30 } = {}) {
   const nowIso = new Date().toISOString();
   const { data, error } = await supabase
     .from('srs_card_states')
-    .select('card_id, direction, due_at, reps, lapses, stability_days, difficulty, last_reviewed_at, srs_cards!inner(id, user_id, card_type, term_en, term_ja, example_en, example_ja, is_active)')
+    .select('card_id, direction, due_at, reps, lapses, stability_days, difficulty, last_reviewed_at, srs_cards!inner(id, user_id, card_type, term_en, term_ja, qa_prompt_ja, example_en, example_ja, is_active)')
     .eq('user_id', user.id)
     .eq('srs_cards.user_id', user.id)
     .eq('srs_cards.card_type', 'qa')
@@ -208,9 +211,11 @@ export async function submitQaReview({ cardId, grade }) {
   return { current, next };
 }
 
-export async function saveQaCard({ question, hint = '', answerEn = '', answerJa = '' }) {
+export async function saveQaCard({ question, questionJa = '', hint = '', answerEn = '', answerJa = '' }) {
   const normalizedQuestion = normalizeQuestion(question);
+  const normalizedQuestionJa = normalizeQuestion(questionJa);
   if (!normalizedQuestion) throw new Error('Question is required.');
+  if (!normalizedQuestionJa) throw new Error('Question (JA) is required.');
   if (!String(answerEn || '').trim()) throw new Error('Model answer is required.');
 
   const user = await getSessionUser();
@@ -240,6 +245,7 @@ export async function saveQaCard({ question, hint = '', answerEn = '', answerJa 
     card_type: 'qa',
     term_en: normalizedQuestion,
     term_ja: String(hint || '').trim(),
+    qa_prompt_ja: normalizedQuestionJa,
     example_en: String(answerEn || '').replace(/\s+/g, ' ').trim(),
     example_ja: String(answerJa || '').replace(/\s+/g, ' ').trim(),
     normalized_term: normalizedTerm,

@@ -9,6 +9,8 @@ import { getEffectiveStudySettings } from './study-settings.js';
 import { buildStudyEvent, recordAndMaybeFlush } from './study-sync.js';
 
 const DAILY_REVIEW_LIMIT = 20;
+const EASY_THRESHOLD_MS = 15 * 1000;
+const GOOD_THRESHOLD_MS = 30 * 1000;
 
 const state = {
   queue: [],
@@ -17,11 +19,86 @@ const state = {
   showingAnswer: false,
   busy: false,
   todayReviewed: 0,
-  totalDue: 0
+  totalDue: 0,
+  startedAt: 0,
+  elapsedMs: 0,
+  pendingGrade: '',
+  timeoutId: null,
+  tickId: null
 };
 
 function getEl(id) {
   return document.getElementById(id);
+}
+
+function clearCardTimers() {
+  if (state.timeoutId) {
+    window.clearTimeout(state.timeoutId);
+    state.timeoutId = null;
+  }
+  if (state.tickId) {
+    window.clearInterval(state.tickId);
+    state.tickId = null;
+  }
+}
+
+function updateElapsedMs() {
+  if (!state.startedAt) {
+    state.elapsedMs = 0;
+    return;
+  }
+  state.elapsedMs = Math.max(0, Date.now() - state.startedAt);
+}
+
+function formatElapsedLabel() {
+  const seconds = Math.min(99, Math.floor(state.elapsedMs / 1000));
+  return `Time ${seconds}s`;
+}
+
+function getElapsedGrade(elapsedMs) {
+  if (elapsedMs <= EASY_THRESHOLD_MS) return 'easy';
+  if (elapsedMs <= GOOD_THRESHOLD_MS) return 'good';
+  return 'again';
+}
+
+function getGradeMessage(grade, isTimedOut = false) {
+  if (isTimedOut || grade === 'again') {
+    return '30秒を超えたため Again です。Again を押して進めてください。';
+  }
+  if (grade === 'good') {
+    return '15秒を超えたので Good です。Good を押して進めてください。';
+  }
+  return '15秒以内なので Easy です。Easy を押して進めてください。';
+}
+
+function startCardTimers() {
+  clearCardTimers();
+  state.startedAt = Date.now();
+  state.elapsedMs = 0;
+
+  if (!state.current) return;
+
+  state.timeoutId = window.setTimeout(() => {
+    revealAnswer({ isTimedOut: true });
+  }, GOOD_THRESHOLD_MS);
+
+  state.tickId = window.setInterval(() => {
+    updateElapsedMs();
+    renderQueueMeta();
+  }, 1000);
+}
+
+function setCurrentCard(card) {
+  clearCardTimers();
+  state.current = card || null;
+  state.showingHint = false;
+  state.showingAnswer = false;
+  state.pendingGrade = '';
+  state.startedAt = 0;
+  state.elapsedMs = 0;
+  if (state.current) {
+    startCardTimers();
+  }
 }
 
 function setBusy(isBusy) {
@@ -31,9 +108,11 @@ function setBusy(isBusy) {
   const gradeBtns = document.querySelectorAll('.review-grade-btn');
 
   if (hintBtn) hintBtn.disabled = state.busy || !state.current;
-  if (revealBtn) revealBtn.disabled = state.busy || !state.current;
+  if (revealBtn) revealBtn.disabled = state.busy || !state.current || state.showingAnswer;
   gradeBtns.forEach((btn) => {
-    btn.disabled = state.busy || !state.current || !state.showingAnswer;
+    const buttonGrade = btn.dataset.grade || '';
+    const isEligible = state.showingAnswer && state.pendingGrade && buttonGrade === state.pendingGrade;
+    btn.disabled = state.busy || !state.current || !isEligible;
   });
 }
 
@@ -48,9 +127,11 @@ function renderQueueMeta() {
   const dueEl = getEl('dueCountLabel');
   const queueEl = getEl('queueCountLabel');
   const todayEl = getEl('todayCountLabel');
+  const timeEl = getEl('timeCountLabel');
   if (dueEl) dueEl.textContent = `Due ${state.totalDue}`;
   if (queueEl) queueEl.textContent = `Queue ${state.queue.length}`;
   if (todayEl) todayEl.textContent = `Today ${Math.min(state.todayReviewed, DAILY_REVIEW_LIMIT)}/${DAILY_REVIEW_LIMIT}`;
+  if (timeEl) timeEl.textContent = formatElapsedLabel();
 }
 
 function hasReachedDailyLimit() {
@@ -84,6 +165,7 @@ function renderCard() {
     if (hintBtn) hintBtn.disabled = true;
     if (revealBtn) revealBtn.disabled = true;
     document.querySelectorAll('.review-grade-btn').forEach((btn) => { btn.disabled = true; });
+    renderQueueMeta();
     return;
   }
 
@@ -105,13 +187,31 @@ function renderCard() {
     hintBtn.textContent = state.showingHint ? 'Hint表示中' : 'Hint';
   }
   if (revealBtn) {
-    revealBtn.disabled = state.busy;
+    revealBtn.disabled = state.busy || state.showingAnswer;
     revealBtn.textContent = state.showingAnswer ? '答え表示中' : '答えを見る';
   }
 
   document.querySelectorAll('.review-grade-btn').forEach((btn) => {
-    btn.disabled = !state.showingAnswer || state.busy;
+    const buttonGrade = btn.dataset.grade || '';
+    const isEligible = state.showingAnswer && state.pendingGrade && buttonGrade === state.pendingGrade;
+    btn.disabled = !isEligible || state.busy;
   });
+
+  renderQueueMeta();
+}
+
+function revealAnswer({ isTimedOut = false } = {}) {
+  if (!state.current || state.busy || state.showingAnswer) return;
+
+  updateElapsedMs();
+  if (isTimedOut) {
+    state.elapsedMs = Math.max(state.elapsedMs, GOOD_THRESHOLD_MS + 1);
+  }
+  clearCardTimers();
+  state.pendingGrade = isTimedOut ? 'again' : getElapsedGrade(state.elapsedMs);
+  state.showingAnswer = true;
+  renderCard();
+  setStatus(getGradeMessage(state.pendingGrade, isTimedOut));
 }
 
 async function loadQueue() {
@@ -130,9 +230,7 @@ async function loadQueue() {
       : [];
 
     state.queue = queue;
-    state.current = queue[0] || null;
-    state.showingHint = false;
-    state.showingAnswer = false;
+    setCurrentCard(queue[0] || null);
 
     renderQueueMeta();
     renderCard();
@@ -169,10 +267,7 @@ function bindRevealButton() {
   if (!btn || btn.dataset.bound === 'true') return;
   btn.dataset.bound = 'true';
   btn.addEventListener('click', () => {
-    if (!state.current || state.busy) return;
-    state.showingAnswer = true;
-    renderCard();
-    setStatus('評価を選んでください。');
+    revealAnswer();
   });
 }
 
@@ -184,7 +279,7 @@ function bindGradeButtons() {
     btn.addEventListener('click', async () => {
       if (!state.current || state.busy || !state.showingAnswer) return;
       const grade = btn.dataset.grade;
-      if (!grade) return;
+      if (!grade || grade !== state.pendingGrade) return;
 
       setBusy(true);
       setStatus('保存中...');
@@ -205,9 +300,7 @@ function bindGradeButtons() {
         state.totalDue = Math.max(0, state.totalDue - 1);
 
         state.queue = state.queue.slice(1);
-        state.current = state.queue[0] || null;
-        state.showingHint = false;
-        state.showingAnswer = false;
+        setCurrentCard(state.queue[0] || null);
 
         renderQueueMeta();
         renderCard();
